@@ -1,0 +1,7 @@
+### GET request to example server
+GET https://{{taiga_url}}/projects/by_slug?slug={{project-slug}}
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+> {% client.global.set("project_id", response.body.id); %}
+###

@@ -1,0 +1,12 @@
+### Get auth token
+POST https://{{taiga_url}}/auth
+Content-Type: application/json
+
+{
+        "password": "{{password}}",
+        "type": "normal",
+        "username": "{{username}}"
+}
+
+> {% client.global.set("auth_token", response.body.auth_token); %}
+###
