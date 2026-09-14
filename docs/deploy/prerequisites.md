@@ -1,0 +1,37 @@
+# Prerequisites and infrastructure
+
+Who is this for? This page lists what you need before installing the toolkit.
+
+## Required
+
+| Prerequisite | Purpose |
+|---|---|
+| Unix-like shell (`bash`) | Running the make targets (`Makefile`) |
+| [GNU make](https://www.gnu.org/software/make/) | Running `install-opencode`, `install-claude`, `test` |
+| `git` | Cloning and updating the repository |
+| An AI coding TUI | Consuming the definitions (opencode recommended; Claude Code for skills) |
+
+## Optional
+
+| Prerequisite | Purpose |
+|---|---|
+| `uv` | Running the ticketing MCP servers (`uv run mcp-ticketing`, `opencode_cfg.jsonc:24`) |
+| `mcp-ticketing` project | Located at `MCP_TICKETING_HOME`; provides the MCP server binary |
+| Ticketing credentials | For the MCP servers (see [Environment variables](environment.md)) |
+| `properdocs` | Optional render tool if you want to build the docs site; no build configuration is shipped (see [Operations](../admin/operations.md)) |
+
+## Infrastructure notes
+
+- No server, database, or network service is required for the definitions
+  themselves; the toolkit is configuration-only
+  ([Architecture](architecture.md)).
+- The Azure DevOps MCP server is disabled by default; the GitHub one is
+  enabled (`opencode_cfg.jsonc:22-33`).
+- Credentials live in the local, git-ignored `.envrc` file and are loaded into
+  the environment by your shell setup (for example direnv). Values must never
+  be committed or documented.
+
+## Next steps
+
+- Perform the install: [Installation](installation.md).
+- Configure credentials: [Environment variables](environment.md).

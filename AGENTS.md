@@ -30,6 +30,8 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 | `ticket-context-reader` | subagent | Read-only ticket and discussion retrieval for the Business Analyst |
 | `docs-glossary-reader` | subagent | Resolves a single unknown term from `docs/` with a minimal, capped report |
 | `docs-topic-reader` | subagent | Returns documented content relevant to one topic |
+| `documenter` | primary | Generates or updates documentation for any repository using the docs taxonomy and checks (typically Python/uv) |
+| `researcher` | subagent | Searches the web for libraries, frameworks, tools, patterns, and technical solutions |
 
 ## Skills
 
@@ -43,7 +45,7 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 | `debug/` | Investigate failures, implement minimal fixes |
 | `django-migration/` | Django migration generation |
 | `django-models/` | Django ORM model design |
-| `documentation/` | Audit and fix the docs site |
+| `documentation/` | Canonical docs site taxonomy, audit clauses, style, and build checks (loaded by `documenter`; triggered standalone for audits) |
 | `find-bugs/` | Bug and vulnerability finding |
 | `pull-request/` | Validate, commit, push, and open a PR |
 | `push/` | Stage, validate with tox, and push |
@@ -69,6 +71,7 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 | `new-spec` | Create or refine a feature spec in `.specs/` |
 | `step-by-step` | Deconstruct a task into an idempotent sequential plan |
 | `truthmode` | Strict empirical rigor and epistemic calibration |
+| `git-status` | Explain what pending changes are trying to do |
 
 ## Conventions
 
@@ -79,6 +82,7 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 - `.gitignore` excludes all dotfiles and editor backup files (`~*`); only `.gitignore` itself is kept among dotfiles.
 - `.ai-temp/` is agent working scratch (for example, `business-analyst` state snapshots): git-ignored, never committed, never treated as a deliverable. The business-analyst also maintains `.ai-temp/glossary-known-terms.yaml` there as an accumulating project glossary of terms resolved from `docs/`, shared across sessions as a fallback when the documentation has no structured glossary.
 - Every agent, skill, and command MUST emit output that follows the TUI-portable standard below.
+- The `documenter` agent generates or updates documentation (operator role: gates, permissions, workflow); the `documentation` skill owns the domain knowledge (four-guide taxonomy, audit clauses, style, build checks, findings template) and is shared by `documenter`, standalone audits, and any future docs agent. Rules live in only one place: the skill.
 
 ## TUI-portable output
 

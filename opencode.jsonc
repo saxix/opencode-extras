@@ -4,5 +4,13 @@
     "edit": {
       "~/.config/opencode/**": "allow"
     }
+  },
+  "references": {
+    "mcp-ticketing": {
+      "path": "../mcp-ticketing"
+    },
+    "mcp-python-dev-tools": {
+      "path": "../mcp-python-dev-tools"
+    }
   }
 }
