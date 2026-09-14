@@ -46,28 +46,7 @@
     }
   },
   "permission": {
-    //    "external_directory": {
-    //      "/tmp/**": "allow",
-    //      "/var/folders/**": "allow",
-    //      "~/**": "ask",
-    //      "~/bin": "allow",
-    //      "~/.agents/skills/sax/gmail/scripts/**": "allow",
-    //      "~/.agents/**": "allow"
-    //    },
-    //    "read": {
-    //      "~/**": "ask"
-    //    },
-    //    "edit": {
-    //      "~/**": "ask",
-    //      "**/.tox/**": "deny",
-    //      "**/.venv/**": "deny"
-    //    },
-    //    "bash": {
-    //      "*": "deny",
-    //      "tox *": "allow",
-    //      "git *": "allow",
-    //      "gh *": "allow"
-    //    }
+
   },
   "provider": {
     "dwarfstar": {
@@ -95,43 +74,6 @@
         "baseURL": "http://localhost:11434/v1"
       },
       "models": {
-        // --- Nostri alias customizzati ---
-        "sax-specs": {
-          // Analisi documenti: leggero (9.5GB), logica pura, "abliterated"
-          "name": "sax: qwable-9b-abliterated",
-          "tool_call": true,
-          "limit": {
-            "context": 100000,
-            "output": 50000
-          },
-          "options": {
-            "num_ctx": 100000
-          }
-        },
-        "sax-coder": {
-          // Implementazione: Ottimo per editing multi-file, struttura complessa locale
-          "name": "Build / Gemma 4 26B",
-          "tool_call": true,
-          "limit": {
-            "context": 65536,
-            "output": 16384
-          },
-          "options": {
-            "num_ctx": 65536
-          }
-        },
-        "sax-architect": {
-          // Architettura: Reasoning profondo cloud, contesto esteso per la pianificazione
-          "name": "Architect / DeepSeek V4 Flash Cloud",
-          "tool_call": true,
-          "limit": {
-            "context": 131072,
-            "output": 32768
-          },
-          "options": {
-            "num_ctx": 131072
-          }
-        },
         "qwen3.6:27b": {
           "name": "ollama / Qwen 3.6 27B (Local High-Quant)",
           "tool_call": true,

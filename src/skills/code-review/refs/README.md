@@ -1,7 +1,6 @@
 ---
 title: "Code Review"
 description: "Code review is mandatory. This adds overhead to each change, but ensures that simple, often overlooked problems are more easily avoided."
-url: https://github.com/saxix/agents-skills/skills/code-review/refs/REAMDE.md
 ---
 
 # Code Review
