@@ -18,20 +18,20 @@
       ".venv/**"
     ]
   },
-  "mcp": {
-    "azure-devops": {
-      "type": "local",
-      "command": ["uv", "run", "mcp-ticketing", "azure"],
-      "cwd": "{env:MCP_TICKETING_HOME}",
-      "enabled": false
-    },
-    "github": {
-      "type": "local",
-      "command": ["uv", "run", "mcp-ticketing", "github"],
-      "cwd": "{env:MCP_TICKETING_HOME}",
-      "enabled": true
-    }
-  },
+//  "mcp": {
+//    "azure-devops": {
+//      "type": "local",
+//      "command": ["uv", "run", "mcp-ticketing", "azure"],
+//      "cwd": "{env:MCP_TICKETING_HOME}",
+//      "enabled": false
+//    },
+//    "github": {
+//      "type": "local",
+//      "command": ["uv", "run", "mcp-ticketing", "github"],
+//      "cwd": "{env:MCP_TICKETING_HOME}",
+//      "enabled": true
+//    }
+//  },
   "instructions": [
     ".ai/*.md"
   ],

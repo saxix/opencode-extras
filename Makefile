@@ -4,18 +4,14 @@ help:
 	@echo "install-opencode: symlink skills/ and agents/ into ~/.config/opencode"
 	@echo "install-claude:   symlink skills/ into ~/.claude/skills"
 
-install-opencode:
+install:
 	@mkdir -p ${PREFIX}/.config/opencode/
-	@ln -sfn "${PWD}/opencode_cfg.jsonc" "${PREFIX}/.config/opencode/opencode.jsonc"
-	@ln -sfn "${PWD}/tui_cfg.jsonc" "${PREFIX}/.config/opencode/tui.jsonc"
+	@ln -sfn "${PWD}/src/opencode_cfg.jsonc" "${PREFIX}/.config/opencode/opencode.jsonc"
+	@ln -sfn "${PWD}/src/tui_cfg.jsonc" "${PREFIX}/.config/opencode/tui.jsonc"
 
-	@ln -sfn "${PWD}/skills" "${PREFIX}/.config/opencode/skills"
-	@ln -sfn "${PWD}/agents" "${PREFIX}/.config/opencode/agents"
-	@ln -sfn "${PWD}/commands" "${PREFIX}/.config/opencode/commands"
-
-
-install-claude:
-	ln -sfn "${PWD}/skills" "${PREFIX}/.claude/skills"
+	@ln -sfn "${PWD}/src/skills" "${PREFIX}/.config/opencode/skills"
+	@ln -sfn "${PWD}/src/agents" "${PREFIX}/.config/opencode/agents"
+	@ln -sfn "${PWD}/src/commands" "${PREFIX}/.config/opencode/commands"
 
 
 clean:

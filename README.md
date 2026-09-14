@@ -30,6 +30,8 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 | `ticket-context-reader` | subagent | Read-only ticket and discussion retrieval for the Business Analyst |
 | `docs-glossary-reader` | subagent | Resolves a single unknown term from `docs/`, cached in `.ai-temp/` so terms are not re-searched each session |
 | `docs-topic-reader` | subagent | Returns documented content relevant to one topic |
+| `documenter` | primary | Generates or updates project documentation for any repository using the docs taxonomy and checks (typically Python/uv) |
+| `researcher` | subagent | Searches the web for libraries, frameworks, tools, patterns, and technical solutions |
 
 ## Skills
 
@@ -69,6 +71,7 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 | `new-spec` | Create or refine a feature spec in `.specs/` |
 | `step-by-step` | Deconstruct a task into an idempotent sequential plan |
 | `truthmode` | Strict empirical rigor and epistemic calibration |
+| `git-status` | Explain what the pending git changes are trying to do |
 
 ## Conventions
 

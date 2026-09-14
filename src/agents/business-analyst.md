@@ -1,7 +1,7 @@
 ---
 description: Refines product and business requests into approved, ready-to-create functional tickets without implementing them
 mode: primary
-color: "#2563eb"
+color: "#FFAAC6"
 steps: 16
 permissions:
   - action: read
