@@ -1,7 +1,6 @@
 ---
 title: "Commit Messages"
 description: "We have very precise rules over how our git commit messages can be formatted. This leads to more readable messages that are easy to follow when looking through the project history."
-url: https://github.com/saxix/agents-skills/skills/code-review/refs/commit-messages.md
 ---
 
 # Commit Messages
