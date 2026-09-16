@@ -56,6 +56,7 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 | `spec-inspect/` | Audit `.specs/` against existing codebase behavior |
 | `spec-write/` | Interactive specification analysis and refinement loop |
 | `testing-guidelines/` | Test writing guidance (integration tests, real fixtures, regression coverage) |
+| `ticket-writing/` | Canonical ticket content rules shared by the analysts (title, prefixes, soft-wrap, diagrams, language) |
 | `tox-fix/` | Run tox, fix failures, re-run until green |
 | `upgrade/` | Audit and upgrade Python dependencies with uv/tox |
 
@@ -85,7 +86,7 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 
 All generated output (handoffs, reviews, reports, commit messages, PR descriptions) must render across terminal-based AI TUIs (`opencode`, Claude Code, Gemini CLI, hermes, ...). Required:
 
-- **Plain CommonMark only.** No raw HTML, no custom containers/admonitions, no Mermaid or ASCII diagrams.
+- **Plain CommonMark only.** No raw HTML, no custom containers/admonitions. Use Mermaid fenced code blocks (`` ```mermaid ``) only when the user asks for a diagram or chart. When a Mermaid diagram appears inside a ticket body, use the same language as the ticket.
 - **ASCII-first charset.** No emoji, no box-drawing/arrow/dingbat glyphs. Prefer `--` over the em-dash character and `->` over the arrow character; use `*` / `-` bullets and `[x]` / `[ ]` checkboxes instead of Unicode list markers.
 - **Headings** use ATX style (`## Title`); avoid setext (underlined) headings and a single `#` for section bodies.
 - **Structure over layout.** Prefer headings, short bullets, and small tables. Keep lines under ~100 characters and tables narrow so they do not wrap in split panes.

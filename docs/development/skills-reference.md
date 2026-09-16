@@ -26,6 +26,7 @@ and trigger keywords. Source of truth: `skills/*/SKILL.md`.
 | [spec-inspect](#spec-inspect) | Audit `.specs/` against codebase behavior |
 | [spec-write](#spec-write) | Interactive specification refinement |
 | [testing-guidelines](#testing-guidelines) | Testing patterns and guidance |
+| [ticket-writing](#ticket-writing) | Canonical ticket content rules shared by the analysts |
 | [tox-fix](#tox-fix) | Run tox, fix failures, re-run until green |
 | [upgrade](#upgrade) | Dependency upgrade checker |
 
@@ -144,6 +145,14 @@ root (`skills/spec-write/SKILL.md:2-3`).
 Guide for writing tests. Use when adding new functionality, fixing bugs, or
 when tests are needed. Emphasizes integration tests, real-world fixtures, and
 regression coverage (`skills/testing-guidelines/SKILL.md:2-3`).
+
+## ticket-writing
+
+Canonical rules for ticket content shared by the `Business Analyst` and the
+`System Analyst`: title (no project prefix, `[DRAFT] ` only), title/body
+separation, `## Summary`-first body, soft-wrap formatting, Mermaid diagrams,
+and language resolution (`skills/ticket-writing/SKILL.md:2-3`). Agents must
+load it rather than re-implementing its rules.
 
 ## tox-fix
 
