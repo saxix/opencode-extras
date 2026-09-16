@@ -56,6 +56,7 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 | `spec-inspect/` | Audit `.specs/` against codebase behavior |
 | `spec-write/` | Interactive specification refinement |
 | `testing-guidelines/` | Testing patterns and guidance |
+| `ticket-writing/` | Canonical ticket content rules shared by Business Analyst and System Analyst (title, prefixes, soft-wrap, diagrams, language) |
 | `tox-fix/` | Run tox, fix failures, re-run until green |
 | `upgrade/` | Dependency upgrade checker |
 
@@ -80,15 +81,16 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 - Agents and commands use Markdown with YAML frontmatter; `description:` is required, and `agent`, `mode`, `color`, `steps`, `permissions` are optional per-TUI settings that other TUIs ignore.
 - Reference materials live alongside `SKILL.md` in named subdirectories (no enforced convention).
 - `.gitignore` excludes all dotfiles and editor backup files (`~*`); only `.gitignore` itself is kept among dotfiles.
-- `.ai-temp/` is agent working scratch (for example, `business-analyst` state snapshots): git-ignored, never committed, never treated as a deliverable. The business-analyst also maintains `.ai-temp/glossary-known-terms.yaml` there as an accumulating project glossary of terms resolved from `docs/`, shared across sessions as a fallback when the documentation has no structured glossary.
+- `.ai-temp/` is agent working scratch: git-ignored, never committed, never treated as a deliverable. The `Business Analyst` and `System Analyst` each persist the current ticket state in a single fixed file (`.ai-temp/business-analyst.yaml`, `.ai-temp/system-analyst.yaml`) with autosave at material state transitions and "annota il lavoro|ticket" / "riprendi il lavoro|ticket" commands. The business-analyst also maintains `.ai-temp/glossary-known-terms.yaml` there as an accumulating project glossary of terms resolved from `docs/`, shared across sessions as a fallback when the documentation has no structured glossary.
 - Every agent, skill, and command MUST emit output that follows the TUI-portable standard below.
 - The `documenter` agent generates or updates documentation (operator role: gates, permissions, workflow); the `documentation` skill owns the domain knowledge (four-guide taxonomy, audit clauses, style, build checks, findings template) and is shared by `documenter`, standalone audits, and any future docs agent. Rules live in only one place: the skill.
+- The `ticket-writing` skill owns the canonical ticket content rules (title, prefixes, body, soft-wrap, diagrams, language) shared by the `Business Analyst` and the `System Analyst`. Rules live in only one place: the skill; agents must load it rather than re-implementing its rules.
 
 ## TUI-portable output
 
 All generated output (handoffs, reviews, reports, commit messages, PR descriptions, replies) MUST render correctly in every common terminal-based AI TUI: `opencode`, Claude Code, Gemini CLI, hermes, and similar Markdown renderers. Concretely:
 
-- **Plain CommonMark only.** Use standard Markdown. No raw HTML, no custom containers or admonitions, no Mermaid or ASCII-art diagrams.
+- **Plain CommonMark only.** Use standard Markdown. No raw HTML, no custom containers or admonitions. When the user asks for a diagram or chart, use Mermaid fenced code blocks (`` ```mermaid ``); otherwise, no diagrams. When a Mermaid diagram appears inside a ticket body, use the same language as the ticket.
 - **ASCII-first charset.** Do not emit emoji, box-drawing glyphs, arrows, dingbats, or other non-ASCII list markers. Prefer `--` over the em-dash character and `->` over the arrow character; use `*`, `-`, `[ ]`, `[x]` for lists and checkboxes.
 - **ATX headings.** Use `#`-style headings (`##`, `###`, ...). Avoid setext (underlined) headings and avoid a lone `#` for section bodies.
 - **Structure over layout.** Favor headings, short bullets, and small, narrow tables over wide layout so lines stay under about 100 characters and do not wrap badly in split panes.

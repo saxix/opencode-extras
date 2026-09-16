@@ -53,10 +53,12 @@ commands in this repository.
 ## The TUI-portable output standard
 
 Any template or output an artifact prescribes must follow the standard in
-`AGENTS.md:85-98`:
+`AGENTS.md:89-102`:
 
-- Plain CommonMark only: no raw HTML, no custom containers or admonitions, no
-  Mermaid or ASCII diagrams.
+- Plain CommonMark only: no raw HTML, no custom containers or admonitions. Use
+  Mermaid fenced code blocks only when the user asks for a diagram or chart.
+  When a Mermaid diagram appears inside a ticket body, use the same language as
+  the ticket.
 - ASCII-first charset: no emoji, box-drawing glyphs, arrows, or dingbats.
   Prefer `--` over the em-dash and `->` over the arrow.
 - ATX headings (`##`, `###`); avoid setext headings and a lone `#` in section

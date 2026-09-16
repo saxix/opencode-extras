@@ -25,7 +25,9 @@ ready-to-create functional tickets without implementing them
 substantive question per message, and never mutates a ticket before the
 approval gate (`agents/business-analyst.md:56-63`). May read `README*` and
 `docs/`, and delegates retrieval to `ticket-context-reader` and the docs
-readers. Cannot edit the repo, run shell, or spawn arbitrary subagents.
+readers. Cannot edit the repo, run shell, or spawn arbitrary subagents; the
+only write location is the fixed `.ai-temp/business-analyst.yaml` snapshot
+(annotate/resume). Applies the `ticket-writing` skill for ticket content.
 
 ## system-analyst
 
@@ -34,12 +36,15 @@ presents implementation options for a user decision (`agents/system-analyst.md:2
 Distinguishes evidence, facts, assumptions, risks, and recommendations; never
 silently chooses between viable alternatives (`agents/system-analyst.md:34-38`).
 Delegates to `code-impact-explorer`, `ticket-context-reader`, and `researcher`;
-denies edit, shell, and other subagents. Output must stay at architectural and
-design analysis level: no production code, diffs, or implementation-ready patches
-(`agents/system-analyst.md:43-58`). Asks the user for explicit permission before
-delegating web research to the `researcher` subagent (`agents/system-analyst.md:46`).
-Always asks the user which language to use for output early in the analysis
-(`agents/system-analyst.md:133`).
+denies edit (except `.ai-temp/`), shell, and other subagents. Output must stay
+at architectural and design analysis level: no production code, diffs, or
+implementation-ready patches (`agents/system-analyst.md:43-58`). Asks the user
+for explicit permission before delegating web research to the `researcher`
+subagent (`agents/system-analyst.md:46`). Resolves the output language from the
+project context (existing ticket, `README*`, recent tickets, `docs/`) via the
+`ticket-writing` skill and asks only when it cannot be determined
+(`agents/system-analyst.md:141`). Can create technical tickets on request,
+with a draft-mode question before creation (`agents/system-analyst.md:260`).
 
 ## coder
 
