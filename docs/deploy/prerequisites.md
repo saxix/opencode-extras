@@ -6,8 +6,8 @@ Who is this for? This page lists what you need before installing the toolkit.
 
 | Prerequisite | Purpose |
 |---|---|
-| Unix-like shell (`bash`) | Running the make targets (`Makefile`) |
-| [GNU make](https://www.gnu.org/software/make/) | Running `install-opencode`, `install-claude`, `test` |
+| PowerShell 5.1+ on Windows | Global/local installer and smoke test; junction-capable filesystem |
+| Shell and GNU Make on Unix | Global install targets and Unix smoke test |
 | `git` | Cloning and updating the repository |
 | An AI coding TUI | Consuming the definitions (opencode recommended; Claude Code for skills) |
 
@@ -15,8 +15,8 @@ Who is this for? This page lists what you need before installing the toolkit.
 
 | Prerequisite | Purpose |
 |---|---|
-| `uv` | Running the ticketing MCP servers (`uv run mcp-ticketing`, `opencode_cfg.jsonc:24`) |
-| `mcp-ticketing` project | Located at `MCP_TICKETING_HOME`; provides the MCP server binary |
+| Project package manager | Only for target project tasks or separately configured integrations |
+| Ticketing adapter / MCP server | Optional retrieval and ticket creation; configure separately |
 | Ticketing credentials | For the MCP servers (see [Environment variables](environment.md)) |
 | `properdocs` | Optional render tool if you want to build the docs site; no build configuration is shipped (see [Operations](../admin/operations.md)) |
 
@@ -25,11 +25,9 @@ Who is this for? This page lists what you need before installing the toolkit.
 - No server, database, or network service is required for the definitions
   themselves; the toolkit is configuration-only
   ([Architecture](architecture.md)).
-- The Azure DevOps MCP server is disabled by default; the GitHub one is
-  enabled (`opencode_cfg.jsonc:22-33`).
-- Credentials live in the local, git-ignored `.envrc` file and are loaded into
-  the environment by your shell setup (for example direnv). Values must never
-  be committed or documented.
+- No MCP server is enabled by the toolkit installer.
+- Use the environment and credential mechanism actually configured for each project.
+  Do not assume `.envrc` or direnv on Windows; never commit credentials.
 
 ## Next steps
 

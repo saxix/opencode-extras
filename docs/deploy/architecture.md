@@ -12,29 +12,18 @@ copies: editing the repository immediately changes the installed definitions
 
 ## Installation topology
 
-```
-agents-skills/
-  agents/        ->  ~/.config/opencode/agents        (opencode only)
-  skills/        ->  ~/.config/opencode/skills        (opencode)
-                ->  ~/.claude/skills                   (Claude Code)
-  commands/      ->  ~/.config/opencode/commands      (opencode only)
-  opencode_cfg.jsonc -> ~/.config/opencode/opencode.jsonc
-  tui_cfg.jsonc      -> ~/.config/opencode/tui.jsonc
-```
+Windows installations use junctions from the global config directory or local `.opencode/`
+to the checkout's `src/agents`, `src/skills`, `src/commands`, and `src/instructions`.
+Unix global installations use symlinks under `~/.config/opencode/`; Claude receives
+only skills under `~/.claude/skills`. User configuration stays independent of the toolkit.
 
 Evidence: `Makefile:7-18`, [Interface navigation](../user-guide/navigation.md).
 
 ## No runtime services
 
-The toolkit itself runs nothing: no daemons, no servers, no data plane. The
-only external connections are the optional ticketing MCP servers declared in
-`opencode_cfg.jsonc:21-34`, which opencode starts on demand:
-
-- `github` -- enabled by default;
-- `azure-devops` -- disabled by default.
-
-Both run the `mcp-ticketing` binary from the project root given by
-`MCP_TICKETING_HOME` (see [Environment variables](environment.md)).
+The toolkit supplies no runtime service. OpenCode runs the configured model and tools;
+optional ticketing MCP servers must be configured separately by the user. No server is
+enabled by the installer. See [Environment variables](environment.md).
 
 ## Trust boundaries
 

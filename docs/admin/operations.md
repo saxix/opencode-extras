@@ -5,9 +5,9 @@ definitions, managing scratch state, and keeping documentation in sync.
 
 ## Updating agents, skills, and commands
 
-Definitions are plain Markdown files under `agents/`, `skills/`, and
-`commands/`. Editing a file updates the installed copy immediately because the
-install targets create symlinks (`Makefile:7-18`). After editing:
+Definitions live under `src/agents/`, `src/skills/`, `src/commands/`, and
+`src/instructions/`. Junctions or symlinks expose the same files to the installed workspace.
+After editing:
 
 1. Restart the TUI so it reloads configuration and agent lists.
 2. Verify frontmatter: `description:` is required; a skill directory must keep
@@ -17,8 +17,9 @@ install targets create symlinks (`Makefile:7-18`). After editing:
 
 ## Symlink management
 
-The install targets are idempotent `ln -sfn` commands; re-running them repairs
-broken or stale links:
+Re-running the installer accepts matching links but refuses conflicting paths.
+Inspect conflicts and preserve user content before deliberately relocating or replacing a link.
+On Windows use `scripts/install-opencode.ps1 -Global` or `-WorkspaceRoot <root>`; on Unix:
 
 ```sh
 make install-opencode
@@ -31,15 +32,14 @@ directory and editor backups (for example `spec.md~`) are git-ignored
 
 ## Scratch state
 
-- `.ai-temp/` is agent working scratch (for example Business Analyst state
-  snapshots): git-ignored, never committed, and never treated as a deliverable
-  (`AGENTS.md:81`).
-- The Business Analyst also maintains
-  `.ai-temp/glossary-known-terms.yaml` as an accumulating project glossary of
-  terms resolved from `docs/` (`AGENTS.md:81`).
-- `.ai/*` instruction files are loaded as context by opencode
-  (`opencode_cfg.jsonc:35-37`) and are created or updated by the
-  [init-project command](../development/commands/init-project.md).
+- Snapshot state lives at `.ai-temp/<repo_key>/<activity_id>/<agent>.yaml` at the
+  workspace root, separately for each activity. It is never committed or used as a deliverable.
+  Verify ignore rules when the containing workspace is tracked.
+- The Business Analyst maintains `.ai-temp/<repo_key>/glossary-known-terms.yaml` per repository.
+- Persistent working documents and prompt logs require explicit local conventions and
+  permissions; otherwise deliverables stay in the conversation. See `local-policy.md`.
+- Shared instructions are loaded through the user config's `instructions` array.
+  Extra `.ai/*` files created by `init-project` need explicit configuration if they are to be loaded.
 
 ## Keeping documentation in sync
 

@@ -31,16 +31,16 @@ command.
 
 ## The install symlinks went stale or broke
 
-Re-run the make target:
+Use the Windows global/local installer, or on Unix re-run the make target:
 
 ```sh
 make install-opencode
 make install-claude
 ```
 
-The targets recreate the symlinks under `~/.config/opencode/` and
-`~/.claude/skills/` (`Makefile:7-18`). If a path conflicts with an existing
-directory, remove the old directory first and re-run make.
+Installers accept matching links and refuse conflicting paths. Inspect stale links and
+preserve existing user content before deliberately changing the installation. Do not delete
+an existing real directory just to make installation succeed. See the installation guide.
 
 ## My report renders badly (emoji, wide tables, raw HTML)
 

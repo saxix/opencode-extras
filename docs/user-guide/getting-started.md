@@ -5,7 +5,8 @@ commands available in their terminal-based AI coding assistant.
 
 ## Prerequisites
 
-- A Unix-like shell (`bash`) and [GNU make](https://www.gnu.org/software/make/).
+- Windows: PowerShell 5.1+ and a local filesystem supporting directory junctions.
+- Unix: a shell and GNU Make for the global install targets.
 - At least one supported TUI: opencode (all artifacts), Claude Code (skills
   only), or another terminal assistant that reads the same Markdown formats.
 - No Python, `uv`, or other build toolchain is required to install or run the
@@ -14,20 +15,18 @@ commands available in their terminal-based AI coding assistant.
 
 ## Install
 
-Install the definitions as symlinks, so the repository stays the single
-source of truth:
+Install linked definitions so the checkout stays the single source of truth.
+For Windows, run from the toolkit checkout:
 
-```sh
-make install-opencode   # symlink agents/, skills/, commands/ and configs into ~/.config/opencode
-make install-claude     # symlink skills/ into ~/.claude/skills
+```powershell
+.\scripts\install-opencode.ps1 -Global
+# Or install in a single project / parent workspace:
+.\scripts\install-opencode.ps1 -WorkspaceRoot 'C:\work\projects'
 ```
 
-The commands are defined in `Makefile:7-18`. `install-opencode` creates
-`~/.config/opencode/` and links:
-
-- `agents/`, `skills/`, `commands/` as directories;
-- `opencode_cfg.jsonc` as `~/.config/opencode/opencode.jsonc`;
-- `tui_cfg.jsonc` as `~/.config/opencode/tui.jsonc`.
+Optionally add the installed `instructions/workspace.md` path to your config's `instructions` array.
+Existing model and provider settings are preserved. On Unix, use `make install-opencode`
+for global definitions, or `make install-claude` for skills only. No user configs are installed.
 
 Details and alternatives (including manual symlinks and a custom `PREFIX`) are
 in the [installation guide](../deploy/installation.md).
@@ -40,7 +39,7 @@ A running session keeps using the configuration it loaded at startup.
 
 ## First run
 
-1. Open your TUI in a project worktree.
+1. Open your TUI at the multi-repository workspace root (or a standalone project worktree).
 2. Ask for a task that matches an agent description, for example "document
    this project" (triggers the [documenter agent](../development/agents-reference.md#documenter)).
    Keyword triggers live in each definition's `description:` frontmatter.
@@ -62,5 +61,6 @@ A running session keeps using the configuration it loaded at startup.
 ## Next steps
 
 - Understand the full pipeline: [Agent workflows](workflows/agents.md).
+- Work across repositories: [Workspace guide](workspace.md).
 - Configure behavior: [Configuration reference](../admin/configuration.md).
 - Install on another machine or TUI: [Deploy guide](../deploy/installation.md).

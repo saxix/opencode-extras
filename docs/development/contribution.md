@@ -8,7 +8,7 @@ commands in this repository.
 - Every artifact is plain Markdown with YAML frontmatter.
 - Every skill MUST have a `SKILL.md` at its directory root (`README.md:75`).
 - Agents and commands require `description:` frontmatter; other fields
-  (`agent`, `mode`, `color`, `steps`, `permissions`) are optional per-TUI
+   (`agent`, `mode`, `color`, `steps`, `permission`) are optional per-TUI
   settings that other TUIs ignore (`README.md:77`).
 - Rules live in only one place. For example, the
   [documenter agent](../development/agents-reference.md#documenter) owns the
@@ -17,7 +17,7 @@ commands in this repository.
 
 ## Authoring a skill
 
-1. Create `skills/<name>/SKILL.md`.
+1. Create `src/skills/<name>/SKILL.md`.
 2. Frontmatter: `name` (lowercase, hyphen-separated) and `description`
    required; the description must front-load the literal trigger keywords the
    user is likely to say, gated with "Use ONLY when..." if the skill should
@@ -29,20 +29,20 @@ commands in this repository.
 
 ## Authoring an agent
 
-1. Create `agents/<name>.md` with `description:` and `mode:` (primary or
+1. Create `src/agents/<name>.md` with `description:` and `mode:` (primary or
    subagent).
 2. Give the agent an explicit role statement, an operating contract, and, for
    primary agents, a state machine and a handoff/report format (pattern
    visible in `agents/coder.md`).
-3. Declare `permissions` with the deny-first, allow-last convention: a broad
+3. Declare `permission` with the deny-first, allow-last convention: a broad
    `*` deny rule before narrow allow rules
    ([configuration reference](../admin/configuration.md)).
-4. For subagents, prefer read-only access: deny `edit` and `shell`, restrict
-   `read`/`glob` to the needed scope (`agents/docs-topic-reader.md`).
+4. For subagents, prefer read-only access: deny `edit`, `bash`, and nested `task`.
+   Give them explicit repository roots. Read, glob, and grep are separate permission surfaces.
 
 ## Authoring a command
 
-1. Create `commands/<name>.md`.
+1. Create `src/commands/<name>.md`.
 2. Optionally set `description:` and `agent:` (for example
    `commands/new-spec.md:3`). Without frontmatter the command runs on the TUI
    default agent.
@@ -78,9 +78,8 @@ Any template or output an artifact prescribes must follow the standard in
   four guides (User, Administrative, Development, Deploy) plus shared landing
   and glossary.
 - The [documenter agent](../development/agents-reference.md#documenter)
-  generates or updates docs under an approval gate and may write only
-  `docs/**`, `README*`, and `properdocs.yml`/`properdocs.yaml`
-  (`agents/documenter.md:45-51`).
+  generates or updates docs under an approval gate and may write documentation and supported
+  site configuration. Extra report paths require local permissions. See `src/agents/documenter.md`.
 - Keep documentation changes in the same changeset as the definitions they
   describe.
 

@@ -13,8 +13,8 @@ Creates or updates `AGENTS.md` and `.ai/*` files (`commands/init-project.md:2`).
 ## Behavior
 
 Bootstraps a project's instruction files: the project-level `AGENTS.md` that
-coding agents load first, and the `.ai/*` instruction files that opencode
-loads as extra context (`opencode_cfg.jsonc:35-37`). Run it when starting a
+coding agents load first, and optional `.ai/*` instruction files. These need explicit
+entries in the user's `instructions` configuration to load as extra context. Run it when starting a
 new worktree or reshaping project instructions.
 
 ## Related

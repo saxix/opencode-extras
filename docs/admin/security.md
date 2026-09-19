@@ -16,9 +16,8 @@ risks are therefore:
 
 ## Secret handling
 
-- `.envrc` holds live credentials for the ticketing integrations (see
-  [Environment variables](../deploy/environment.md)); it is git-ignored and
-  must stay untracked (`.gitignore:2`).
+- Credentials belong to the configured provider/integration environment, not toolkit files
+  or reports. See [Environment variables](../deploy/environment.md).
 - Documentation never includes secret values, only variable **names**.
 - If a token is exposed in any output or commit, rotate it immediately and
   remove the copy.
@@ -27,21 +26,18 @@ risks are therefore:
 
 Agents are granted the minimum access needed:
 
-- **Read-only roles**: Business Analyst, System Analyst, and all subagents
-  cannot edit or run shell commands (`agents/system-analyst.md:7-8`,
-  `agents/code-impact-explorer.md:4-6`).
-- **Deny-by-default**: the Documenter denies all edits except `docs/**`,
-  `README*`, and `properdocs.yml`/`properdocs.yaml`
-  (`agents/documenter.md:14-28`).
-- **Shell restrictions**: analysis agents deny shell entirely; only the Coder
-  and Documenter allow limited shell access (the Coder for implementation,
-  the Documenter only for `uv run properdocs` and `properdocs`,
-  `agents/documenter.md:29-37`).
+- **Analysts** deny application edits and shell commands; their default write access is
+  activity scratch only. Deployments can permit specific report paths through local policy.
+  Subagents deny edits and shell entirely.
+- **Documenter** allows documentation and supported site configuration paths by default;
+  extra report locations need explicit local permissions.
+- **Shell restrictions**: Coder runs implementation commands; Documenter uses the host's
+  permission flow for project-specific documentation checks. Neither commits without a request.
 - **Subagent limits**: subagents are either read-only or read with bounded
   scope (for example `docs-glossary-reader` may only read `docs/**`,
   `agents/docs-glossary-reader.md:5-8`).
 
-Permission lists follow a deny-first, allow-last convention
+`permission` mappings put broad rules first and narrow exceptions last
 ([configuration reference](configuration.md)).
 
 ## Trusting input
@@ -59,7 +55,8 @@ Permission lists follow a deny-first, allow-last convention
 
 - `.gitignore` excludes all dotfiles and editor backups (`~*`); only
   `.gitignore` itself is kept among dotfiles (`AGENTS.md:80`).
-- `.ai-temp/` scratch is git-ignored and never committed (`AGENTS.md:81`).
+- `.ai-temp/` scratch is never committed. Verify ignore rules in its containing workspace;
+  the toolkit's ignore file does not cover the parent workspace.
 - The security audit skills exist precisely to catch credential, SSRF, SQLi,
   and auth flaws in the projects this toolkit drives
   (`skills/security-audit/SKILL.md:2-3`).
@@ -67,8 +64,8 @@ Permission lists follow a deny-first, allow-last convention
 ## Compliance notes
 
 - No telemetry, network calls, or data collection inside the definitions.
-- Optional MCP servers connect to ticketing systems only when configured
-  (`opencode_cfg.jsonc:21-34`); the Azure DevOps server is disabled by default.
+- Optional MCP servers connect to ticketing systems only when separately configured.
+  No server is enabled by the installer.
 
 ## Next steps
 

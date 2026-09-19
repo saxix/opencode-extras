@@ -1,160 +1,69 @@
 # Configuration reference
 
-Who is this for? This page is the source of truth for every configuration file
-and frontmatter field in the toolkit. Operators and contributors should keep
-it in sync when config changes.
+## Configuration ownership
 
-## Repository configuration files
+The Windows installer supports both user-global and project/workspace-local installations.
+The Unix Make targets link definitions into the user configuration directory. Neither installs or
+overwrites provider, model, TUI, or MCP configuration.
 
-### `opencode.jsonc` (project scope sample)
+The checkout's `opencode.jsonc` is local to toolkit development. Its `references` entries point
+to optional sibling repositories; these are supporting source references, not MCP server
+registrations. They are not prerequisites for using the agents and skills elsewhere.
 
-A minimal project-scope sample that allows editing files under
-`~/.config/opencode/`:
+## Shared workspace instructions
 
-```jsonc
-{
-  "$schema": "https://opencode.ai/config.json",
-  "permission": {
-    "edit": {
-      "~/.config/opencode/**": "allow"
-    }
-  }
-}
-```
+Add `.opencode/instructions/workspace.md` to the workspace configuration's `instructions`
+array, preserving existing entries. For a fixed Windows workspace an absolute path with
+forward slashes is appropriate. The workspace `AGENTS.md` supplies local reporting conventions;
+agents explicitly read nested repository instructions before operating on those repositories.
 
-Evidence: `opencode.jsonc:1-8`. It is a sample intended for users of this
-glossary repository, not installed by the make targets.
+Report directories, language, and prompt logging are optional deployment policies. The generic
+analysts write internal scratch only and present deliverables in the conversation. Snapshots use
+`.ai-temp/<repo_key>/<activity_id>/<agent>.yaml`, with one glossary per repository at
+`.ai-temp/<repo_key>/glossary-known-terms.yaml`. See `src/instructions/workspace.md`.
 
-### `opencode_cfg.jsonc` (global opencode config)
+## Agent frontmatter
 
-Installed as `~/.config/opencode/opencode.jsonc` by `install-opencode`
-(`Makefile:9-10`). Declared settings (`opencode_cfg.jsonc`):
-
-| Setting | Value | Effect |
-|---|---|---|
-| `small_model` | `ollama/qwen2.5-coder:3b` | Lightweight model for background tasks |
-| `default_agent` | `plan` | Agent used when none is selected |
-| `subagent_depth` | `2` | Maximum subagent nesting |
-| `share` | `manual` | Session sharing mode |
-| `shell` | `bash` | Default shell for the TUI |
-| `plugin` | `opencode-gemini-auth@latest` | Auth plugin registered at startup |
-| `watcher.ignore` | `node_modules/**`, `dist/**`, `.git/**`, `.idea/**`, `.tox/**`, `.venv/**` | Paths excluded from file watching |
-| `instructions` | `.ai/*.md` | Extra instruction files loaded as context |
-| `attachment.image` | `auto_resize: true`, `max_width: 1000`, `max_height: 1000`, `max_base64_bytes: 5242880` | Image attachment limits |
-| `formatter` | `ruff` on `*.py` | Formatting command for Python files |
-
-### `opencode_cfg.jsonc` -- MCP servers
-
-| Server | Provider | Enabled | Command | cwd |
-|---|---|---|---|---|
-| `azure-devops` | Azure DevOps | false | `uv run mcp-ticketing azure` | `{env:MCP_TICKETING_HOME}` |
-| `github` | GitHub | true | `uv run mcp-ticketing github` | `{env:MCP_TICKETING_HOME}` |
-
-Evidence: `opencode_cfg.jsonc:21-34`. The commented-out `permission` block is
-a maintained example, not active configuration (`opencode_cfg.jsonc:48-71`).
-Providers section declares `dwarfstar`, `ollama`, and `google` models
-(`opencode_cfg.jsonc:72-249`).
-
-#### MCP environment overrides
-
-The `environment` field in MCP configuration allows overriding environment
-variables loaded by the MCP server. This is useful when the server's `cwd`
-points to a directory with its own `.envrc` but you need to use variables from
-the current project instead.
-
-```jsonc
-"github": {
-  "type": "local",
-  "command": ["uv", "run", "mcp-ticketing", "github"],
-  "cwd": "{env:MCP_TICKETING_HOME}",
-  "enabled": true,
-  "environment": {
-    "MCP_GITHUB_OWNER": "{env:MCP_GITHUB_OWNER}",
-    "MCP_GITHUB_REPO": "{env:MCP_GITHUB_REPO}",
-    "MCP_GITHUB_TOKEN": "{env:MCP_GITHUB_TOKEN}"
-  }
-}
-```
-
-The `{env:VAR}` syntax reads values from the shell environment at runtime.
-Each project must define `MCP_GITHUB_OWNER`, `MCP_GITHUB_REPO`, and
-`MCP_GITHUB_TOKEN` in its own `.envrc` file. The `environment` field values
-override those loaded by `uv run` from the server's `.envrc`.
-
-### `tui_cfg.jsonc` (TUI interface config)
-
-Installed as `~/.config/opencode/tui.jsonc` by `install-opencode`
-(`Makefile:10`). Declared settings (`tui_cfg.jsonc:1-22`):
-
-| Setting | Value | Effect |
-|---|---|---|
-| `scroll_speed` | `3` | Scroll speed |
-| `keybinds.command_list` | `ctrl+p` | Command list keybind |
-| `scroll_acceleration.enabled` | `true` | Accelerated scrolling |
-| `diff_style` | `auto` | Diff rendering style |
-| `cursor` | `style: block`, `blinking: true` | Cursor appearance |
-| `mouse` | `true` | Mouse support |
-| `attention` | `enabled`, `notifications`, `sound`, `volume: 0.4` | Attention alerts |
-
-## Frontmatter reference
-
-### Skills (`SKILL.md`)
-
-| Field | Required | Purpose |
-|---|---|---|
-| `name` | yes | Lowercase hyphen-separated skill name |
-| `description` | yes | What it does and when to trigger; carries trigger keywords |
-| `license` | no | License reference (for example `security-owasp` uses `license: LICENSE`) |
-| `compatibility` | no | TUI or version compatibility notes |
-| `metadata` | no | String-string map of extra metadata |
-
-Evidence: `README.md:75-76`, `skills/security-owasp/SKILL.md:2-4`.
-
-### Agents and commands
-
-| Field | Required | Purpose |
-|---|---|---|
-| `description` | yes | Purpose and trigger keywords |
-| `agent` | no (commands) | Agent the command runs on (`commands/debug-code.md:3`) |
-| `mode` | no (agents) | `primary` or `subagent` (`agents/business-analyst.md:3`) |
-| `color` | no | TUI display color |
-| `steps` | no | Suggested step budget |
-| `permissions` | no | Per-action allow/deny list, see below |
-
-Evidence: `README.md:77`, the frontmatter blocks in `agents/*.md` and
-`commands/*.md`.
-
-## Permissions format
-
-Agents declare `permissions` as a list of entries with `action`, `resource`,
-and `effect`:
+Agent definitions live in `src/agents/*.md`. Required: `description`. Optional OpenCode fields
+include `mode`, `hidden`, `color`, `steps`, `model`, and `permission`.
 
 ```yaml
-permissions:
-  - action: edit
-    resource: "*"
-    effect: deny
-  - action: edit
-    resource: "docs/**"
-    effect: allow
+permission:
+  edit:
+    "*": deny
+    "**/.ai-temp/**": allow
+  bash: deny
+  task:
+    "*": deny
+    code-impact-explorer: allow
 ```
 
-The repository convention is deny-by-default: a broad `*` deny rule comes
-first, then narrow allow rules. Read and glob are the only actions most agents
-allow broadly; editing is restricted to explicit paths, and shell access is
-denied for all analysis agents (`agents/system-analyst.md:7-21`). Per-TUI
-handling of this list varies; other TUIs ignore it (`README.md:77`).
+Use `permission` singular, not a `permissions` list. Tool keys are `bash` and `task`, not
+`shell` and `subagent`. OpenCode evaluates the last matching pattern: broad rules go first.
+Recursive path patterns allow the definitions to work from a parent multi-repository workspace.
+They do not dynamically limit access to the activity's selected repositories; the operating
+contract supplies that scope. Narrow permissions further in a deployment if hard per-repo
+isolation is required. Grep/glob rules are separate from read rules; read restrictions alone
+do not establish a content-search boundary.
 
-## Keeping this page in sync
+Business and System Analysts can save internal state by default. Persistent reports need local
+instructions and matching agent permissions; see [Local policy](local-policy.md). Analysts
+cannot edit application code. Read-only subagents cannot edit or run shell commands.
+Documentation agents write only the configured documentation surfaces; shell checks require
+the host's permission flow because projects use different build commands.
 
-Any change to configuration files, frontmatter fields, or the permissions
-convention belongs in the same changeset as this page
-(`skills/documentation/SKILL.md`). The
-[documentation skill](../development/skills-reference.md#documentation) audit
-flags undocumented settings and outdated defaults.
+Validate against the installed OpenCode loader and its schema. Other clients may not enforce
+OpenCode permission fields. Portable Markdown formatting does not imply identical tool controls.
 
-## Next steps
+## Skills and commands
 
-- Runtime variables are covered in the
-  [Environment variables page](../deploy/environment.md).
-- Authoring new files: [Contribution guidelines](../development/contribution.md).
+- Skills: `src/skills/<name>/SKILL.md`, with required `name` and `description`.
+- Commands: `src/commands/*.md`, with `description` and optional `agent`.
+- Skill examples do not override actual repository versions, runners, or database conventions.
+- Ticketing integrations are optional and must be explicitly configured in the user's config.
+  Without one, use supplied ticket text and the agents' provider-neutral draft workflow.
+
+## Reloading
+
+Quit and restart OpenCode after changing config, linked agent definitions, or skills. Verify
+resolved agents and skills using the checks in `docs/development/testing.md`.

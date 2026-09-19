@@ -18,7 +18,7 @@ and trigger keywords. Source of truth: `skills/*/SKILL.md`.
 | [documentation](#documentation) | Canonical docs site taxonomy, audit, style, and build checks |
 | [find-bugs](#find-bugs) | Bug and vulnerability finding |
 | [pull-request](#pull-request) | Validate, commit, push, and open a PR |
-| [push](#push) | Stage, validate with tox, and push |
+| [push](#push) | Stage intended files, validate with project tools, and push |
 | [release](#release) | Generate release notes and a GitHub release |
 | [security](#security) | Orchestrated security audit |
 | [security-audit](#security-audit) | Threat-modeling security audit |
@@ -75,9 +75,10 @@ conflicts (`skills/django-migration/SKILL.md:2-3`).
 
 ## django-models
 
-Designs Django ORM models following architectural conventions for silos,
-replication, relocation, and foreign keys. Not for Pydantic models, dataclasses,
-ML models, or Protobuf (`skills/django-models/SKILL.md:2-3`).
+Designs Django ORM models using the target repository's supported Django version,
+database backend, existing base classes, and local conventions. The migration skill
+distinguishes Django 4.2 from 5.0+ defaults and resolves the actual project runner.
+See `src/skills/django-models/SKILL.md` and `src/skills/django-migration/SKILL.md`.
 
 ## documentation
 
@@ -101,8 +102,9 @@ opens a GitHub Pull Request. Decides branch name automatically from changes
 
 ## push
 
-Stages changes, runs tox validation, generates a commit message, and pushes to
-the remote repository. Stops if tox fails (`skills/push/SKILL.md:2-3`).
+Stages only intended changes, runs configured repository checks, follows the commit workflow
+when authorized, and pushes to the confirmed remote. Stops on required verification failures.
+In a multi-repo workspace each repository is handled separately (`src/skills/push/SKILL.md`).
 
 ## release
 
@@ -161,10 +163,9 @@ and re-runs until all checks pass. Use when asked to "run tox" (`skills/tox-fix/
 
 ## upgrade
 
-Audits Python dependencies in `pyproject.toml` using uv and tox, upgrades
-packages one by one, and verifies stability. Triggers on "sax upgrade",
-"upgrade dependencies", "audit security dependencies"
-(`skills/upgrade/SKILL.md:2-3`).
+Audits and upgrades dependencies with the repository's existing manager, lockfile, supported
+runtime, and validation commands. Preserves user work and separates cross-repository results.
+Triggers on dependency upgrade or audit requests (`src/skills/upgrade/SKILL.md`).
 
 ## Next steps
 

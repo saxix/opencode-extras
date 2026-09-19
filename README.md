@@ -4,20 +4,41 @@ Reusable **agents**, **skills**, and **commands** for AI coding TUIs. Typeset as
 
 ## Install
 
-```sh
-make install-opencode   # symlink agents/, skills/, commands/ and configs into ~/.config/opencode
-make install-claude     # symlink skills/ into ~/.claude/skills
+Choose a global install for use from any individual project, or a local install for one
+project or multi-repository workspace. From this checkout on Windows:
+
+```powershell
+.\scripts\install-opencode.ps1 -Global -WhatIf
+.\scripts\install-opencode.ps1 -Global
+# Alternative: local installation in an existing project/workspace
+.\scripts\install-opencode.ps1 -WorkspaceRoot 'C:\work\projects'
 ```
+
+The installer creates junctions for agents, skills, commands, and optional shared instructions.
+Global installs use the user's OpenCode config directory; local installs use `.opencode/`.
+Existing conflicting content is never overwritten. To use shared operating defaults, add
+the installed `instructions/workspace.md` path to your config's `instructions` array.
+No report directory, language, or prompt logging is imposed. These policies and any extra
+agent permissions belong in the project/workspace configuration, not the toolkit definitions.
+The old `install-workspace.ps1 -WorkspaceRoot ...` entrypoint remains supported.
+Restart OpenCode after changes.
+See `docs/deploy/installation.md` and `docs/user-guide/workspace.md` for details.
+
+On Unix, `make install-opencode` (or `make install`) links definitions globally under
+`~/.config/opencode`; `make install-claude` links skills under `~/.claude/skills`.
+Neither target installs provider, model, TUI, or MCP configuration. On Windows,
+`make install-opencode` also delegates to the global PowerShell installer when Make is available.
 
 ## Structure
 
 | Directory | Description |
 |---|---|
-| `agents/` | Agent definitions (Markdown with YAML frontmatter: role, permissions, state machine, handoff format) |
-| `skills/` | Skills (one subdirectory per skill with a `SKILL.md` entrypoint and optional `refs/`, `references/`, `languages/`, `infrastructure/`) |
-| `commands/` | Slash-command definitions (Markdown prompt bodies with an optional YAML frontmatter: `description:`, `agent:`) |
-| `plugins/` | Reserved for TUI plugins |
-| `*.jsonc` | Sample opencode global/TUI configs (`opencode.jsonc`, `opencode_cfg.jsonc`, `tui_cfg.jsonc`) |
+| `src/agents/` | Agent roles, permissions, workflows, and handoffs |
+| `src/skills/` | Skills with `SKILL.md` entrypoints and optional reference materials |
+| `src/commands/` | Reusable command prompts |
+| `src/instructions/` | Shared workspace operating rules |
+| `scripts/` | Windows installer and installation smoke test |
+| `opencode.jsonc` | Configuration for this toolkit checkout; not an installed user config |
 
 ## Agents
 
@@ -30,7 +51,7 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 | `ticket-context-reader` | subagent | Read-only ticket and discussion retrieval for the Business Analyst |
 | `docs-glossary-reader` | subagent | Resolves a single unknown term from `docs/`, cached in `.ai-temp/` so terms are not re-searched each session |
 | `docs-topic-reader` | subagent | Returns documented content relevant to one topic |
-| `documenter` | primary | Generates or updates project documentation for any repository using the docs taxonomy and checks (typically Python/uv) |
+| `documenter` | primary | Generates or updates documentation using the existing project's tools |
 | `researcher` | subagent | Searches the web for libraries, frameworks, tools, patterns, and technical solutions |
 
 ## Skills
@@ -44,11 +65,11 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 | `create_github_issue/` | Open a GitHub issue via `gh` |
 | `debug/` | Investigate test failures and regressions, implement minimal fixes |
 | `django-migration/` | Generate Django database migrations |
-| `django-models/` | Design Django ORM models following silo/replication conventions |
+| `django-models/` | Design ORM models using the target project's Django version and conventions |
 | `documentation/` | Audit and fix the docs site for completeness and correctness |
 | `find-bugs/` | Find bugs, security vulnerabilities, and quality issues in branch changes |
 | `pull-request/` | Validate, commit, push, and open a PR with a Conventional description |
-| `push/` | Stage, validate with tox, and push |
+| `push/` | Stage intended files, validate with project tools, and push when requested |
 | `release/` | Generate release notes and create a GitHub release |
 | `security/` | Orchestrated audit via security-audit + security-owasp |
 | `security-audit/` | Threat-modeling audit (attack surfaces, secrets, SSRF, auth flaws) |
@@ -58,7 +79,7 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 | `testing-guidelines/` | Test writing guidance (integration tests, real fixtures, regression coverage) |
 | `ticket-writing/` | Canonical ticket content rules shared by the analysts (title, prefixes, soft-wrap, diagrams, language) |
 | `tox-fix/` | Run tox, fix failures, re-run until green |
-| `upgrade/` | Audit and upgrade Python dependencies with uv/tox |
+| `upgrade/` | Audit and upgrade dependencies with the existing project manager and checks |
 
 ## Commands
 
@@ -78,7 +99,10 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 
 - Each skill MUST have a `SKILL.md` at its directory root.
 - `SKILL.md` frontmatter uses `name:` and `description:` (required; description carries trigger keywords) plus optional `license:`, `compatibility:`, `metadata:`.
-- Agents and commands use Markdown with YAML frontmatter; `description:` is required, and `agent`/`mode`/`permissions` are optional per-TUI settings.
+- Agents and commands use Markdown with YAML frontmatter; `description:` is required.
+  OpenCode agents use `permission` (singular), with `edit`, `bash`, and `task` tool rules.
+- Shared instructions define multi-repo scope and per-project environments. Analyst snapshots
+  are separated by repository and activity; final reports follow workspace conventions.
 - Every agent, skill, and command MUST follow the **TUI-portable output** standard (below) so reports render correctly in any terminal assistant.
 - `.gitignore` excludes all dotfiles and editor backup files (`~*`).
 
@@ -94,6 +118,16 @@ All generated output (handoffs, reviews, reports, commit messages, PR descriptio
 - **Self-contained output.** No relative links to repo files the reader may not have; inline the evidence (path:line) instead.
 - **Literal special characters** must be escaped or placed in code spans so no TUI mis-parses them.
 
-## No code
+## Verification
 
-This repository contains no application code, tests, lint, typecheck, or CI. It is purely instruction definitions for coding agents.
+There is no application code or application test suite. Definitions are checked through the
+OpenCode loader and static review. The Windows installer has a focused smoke test:
+
+```powershell
+.\scripts\test-workspace-install.ps1
+.\scripts\test-opencode-loader.ps1
+```
+
+The installer test exercises dry-run, paths with spaces, repeat installation, configuration
+preservation, and conflicts. The loader test uses isolated local/global configuration to verify
+standalone, multi-repository, and local-policy behavior. See `docs/development/testing.md`.

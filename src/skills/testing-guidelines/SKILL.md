@@ -5,7 +5,8 @@ description: Guide for writing tests. Use when adding new functionality, fixing 
 
 # Testing Guidelines
 
-Follow these principles when writing tests for this codebase.
+Follow these principles when writing tests for the target repository. Its local instructions,
+framework, and existing test layout take precedence over the language-specific examples below.
 
 ## Core Principles
 
@@ -66,15 +67,18 @@ Tests are how we validate **ANY** functionality works before manual testing.
 
 ### File Organization
 
-- Test files use `*.test.ts` extension
-- Co-locate tests with source: `foo.ts` -> `foo.test.ts`
+- Match the repository's test discovery and layout. Python projects may use `test_*.py`
+  in a test package; TypeScript projects may co-locate `foo.test.ts` with `foo.ts`.
+- Do not introduce a different testing framework or language to follow an example.
 
 ### Test Isolation
 
 Every test must:
 - Run independently without affecting other tests
 - Use temporary directories for file operations
-- Clean up resources in `afterEach` hooks
+- Clean up resources with the framework's fixtures/finalizers or teardown hooks.
+
+For example, in a project that already uses Vitest:
 
 ```typescript
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
@@ -118,9 +122,13 @@ describe('matchGlob', () => {
 
 ## Running Tests
 
-```bash
-tox -e test              # Run all tests
-```
+Read the target repository's instructions, README, test configuration, and project scripts.
+Use its existing runner and virtual environment with the repository set as the working
+directory. Do not assume tox, a particular tox environment name, pytest-django, or any coverage
+threshold from an example. Avoid repeating flags already configured in the project.
+
+For multi-repository changes, verify each changed repository and relevant integration paths
+separately. Report exact commands, working directories, outcomes, and unavailable checks.
 
 ## Checklist Before Submitting
 

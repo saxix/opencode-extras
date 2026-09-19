@@ -6,7 +6,7 @@ definitions in this repository.
 ## Prerequisites
 
 - `git` to clone the repository.
-- `make` and a Unix shell (macOS or Linux).
+- Windows: PowerShell 5.1+; Unix: GNU Make and a shell.
 - No Python, `uv`, tox, or any other build toolchain: the repository contains
   no application code and no CI (`README.md:95`).
 - Optional: an installed TUI (opencode, Claude Code) to exercise the
@@ -25,6 +25,9 @@ make test
 `make test` builds a sandbox under `~build/` with the same symlink layout that
 `install-opencode` creates, verifying the install targets (`Makefile:24-27`).
 The sandbox is git-ignored (`.gitignore:1`).
+
+On Windows, run `scripts/test-workspace-install.ps1` instead. It creates and cleans a
+temporary workspace and tests the junction installer. See `docs/development/testing.md`.
 
 ## Tooling expectations
 

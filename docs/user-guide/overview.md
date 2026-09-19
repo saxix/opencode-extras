@@ -34,14 +34,14 @@ tests, and CI (`README.md:95`).
 - **Explicit approval gates.** The Business Analyst and System Analyst do not
   mutate tickets or choose technical directions without user approval
   (`agents/business-analyst.md:63`).
-- **Deny-by-default permissions.** Agents explicitly allow a narrow write
-  surface (for example the Documenter may only write `docs/**`, `README*`, and
-  `properdocs.yml` / `properdocs.yaml`, `agents/documenter.md:14-28`).
+- **Role-specific permissions.** Analysts save scratch by default; persistent reports require
+  local policy and permissions. Documenter writes documentation and supported site configuration.
+  Read-only subagents cannot edit files.
 - **One-skill-per-directory layout.** Each skill has a `SKILL.md` entrypoint
   and optional reference material (see the
   [skill reference](../development/skills-reference.md)).
-- **Plug-and-play install.** One `make` target symlinks the definitions into
-  your TUI configuration (see [getting started](getting-started.md)).
+- **Linked installation.** PowerShell installs Windows global or local junctions; Make targets
+  install Unix global symlinks (see [getting started](getting-started.md)).
 
 ## What you get
 

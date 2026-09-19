@@ -1,52 +1,71 @@
-# Testing strategy
+# Verification
 
-Who is this for? This page explains how changes to this repository are
-validated, and why there is no code test suite.
+There is no application test suite. Verify instruction definitions with the OpenCode loader
+and review, and verify installers with their focused smoke tests.
 
-## No code tests by design
+## Windows installer smoke test
 
-The repository contains no application code, tests, lint, typecheck, or CI
-(`README.md:95`, `AGENTS.md:102`). There is nothing to unit-test: the artifacts
-are instruction definitions for coding agents.
+```powershell
+.\scripts\test-workspace-install.ps1
+```
 
-## `make test`
+The script uses a unique temporary sandbox and removes it afterward without traversing junction
+targets. It checks dry-run, paths containing spaces, expected junction targets, repeat installation,
+conflicting real directories and links, preflight before mutation, and missing workspace rejection.
+Global-mode tests also check custom config paths and preservation of an existing config file.
+Use `-TempRoot <existing-directory>` to select the temporary parent.
 
-The only automated check is a sandbox smoke test that verifies the install
-targets:
+## Unix install smoke test
 
 ```sh
 make test
 ```
 
-`test` runs `install-opencode` with `PREFIX` pointing at a local `~build/`
-directory and lists the resulting layout (`Makefile:24-27`). It confirms that
-the symlink commands produce the expected `~build/.config/opencode` tree
-without touching the real home directory. The `~build/` sandbox is
-git-ignored (`.gitignore:1`).
+This installs twice under the ignored `~build/` prefix to check repeat installation without
+touching the user's home configuration. `make clean` removes that sandbox. Run it on a Unix
+environment with GNU Make and the usual symlink tools; Windows validation is separate.
 
-## Definition validation
+## Automated OpenCode loader checks
 
-Changes to agents, skills, and commands are validated manually against the
-repository conventions:
+```powershell
+.\scripts\test-opencode-loader.ps1
+```
 
-| Check | Criterion |
-|---|---|
-| Skill entrypoint | `SKILL.md` exists at the skill directory root (`README.md:75`) |
-| Frontmatter | `name:`/`description:` for skills; `description:` for agents and commands (`README.md:75-77`) |
-| Output standard | Content follows the TUI-portable standard (`AGENTS.md:85-98`) |
-| Permissions | Deny-first, allow-last convention and a restricted write surface |
-| Docs consistency | Documentation changes match the docs taxonomy (`skills/documentation/SKILL.md`) |
+Requires OpenCode and Git on PATH. Uses a unique temporary sandbox and isolated XDG config,
+data, cache, and state directories; disables external plugins/skills for reproducibility.
+Child processes run in separate standalone, multi-repository, and global-consumer roots,
+with temporary Git repositories and no commits.
+Checks agent/command/skill discovery, scratch-only analyst defaults, and a local report
+permission merged with Markdown definitions. No model request or real ticket operation runs.
+The script restores process environment variables and removes its links/sandbox afterward.
 
-For TUI behavior, open a session in this repository and trigger the changed
-agent, skill, or command; then restart to confirm it reloads.
+## Manual OpenCode loader checks
 
-## When tests appear
+From the installed workspace root:
 
-If a future change introduces real code (for example a plugin), it must come
-with an appropriate test suite and CI; the current "no code" status is a
-deliberate constraint, not an oversight.
+```powershell
+opencode --version
+opencode debug config
+opencode debug skill
+opencode debug agent system-analyst
+opencode debug agent coder
+```
 
-## Next steps
+Inspect resolved configuration locally: it can contain sensitive provider/MCP settings, so do
+not paste raw output into reports. Verify the existing model/provider are preserved, all nine
+agents and nine commands load, toolkit skills are discovered, and the shared instruction path
+is present. Agent permissions should be resolved rules, not a legacy `permissions` option.
+Verify broad edit denial precedes scratch exceptions for analysts, and any report exceptions
+explicitly added by the local deployment. See `docs/admin/local-policy.md` for merge ordering.
 
-- Authoring rules in detail: [Contribution guidelines](contribution.md).
-- Conventions audit: [Maintenance and operations](../admin/operations.md).
+Review the definitions for per-repository scope, Windows-compatible command examples,
+version-aware Django guidance, separate activity state, and selective Git staging. Run
+`git diff --check` before completion. Check documentation links after changing page structure.
+
+## Functional pilot
+
+After restarting the TUI, try a bounded analysis involving an application and a shared library.
+Check that it reads nested instructions, distinguishes consulted and writable repositories,
+and reports evidence per repository. An actual implementation pilot needs a concrete authorized
+change and each project's environment. Loader success alone does not validate model behavior,
+database migrations, external integrations, or another TUI's permission enforcement.

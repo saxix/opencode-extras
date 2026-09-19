@@ -25,11 +25,14 @@ Before running any test command, discover how **this** project expects tests to 
    - required environment variables or services (databases, caches, brokers),
    - flags that are already baked into config files (do NOT repeat them on the CLI),
    - how to run a single test.
-3. If no local instructions exist, fall back to the defaults in "Test Execution Commands".
+3. If no local instructions exist, inspect the runner configuration and installed environment.
+   If no reliable test invocation can be established, report the gap rather than assuming tox.
+4. In a multi-repo workspace, read nested instructions and set every command's working directory
+   to its target repository. Use that project's runner, environment, and database settings.
 
 ## Test Execution Commands
 
-Defaults -- use only when no project-specific instructions were found:
+Examples for a project with a verified tox `tests` environment; adapt to the actual runner:
 
 - Run the test suite using:
 

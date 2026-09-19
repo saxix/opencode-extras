@@ -1,68 +1,61 @@
 ---
 name: django-migration
-description: Generate Django database migrations. Use when creating migrations, adding/removing columns or tables, adding indexes, or resolving migration conflicts.
+description: Generate and review Django database migrations with the target project's supported Django version, database, environment, and deployment conventions. Use for schema changes, data migrations, indexes, and migration conflicts.
 ---
 
-# Generate Django Database Migrations
+# Django migrations
 
-## Commands
+## Resolve the environment first
 
-Generate migrations automatically based on model changes:
+- Read workspace and repository instructions, existing migrations, and project configuration.
+- Identify the target app, supported and installed Django versions, database backend, settings,
+  and the existing runner. Do not assume PostgreSQL, tox, uv, direnv, or pytest-django.
+- Set the command working directory to the repository containing the relevant management entry
+  point. Use its Python environment; never run migrations from the multi-repo workspace root.
+- Resolve whether the configured database is local development before applying migrations.
+  Generating migrations does not by itself authorize changing a remote or production database.
 
-```bash
-python manage.py makemigrations
-```
+## Generate and inspect
 
-For a specific app:
+The following arguments are examples to pass through the project's resolved runner. A project
+may use `pdm run python`, `uv run python`, its venv interpreter, Docker, or a documented script.
 
-```bash
+```text
 python manage.py makemigrations <app_name>
-```
-
-Generate an empty migration (for data migrations or custom work):
-
-```bash
 python manage.py makemigrations <app_name> --empty
+python manage.py sqlmigrate <app_name> <migration_name>
+python manage.py migrate --plan
 ```
 
-## After Generating
+- Use `--empty` only for a deliberate data/custom migration. Prefer generated schema operations.
+- Review dependencies, operation order, defaults, constraints, indexes, and backend compatibility.
+- Use `sqlmigrate` for SQL-bearing migrations where the backend supports it. It does not validate
+  Python data migrations; inspect and test their behavior separately.
+- Register new models through the established `models.py` / `models/__init__.py` layout,
+  not by importing models in the app package's top-level `__init__.py`.
 
-1. If you added a new model, ensure it's imported in the app's `__init__.py`
-2. Review the generated migration for correctness
-3. lint the migration code
-3. Run `python manage.py sqlmigrate <app_name> <migration_name>` to verify the SQL
-4. Apply the migration locally with `python manage.py migrate <app_name>` 
+## Version-aware schema changes
 
+- Django 4.2 does not support `db_default`. Use a Python-side `default` only when required by
+  the domain; choose a one-off migration default or staged backfill for existing rows.
+- Django 5.0+ supports `db_default`, but database and Python defaults serve different purposes.
+  Introduce it only when compatible with all supported versions and the chosen backend.
+- Adding a non-null field to populated tables may require nullable addition, a backfill, then
+  a constraint. Assess table size, locks, existing data, and deployment order.
+- Use standard operations such as `RemoveField` unless a custom operation is verified in the
+  repository. `SafeRemoveField` and `DeletionAction` are not Django built-ins.
+- For deletion or renaming, follow the project's rollout policy. Standard rename operations
+  are valid tools; use `db_column` / `db_table` to preserve physical names when that is intentional.
+- For data migrations use historical models via `apps.get_model`, the migration database alias,
+  and an appropriate reverse operation or an explicit explanation of irreversibility.
+- Do not rewrite migrations already applied/shared without an explicit coordinated strategy.
 
+## Verify
 
-### Don't test the ORM
-
-Don't write tests that only exercise Django's ORM. Standard operations -- create/update/delete, cascading deletes, unique-constraint enforcement -- are provided by Django and Postgres and are assumed to work. Test _your_ logic (business rules, signal receivers, custom managers/validation), not the framework's.
-
-### Test
-
-Run these tests locally with the `--migrations` and `--reuse-db` flags. On the first run, it will be necessary to use `--create-db` along with `--reuse-db` to get the database in a good state.
-
-## Guidelines
-
-### Adding Columns
-
-- Use `db_default=<value>` instead of `default=<value>` for columns with defaults
-- Nullable columns: use `null=True`
-- Not null columns: must have `db_default` set
-
-
-### Deleting Columns
-
-1. Make column nullable (`null=True`) if not already
-2. Remove all code references
-3. Replace `RemoveField` with `SafeRemoveField(..., deletion_action=DeletionAction.MOVE_TO_PENDING)`
-4. Deploy, then create second migration with `SafeRemoveField(..., deletion_action=DeletionAction.DELETE)`
-
-### Removing a Model (and eventually its table)
-
-1. Remove all code references
-
-### Renaming Columns/Tables
-
-Don't rename in Postgres. Use `db_column` or `Meta.db_table` to keep the old name.
+1. Run the project's migration consistency check (for example `makemigrations --check --dry-run`).
+2. Apply to the confirmed local/test database when within the requested scope.
+3. Run targeted tests for changed business behavior, data transformations, and upgrade paths.
+   Use pytest-django flags such as `--reuse-db` only if the project uses that plugin and they are
+   not already configured. Do not add tests that merely restate standard ORM behavior.
+4. Report the actual commands, working directories, database context, outcomes, and checks not run.
+   For cross-repo changes, record deployment order and compatibility expectations for consumers.

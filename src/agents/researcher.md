@@ -4,22 +4,12 @@ mode: subagent
 hidden: true
 color: "#8b5cf6"
 steps: 15
-permissions:
-  - action: edit
-    resource: "*"
-    effect: deny
-  - action: shell
-    resource: "*"
-    effect: deny
-  - action: subagent
-    resource: "*"
-    effect: deny
-  - action: websearch
-    resource: "*"
-    effect: allow
-  - action: webfetch
-    resource: "*"
-    effect: allow
+permission:
+  edit: deny
+  bash: deny
+  task: deny
+  websearch: allow
+  webfetch: allow
 ---
 
 # Researcher

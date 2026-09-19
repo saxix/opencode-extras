@@ -8,8 +8,10 @@ description: Run tox tests and linting, analyze any failures, automatically fix 
 Automatically run `tox` and iteratively resolve all linting, formatting, and test failures until the tox suite passes cleanly.
 
 ## Phase 1: Execute Tox
-1. Add all files to git `git add .`
-2. Run the tox suite:
+1. Identify the target repository, read workspace/local instructions, and inspect the working
+   tree. Confirm tox is configured and available in its environment. Do not introduce tox into
+   a project using another runner. Do not stage files as a prerequisite for running tests.
+2. Run the configured tox invocation with the target repository as working directory:
    `tox`
 3. Evaluate the exit status:
    - **Exit code 0:** All checks passed. Output success message and exit.
@@ -17,7 +19,9 @@ Automatically run `tox` and iteratively resolve all linting, formatting, and tes
 
 
 ## Phase 2: Validate Code Quality & Auto-Fix
-1. Re-run the failing commands from Phase 1 (e.g. `tox -e lint`, `tox -e tests -k "<failing_test>"`) and fix each reported error: apply code/formatting fixes, then re-run the same command to confirm.
+1. Re-run the failing configured environment/target from Phase 1, preserving the project's
+   actual environment names and argument forwarding. Apply minimal in-scope fixes, preserve
+   unrelated user work, then re-run the same command. Handle authorized repositories separately.
 2. **CRITICAL:** If the same error persists unchanged across 3 consecutive iterations, **STOP HERE**. Do not stage, commit, or push. Report the remaining errors to the user.
 
 

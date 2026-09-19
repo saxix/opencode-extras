@@ -10,12 +10,15 @@ You are a senior software engineer validating code, creating appropriate topic b
 ---
 
 ## Phase 1: Pre-Flight, Target Branch & Auto-Branching
-1. Inspect working directory and branch state:
+1. Identify the target repository and read workspace and local instructions. Set the working
+   directory for all commands; repeat independently for each authorized cross-repo PR.
+   Inspect working directory and branch state:
    `git branch --show-current`
    `git status`
-2. **Determine Target Branch:** Detect default branch name (`main`, `master`, or `develop`):
-   `git symbolic-ref refs/remotes/origin/HEAD | sed 's@refs/remotes/origin/@@'`
-   *(Fallback to checking if `main` or `master` exists).*
+2. **Determine Target Branch:** inspect remote tracking and the requested base. For a verified
+   `origin` remote, `git symbolic-ref --short refs/remotes/origin/HEAD` reports the default ref.
+   Interpret its remote prefix without shell-specific text filters. If unresolved, inspect
+   remote branches or ask; do not guess the base from the presence of `main` or `master`.
 3. **Automated Branch Name Decision:**
    - Review staged/unstaged changes: `git status -s` and `git diff --stat`
    - Classify primary intent (`feature`, `bugfix`, `refactor`, `docs`, `chore`).
@@ -33,9 +36,10 @@ You are a senior software engineer validating code, creating appropriate topic b
 
 ## Phase 2: Validate, Commit & Push (Delegate to `push`)
 1. Invoke the `push` skill.
-   - *Note:* The `push` skill stages changes (`git add .`), runs `tox-fix` validation/testing (halt if still errors after `tox-fix`) invokes `commit-message` for commit generation, and executes `git push -u origin <branch>`.
+   - The `push` skill validates with the repository's actual tools, stages only intended files,
+     follows the `commit` skill when committing is authorized, and pushes to the confirmed remote.
 2. **CRITICAL:** Check the outcome of the `push` execution.
-   - If `push` fails at any step (e.g., unresolvable `tox` failures or git errors), **STOP HERE**. Do not draft or create the PR.
+    - If `push` fails at any step (validation or Git errors), **STOP HERE**. Do not create the PR.
 
 ---
 
@@ -50,7 +54,7 @@ You are a senior software engineer validating code, creating appropriate topic b
    - **Summary:** Concise bullet points covering high-level functional changes. Explain What not How.
    - **Motivation / Why:** Explain the problem solved or requirement addressed.
    - **Breaking Changes:** Explicitly call out any breaking API, schema, or structural changes.
-   - **Testing Checklist:** List exact manual or automated tests executed (including passing `tox` suite).
+   - **Testing Checklist:** List actual checks, working directory, and results; identify unavailable checks.
    - **Format:** Plain Markdown using clean headers and standard ASCII text (no emojis).
 
 ---

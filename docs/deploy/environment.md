@@ -1,74 +1,36 @@
-# Environment variables
+# Environment and optional integrations
 
-Who is this for? This page lists the runtime variables the toolkit's optional
-integrations use. It is the source of truth for these variable **names**;
-values are per-machine secrets and are never documented here.
+The definitions and Windows installer require no credentials, Python environment, or ticketing
+server. Configure model providers in the existing OpenCode user/workspace configuration.
+The installer does not change these settings or enable MCP servers.
 
-## Source
+## Project environments
 
-The variables are declared locally in `.envrc`, which is git-ignored and
-provides a direnv-style environment (`git check-ignore .envrc` matches
-`.gitignore:2`). Load them with your shell setup (for example direnv) or by
-exporting them manually. Never commit this file.
+Resolve each target project's runner, Python environment, settings, database, and required
+variables from its own instructions and configuration. Do not assume `.envrc`, direnv, uv,
+or one environment for the whole workspace. On Windows use the project's documented
+PowerShell-compatible setup.
 
-## Variable reference
+## Optional ticketing
 
-| Variable | Required by | Purpose |
-|---|---|---|
-| `MCP_TICKETING_HOME` | both MCP servers | Project root holding the `mcp-ticketing` package; used as the server `cwd` (`opencode_cfg.jsonc:24`) |
-| `MCP_AZURE_DEVOPS_ORG` | azure-devops server | Azure DevOps organization |
-| `MCP_AZURE_DEVOPS_PROJECT` | azure-devops server | Azure DevOps project |
-| `MCP_AZDO_PAT` | azure-devops server | Azure DevOps personal access token (secret) |
-| `MCP_GITHUB_OWNER` | github server | GitHub owner for the ticketing repository |
-| `MCP_GITHUB_REPO` | github server | GitHub repository for the ticketing integration |
-| `MCP_GITHUB_TOKEN` | github server | GitHub personal access token (secret) |
+Business and System Analysts accept supplied ticket text and can prepare provider-neutral
+drafts without an integration. To retrieve or create tickets through tools, configure a
+supported MCP server or adapter separately using its own documentation.
 
-Evidence: `.envrc` export lines; server wiring in `opencode_cfg.jsonc:21-34`.
+Provider credentials and target project/repository selection belong to that integration.
+In a multi-repo session, confirm the ticketing target rather than reusing a previous project's
+owner, repository, or board by assumption. OpenCode MCP `environment` values can refer to
+`{env:VARIABLE_NAME}`; the variable must actually be available to the server process.
 
-## Per-project configuration
+The checkout's `references` are source-code references, not running MCP servers. No default
+GitHub or Azure DevOps server is supplied. Do not infer server commands or credential names
+from obsolete configuration examples.
 
-Each project must define `MCP_GITHUB_OWNER`, `MCP_GITHUB_REPO`, and
-`MCP_GITHUB_TOKEN` in its own `.envrc` file. The MCP server configuration
-uses the `environment` field to pass these values to the server process,
-overriding the defaults from `MCP_TICKETING_HOME/.envrc`.
+## Secret handling
 
-```bash
-# Project .envrc
-export MCP_GITHUB_OWNER=my-org
-export MCP_GITHUB_REPO=my-repo
-export MCP_GITHUB_TOKEN=ghp_xxxxxxxxxxxx
-```
+Keep credentials outside tracked definitions and reports. A toolkit `.gitignore` does not
+protect files in its parent workspace or other repositories. Use each project's existing
+credential mechanism, and document variable names or redacted examples rather than values.
 
-The MCP configuration reads these via `{env:VAR}` syntax:
-
-```jsonc
-"environment": {
-  "MCP_GITHUB_OWNER": "{env:MCP_GITHUB_OWNER}",
-  "MCP_GITHUB_REPO": "{env:MCP_GITHUB_REPO}",
-  "MCP_GITHUB_TOKEN": "{env:MCP_GITHUB_TOKEN}"
-}
-```
-
-See [Configuration reference](../admin/configuration.md#mcp-environment-overrides)
-for the full MCP configuration format.
-
-## Server status
-
-Only the `github` server is enabled by default; `azure-devops` is disabled
-(`opencode_cfg.jsonc:22-33`). To use Azure DevOps, enable the server block and
-provide its three variables. The server command form is
-`uv run mcp-ticketing <provider>` run from `MCP_TICKETING_HOME`
-(`opencode_cfg.jsonc:24-25`).
-
-## Security
-
-- Values are secrets and must never be written to documentation, commits, or
-  issue reports; only names are documented here.
-- If a token appears in any output, rotate it immediately.
-- The `.envrc` file stays local and untracked
-  ([Security and compliance](../admin/security.md)).
-
-## Next steps
-
-- Server troubleshooting: [Administrative troubleshooting](../admin/troubleshooting.md).
-- Infrastructure requirements: [Prerequisites](prerequisites.md).
+See [Configuration](../admin/configuration.md), [Troubleshooting](../admin/troubleshooting.md),
+and [Prerequisites](prerequisites.md).

@@ -1,24 +1,29 @@
 # Testing Patterns: Factories & Fixtures
 
-This document enforces Bitcaster's testing standards, ensuring a strict separation of concerns between model generation and test data provision.
+These optional factory/fixture examples illustrate a separation between model generation and
+test data provision. Apply them only when consistent with the target repository's existing
+tests. They do not require installing factory-boy, introducing custom base classes, or changing
+the test runner. Local project instructions take precedence.
 
-## Core Mandates
+## Pattern for projects using factory-boy and pytest
 
-1. **Isolation:** NEVER use `Factory` classes directly within a test function.
-2. **Layering:** Use `factory-boy` to define low-level database objects. Factories are located in `tests/extras/testutils/factories`.
-3. **Wrapping:** Tests MUST use `pytest` fixtures that wrap these Factory instances, customising them for specific scenarios.
+1. **Isolation:** Prefer fixtures when they make setup clearer and reusable; follow local practice.
+2. **Layering:** Use existing factories in the project's established test utilities directory.
+3. **Wrapping:** Pytest fixtures can wrap factories, customizing them for specific scenarios.
 4. **Consistency:** Fixtures should be clear, specific, and defined in the same test file that uses them.
 5. **Reusability:** Common fixtures can reside in `conftest.py` if they are reused across multiple modules.
 
 ## Implementation Pattern
 
 ### 1. Define the Factory
-Factories are for low-level registration. Use `AutoRegisterModelFactory`.
+Factories create low-level test objects. For example, with factory-boy already configured:
 
 ```python
-class UserFactory(AutoRegisterModelFactory[User]):
+import factory
+
+class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = User
+        model = "auth.User"  # Use the project's actual user model.
 ```
 
 ### 2. Define the Fixture
@@ -33,10 +38,10 @@ def user() -> "User":
 ```
 
 ## Test Configuration
-- **Pytest markers:** `selenium`, `api`, `admin`, `skip_models`, `dispatcher`, `wizard`, `smoke`
-- **DB reuse:** pytest runs with `--reuse-db`; tox uses `--create-db` for CI
-- **Coverage:** 100% patch coverage enforced via `diff-cover` -- run `tox -e tests` which includes this check
+- **Markers:** use only markers registered by the target project.
+- **DB reuse:** use pytest-django flags only when supported and not already configured.
+- **Coverage:** follow actual repository thresholds and commands; no universal threshold or tox environment is assumed.
 
 ## Best Practices
 - **Importing:** Avoid importing Django models or Factories at the module level in test files to prevent premature Django initialisation. Import them inside the fixture function or use `if TYPE_CHECKING`.
-- **Customisation:** Use the `configure_model` context manager for minor object adjustments within a test instead of creating multiple similar fixtures.
+- **Customization:** use the project's existing fixture overrides or factory arguments. Custom helpers require repository evidence.

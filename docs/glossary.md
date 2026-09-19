@@ -23,7 +23,7 @@ One term per entry. Terms are linked from their first use on each page.
 A reusable role definition for an AI coding assistant, stored under
 `agents/` as Markdown with YAML frontmatter. Each agent has a purpose, a
 description that carries trigger keywords, optional per-TUI settings
-(`mode`, `color`, `steps`, `permissions`), and an operating contract
+(`mode`, `color`, `steps`, `permission`), and an operating contract
 (`agents/business-analyst.md:48`). See the [agent reference](development/agents-reference.md).
 
 ## AGENTS.md
@@ -42,15 +42,14 @@ See [Slash command](#slash-command).
 The YAML block at the top of a Markdown definition file, delimited by `---`
 lines. Skills require `name:` and `description:`; agents and commands require
 `description:` and may carry per-TUI settings such as `agent`, `mode`, `color`,
-`steps`, and `permissions` (`README.md:75-77`). See the
+`steps`, and `permission`. See the
 [configuration reference](admin/configuration.md).
 
 ## MCP
 
-Model Context Protocol. The ticketing integrations are declared as local MCP
-servers in `opencode_cfg.jsonc` (`opencode_cfg.jsonc:21-34`), running
-`uv run mcp-ticketing` against a project root given by `MCP_TICKETING_HOME`.
-The Azure DevOps server is disabled by default; the GitHub server is enabled.
+Model Context Protocol. Optional integrations are configured in the user's OpenCode
+configuration. The toolkit enables no server by default; checkout source references
+are not MCP server registrations.
 
 ## Primary agent
 
@@ -60,9 +59,8 @@ initiate work (for example `business-analyst`, `system-analyst`, `coder`,
 
 ## properdocs
 
-A Markdown static site generator for project documentation. It is the
-preferred rendering tool for generated docs sites (`agents/documenter.md:60`)
-and is configured with `properdocs.yml` / `properdocs.yaml` when a project
+A Markdown static site generator for project documentation. It is one supported tool,
+configured with `properdocs.yml` / `properdocs.yaml` when a project
 uses it. This documentation site is plain static Markdown and ships no build
 configuration; verification uses the static checklist in the
 [documentation skill](development/skills-reference.md#documentation).

@@ -4,28 +4,16 @@ mode: subagent
 hidden: true
 color: "#0369a1"
 steps: 7
-permissions:
-  - action: read
-    resource: "*"
-    effect: deny
-  - action: read
-    resource: "docs/**"
-    effect: allow
-  - action: glob
-    resource: "*"
-    effect: deny
-  - action: glob
-    resource: "docs/**"
-    effect: allow
-  - action: edit
-    resource: "*"
-    effect: deny
-  - action: shell
-    resource: "*"
-    effect: deny
-  - action: subagent
-    resource: "*"
-    effect: deny
+permission:
+  read:
+    "*": deny
+    "**/docs/**": allow
+    "**/AGENTS.md": allow
+  glob: allow
+  grep: allow
+  edit: deny
+  bash: deny
+  task: deny
 ---
 
 # Documentation Glossary Reader
@@ -36,6 +24,7 @@ You are a read-only documentation subagent. Given exactly one unknown term, you 
 
 Your parent must provide:
 
+- the explicit repository root and applicable local instructions; resolve `docs/` under that root and restrict all content searches to it;
 - the exact unknown term, feature label, acronym, or capability to resolve (required, exactly one);
 - optionally, terms already known to the parent, to skip;
 - optionally, a bounded domain hint to orient the search.

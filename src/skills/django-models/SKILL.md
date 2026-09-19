@@ -1,80 +1,45 @@
 ---
 name: django-models
-description: Design Django ORM models following architectural conventions for silos, replication, relocation, and foreign keys. Use when adding a new Django model, designing a model for a feature, deciding where data should live, picking a foreign key type, or refactoring an existing model's silo placement. Trigger on "add a Django model", "create a model", "design a model for X", "new database table", "store this data in the DB", "I need to track Y", "model for [feature]". Not for Pydantic models, dataclasses, ML models, or Protobuf -- this is specifically for Django ORM models in the  codebase.
+description: Design Django ORM models using the target repository's supported Django version, database, base classes, and model conventions. Use when adding or refactoring Django models, fields, relationships, constraints, or indexes.
 ---
 
-# Model Conventions
+# Django model design
 
-This skill captures the _architectural_ decisions that go into a Dango model. It does not cover Django syntax, import order, or migration generation -- for those:
+## Establish project context
 
-- Migrations: invoke the `django-migration` skill after the model is designed.
+1. Identify the target repository and read its applicable `AGENTS.md`, project configuration,
+   existing models, and migrations. In a multi-repo workspace, inspect shared model libraries
+   only as needed and do not modify them without an authorized cross-repo scope.
+2. Determine supported Django versions and database backends. A dependency lower bound is
+   not the installed version; inspect the lockfile or resolved project environment when available.
+3. Follow existing app layout, base classes, naming, primary key type, translation style,
+   timestamps, and deletion policy. Do not invent organization-specific classes or import them without
+   repository evidence. Sentry SDK usage does not imply access to Sentry's internal ORM classes.
 
-## Other norms worth encoding
+## Model rules
 
-### Base class and timestamps
+- Use existing shared base models only when the repository actually depends on them;
+  otherwise use `models.Model`. Custom bounded fields and soft-delete machinery are not
+  standard Django features and must not be introduced by assumption.
+- Choose field types, lengths, nullability, and defaults from business requirements and
+  existing data. Use callable defaults such as `dict` and `list` for mutable values.
+- On Django 4.2, use `default` when a Python-side default is required. `db_default` requires
+  Django 5.0+ and has different semantics; it is not a universal substitute for `default`.
+- Specify `on_delete` for every `ForeignKey` / `OneToOneField`. Choose the behavior from
+  lifecycle requirements, not from a generic scaffold. Match existing `related_name` conventions.
+- Use `models.JSONField` only where supported by the project's database and usage requirements.
+- Prefer explicit, descriptive constraints for new rules where supported. Validate backend
+  support for conditional or expression constraints; nullable uniqueness is backend-dependent.
+- Design indexes from actual query predicates, ordering, and query plans. Do not assume that
+  the most selective column must always come first or that every foreign key needs another index.
+- Follow local requirements for `verbose_name`, `help_text`, and translated labels. When labels
+  are translated at import time, use `gettext_lazy` unless the project's context requires otherwise.
+- Describe non-obvious model semantics in a docstring. A descriptive docstring is not a doctest.
 
-Use `DefaultFieldsModel` for new models. It gives you `date_added` (`auto_now_add=True`) and `date_updated` (`auto_now=True`) for free, and it's almost always what you want -- tables that genuinely shouldn't track either timestamp are rare. `DefaultFieldsModelExisting` is legacy-only -- its docstring explicitly says don't use it on new models (it leaves `date_added` nullable for backward compat with models that predate the field).
+## Finish
 
-### Field-type intent
-
-- `BoundedBigAutoField` for primary keys, `BoundedBigIntegerField` / `BoundedPositiveIntegerField` for non-PK numeric IDs and counts. The "bounded" part is a runtime overflow guard, not a Django nicety -- it catches values that would silently corrupt downstream consumers.
-- For bounded text fields without a strict spec, prefer `CharField(max_length=256)`. Postgres `varchar(n)` storage is identical regardless of `n` below the TOAST threshold, so picking 64 prematurely is a constraint without a benefit. Pick a smaller value only when the column has a real meaning (hash=40/64, UUID=32, slug, identifier with a spec).
-- For free-form text fields, use `TextField`.
-- For new JSON columns, prefer Django's `models.JSONField()` (jsonb-backed). The legacy `sentry.db.models.fields.jsonfield.JSONField` is text-backed and exists for compatibility with old columns -- only use it when intentionally matching one.
-- Mutable callable defaults (`default=dict`, `default=list`) -- never bare `default={}` / `default=[]`.
-
-### Soft delete is explicit
-
-There is no metaclass-based soft delete. If a model needs soft delete, add an explicit `deleted` field using `BooleanField` and have business logic respect it. 
-
-### Constraints over `unique_together`
-
-For new models, use `Meta.constraints = [UniqueConstraint(...)]` instead of `unique_together`. The reason is `condition=Q(...)`: partial unique constraints are the only correct way to express "unique when this column is not null", which is a common requirement and silently broken with `unique_together`. Constraint and index names should be explicit and descriptive, not auto-generated.
-
-### Composite indexes match query order
-
-If you filter on `(org_id, project_id, type)` together, you need an index whose field order matches the most-selective-first filter pattern. A foreign key auto-index does _not_ cover the multi-column case.
-
-### Where the file lives
-
-- Default: put new models in an app under `src/<main_package>/models/<thing>.py`  (one model per file) -- pick by precedent in the app.
-
-
-## Mandatory attributes
-### Doctest
-
-Model must provide a doctest (```"""...."""```) that describes the Model purpose
-
-### Fields
-Each field MUST have the following attributes
-
-**verbose_name**: to properly translated each field must provide a`gettext` label
-**help_text**: description of the field from the business logic perspective. How it is used, what business informmations provides, impact on business flow.
-
-## A minimal cell-silo model skeleton
-
-This is a starting scaffold, not a template -- strip what you do not need, do not add things you do not need.
-
-```python
-from django.db import models
-from django.utils.translation import gettext as _
-
-class MyThing(models.Model):
-    organization = models.ForeignKey("Organization")
-    name = models.CharField(verbose_name=_("Name"), max_length=256, help_text=_("...."))
-    config = models.JSONField(verbose_name=_("Configuration"), default=dict, help_text=_("...."))
-
-    class Meta:
-        app_label = "app"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["organization", "name"],
-                name="mything_org_name_unique",
-            ),
-        ]
-```
-
-## After the model is designed
-
-1. Generate the migration: invoke the `django-migration` skill.
-3. If the app's `models/__init__.py` re-exports its models, add your new one there too -- it's a convenience for callers (`from <prj>.<app>.models import Thing`), not a Django requirement, so match the app's precedent.
+1. Make models discoverable through the existing `models.py` or `models/__init__.py` layout.
+   Do not import models from the app package's top-level `__init__.py` merely to register them.
+2. Load `django-migration` to generate and review migrations using the actual project runner.
+3. Run targeted checks and business-logic tests with the project's environment and backend.
+   Verify compatibility in dependent repositories when the authorized change alters shared models.

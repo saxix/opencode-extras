@@ -86,8 +86,8 @@ docs" or "update the documentation". The Documenter:
    (`agents/documenter.md:90`);
 2. Proposes a structure and gap list for approval before writing
    (`agents/documenter.md:98-99`);
-3. Writes only documentation (`docs/**`, `README*`, `properdocs.yml` /
-   `properdocs.yaml`, `agents/documenter.md:45-51`);
+3. Writes documentation, explicitly permitted local reports, and supported site configuration
+   in the authorized repositories (`src/agents/documenter.md`);
 4. Verifies the result and reports checks and residual gaps
    (`agents/documenter.md:115-126`).
 

@@ -35,22 +35,17 @@ options. Then verify the file still follows the TUI-portable output standard
 
 ## MCP ticketing server fails to start
 
-The GitHub MCP server is enabled, Azure DevOps disabled by default
-(`opencode_cfg.jsonc:21-34`). The server command runs `uv run mcp-ticketing`
-with `cwd` set from `{env:MCP_TICKETING_HOME}`. If it fails:
-
-1. Confirm `MCP_TICKETING_HOME` points at the mcp-ticketing project
-   (`.envrc`).
-2. Confirm the provider credentials are exported (names and roles in
-   [Environment variables](../deploy/environment.md)); the Azure DevOps server
-   additionally needs `MCP_AZURE_DEVOPS_ORG` and `MCP_AZURE_DEVOPS_PROJECT`.
-3. Check the repo has a `uv` virtualenv with `mcp-ticketing` installed.
+The installer enables no MCP server. If you configured one separately, verify its actual
+command, environment, credentials, and selected ticketing project using its documentation.
+Checkout `references` do not start servers. Without an integration, the analysts can use
+pasted ticket text and prepare provider-neutral drafts.
 
 ## `make install-opencode` complains about an existing path
 
-The target uses symlinks; an existing real directory at the destination must
-be removed first. For example, if `~/.config/opencode/agents` exists as a
-directory, remove it, then re-run make (`Makefile:12-14`).
+Installers refuse existing conflicting directories or links. Inspect the path, preserve
+user definitions, and decide whether to merge definitions or relocate the old installation.
+Do not delete an existing real directory merely to make the installer succeed. On Windows,
+use the PowerShell global/local installer; the Windows Make install target delegates to global mode.
 
 ## A stale editor backup is mistaken for a definition
 

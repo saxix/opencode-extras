@@ -1,51 +1,56 @@
-UNAME_S := $(shell uname -s 2>/dev/null)
-ifeq ($(UNAME_S),)
-  WIN := 1
-else
-  WIN := 0
-endif
+.PHONY: help install install-opencode install-claude test clean
 
-ifeq ($(WIN),0)
-  PREFIX ?= $(HOME)
-else
-  PREFIX ?= $(shell echo %USERPROFILE%)
-endif
+ifeq ($(OS),Windows_NT)
+help:
+	@echo "Global install: make install-opencode"
+	@echo "Local install: powershell -File scripts/install-opencode.ps1 -WorkspaceRoot C:/path/to/project"
+	@echo "Smoke test: powershell -File scripts/test-workspace-install.ps1"
 
+install install-opencode:
+	powershell -NoProfile -File scripts/install-opencode.ps1 -Global
+
+install-claude:
+	$(error See docs/deploy/installation.md for manual Claude skill installation)
+
+test:
+	powershell -NoProfile -File scripts/test-workspace-install.ps1
+
+clean:
+	@echo "The Windows smoke test cleans up its own temporary directories."
+else
+PREFIX ?= $(HOME)
 DEST = $(PREFIX)/.config/opencode
 
 help:
-	@echo "install: symlink skills/, agents/, commands/ into ~/.config/opencode"
+	@echo "install-opencode: link definitions under PREFIX/.config/opencode"
+	@echo "install-claude: link skills under PREFIX/.claude/skills"
 
-ifeq ($(WIN),0)
+install: install-opencode
 
-install:
-	@mkdir -p $(DEST)
-	@ln -sfn "$(PWD)/src/skills"   "$(DEST)/skills"
-	@ln -sfn "$(PWD)/src/agents"   "$(DEST)/agents"
-	@ln -sfn "$(PWD)/src/commands" "$(DEST)/commands"
+install-opencode:
+	@mkdir -p "$(DEST)"
+	@for name in agents skills commands instructions; do \
+		target="$(DEST)/$$name"; source="$(CURDIR)/src/$$name"; \
+		if [ -L "$$target" ] && [ "$$(readlink "$$target")" = "$$source" ]; then \
+			:; \
+		elif [ -e "$$target" ] || [ -L "$$target" ]; then \
+			echo "Destination already exists: $$target"; exit 1; \
+		else ln -s "$$source" "$$target" || exit 1; fi; \
+	done
 
-clean:
-	rm -fr ./~build
-
-test:
-	mkdir -p ~build/.config/opencode
-	@PREFIX=$(PWD)/~build/ $(MAKE) install
-	ls -al $(PWD)/~build/.config/opencode
-
-else
-
-install:
-	@cmd /c "if not exist \"$(DEST)\" mkdir \"$(DEST)\""
-	@cmd /c mklink /D "$(DEST)\skills"   "$(PWD)\src\skills"
-	@cmd /c mklink /D "$(DEST)\agents"   "$(PWD)\src\agents"
-	@cmd /c mklink /D "$(DEST)\commands" "$(PWD)\src\commands"
-
-clean:
-	@cmd /c "if exist ~build rmdir /s /q ~build"
+install-claude:
+	@mkdir -p "$(PREFIX)/.claude"
+	@if [ -L "$(PREFIX)/.claude/skills" ] && [ "$$(readlink "$(PREFIX)/.claude/skills")" = "$(CURDIR)/src/skills" ]; then \
+		:; \
+	elif [ -e "$(PREFIX)/.claude/skills" ] || [ -L "$(PREFIX)/.claude/skills" ]; then \
+		echo "Destination already exists: $(PREFIX)/.claude/skills"; exit 1; \
+	else ln -s "$(CURDIR)/src/skills" "$(PREFIX)/.claude/skills"; fi
 
 test:
-	@cmd /c "if not exist ~build\.config\opencode mkdir ~build\.config\opencode"
-	@cmd /c set "PREFIX=$(PWD)\~build\" && $(MAKE) install
-	@cmd /c dir /b "$(PWD)\~build\.config\opencode"
+	@$(MAKE) PREFIX="$(CURDIR)/~build" install-opencode
+	@$(MAKE) PREFIX="$(CURDIR)/~build" install-opencode
+	@ls -ld "$(CURDIR)/~build/.config/opencode/"*
 
+clean:
+	rm -rf "$(CURDIR)/~build"
 endif

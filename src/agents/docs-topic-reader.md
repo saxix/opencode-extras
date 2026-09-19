@@ -4,28 +4,16 @@ mode: subagent
 hidden: true
 color: "#0369a1"
 steps: 10
-permissions:
-  - action: read
-    resource: "*"
-    effect: deny
-  - action: read
-    resource: "docs/**"
-    effect: allow
-  - action: glob
-    resource: "*"
-    effect: deny
-  - action: glob
-    resource: "docs/**"
-    effect: allow
-  - action: edit
-    resource: "*"
-    effect: deny
-  - action: shell
-    resource: "*"
-    effect: deny
-  - action: subagent
-    resource: "*"
-    effect: deny
+permission:
+  read:
+    "*": deny
+    "**/docs/**": allow
+    "**/AGENTS.md": allow
+  glob: allow
+  grep: allow
+  edit: deny
+  bash: deny
+  task: deny
 ---
 
 # Documentation Topic Reader
@@ -34,7 +22,7 @@ You are a read-only documentation subagent. Given one requested topic or questio
 
 ## Input contract
 
-Your parent should provide one exact topic or question, such as "How does user invitation expiry work?" or "What does a subscription cancellation do?".
+Your parent should provide the explicit repository root, applicable local instructions, and one exact topic or question, such as "How does user invitation expiry work?" or "What does a subscription cancellation do?". Interpret `docs/` relative to that repository, not the workspace root. Restrict all content searches to its documentation.
 
 If the topic is missing or too broad to bound responsibly, report that limitation to the parent. Do not ask the end user questions.
 

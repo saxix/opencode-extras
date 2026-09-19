@@ -4,20 +4,24 @@ Reusable agents, skills, and commands for AI coding TUIs. All definitions are pl
 
 ## Install
 
-```sh
-make install-opencode   # symlink agents/, skills/, commands/ and configs into ~/.config/opencode
-make install-claude     # symlink skills/ into ~/.claude/skills
-```
+Windows: `scripts/install-opencode.ps1 -Global` creates user-wide junctions;
+`-WorkspaceRoot <existing-project-or-workspace>` installs locally under `.opencode/`.
+`scripts/install-workspace.ps1` remains a compatible local entrypoint. Shared instructions
+are optional. Preserve existing provider, model, and unrelated settings; restart OpenCode.
+
+Unix: `make install-opencode` links definitions globally; `make install-claude` links skills.
+No installer replaces user configuration. See `docs/deploy/installation.md`.
 
 ## Structure
 
 | Directory | Description |
 |---|---|
-| `agents/` | Agent definitions (Markdown with YAML frontmatter; `description:` required) |
-| `skills/` | Skills (one subdirectory per skill with a `SKILL.md` entrypoint and optional reference docs) |
-| `commands/` | Slash-command definitions (Markdown prompt bodies with an optional YAML frontmatter: `description:`, `agent:`) |
-| `plugins/` | Reserved for TUI plugins |
-| `*.jsonc` | Sample opencode global and TUI configs (`opencode.jsonc`, `opencode_cfg.jsonc`, `tui_cfg.jsonc`) |
+| `src/agents/` | Agent definitions (Markdown with YAML frontmatter; `description:` required) |
+| `src/skills/` | Skill directories with `SKILL.md` and optional reference docs |
+| `src/commands/` | Reusable command prompts |
+| `src/instructions/` | Shared workspace operating rules |
+| `scripts/` | Windows installer and smoke test |
+| `opencode.jsonc` | Toolkit checkout configuration, not a user config template |
 
 ## Agents
 
@@ -30,7 +34,7 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 | `ticket-context-reader` | subagent | Read-only ticket and discussion retrieval for the Business Analyst |
 | `docs-glossary-reader` | subagent | Resolves a single unknown term from `docs/` with a minimal, capped report |
 | `docs-topic-reader` | subagent | Returns documented content relevant to one topic |
-| `documenter` | primary | Generates or updates documentation for any repository using the docs taxonomy and checks (typically Python/uv) |
+| `documenter` | primary | Generates or updates documentation using the existing project's tools |
 | `researcher` | subagent | Searches the web for libraries, frameworks, tools, patterns, and technical solutions |
 
 ## Skills
@@ -48,7 +52,7 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 | `documentation/` | Canonical docs site taxonomy, audit clauses, style, and build checks (loaded by `documenter`; triggered standalone for audits) |
 | `find-bugs/` | Bug and vulnerability finding |
 | `pull-request/` | Validate, commit, push, and open a PR |
-| `push/` | Stage, validate with tox, and push |
+| `push/` | Stage intended files, validate with project tools, and push |
 | `release/` | Generate release notes and a GitHub release |
 | `security/` | Orchestrated security audit |
 | `security-audit/` | Threat-modeling security audit |
@@ -78,10 +82,23 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 
 - Each skill MUST have a `SKILL.md` at its directory root.
 - `SKILL.md` frontmatter uses `name:` and `description:` (required; the description carries trigger keywords) plus optional `license:`, `compatibility:`, `metadata:` keys.
-- Agents and commands use Markdown with YAML frontmatter; `description:` is required, and `agent`, `mode`, `color`, `steps`, `permissions` are optional per-TUI settings that other TUIs ignore.
+- Agents and commands use Markdown with YAML frontmatter; `description:` is required.
+  OpenCode agents use `permission` (singular) with tool keys such as `edit`, `bash`, and `task`.
+  Put broad permission patterns first and narrow exceptions last. Do not use legacy
+  `permissions` lists with `action/resource/effect`.
 - Reference materials live alongside `SKILL.md` in named subdirectories (no enforced convention).
 - `.gitignore` excludes all dotfiles and editor backup files (`~*`); only `.gitignore` itself is kept among dotfiles.
-- `.ai-temp/` is agent working scratch: git-ignored, never committed, never treated as a deliverable. The `Business Analyst` and `System Analyst` each persist the current ticket state in a single fixed file (`.ai-temp/business-analyst.yaml`, `.ai-temp/system-analyst.yaml`) with autosave at material state transitions and "annota il lavoro|ticket" / "riprendi il lavoro|ticket" commands. The business-analyst also maintains `.ai-temp/glossary-known-terms.yaml` there as an accumulating project glossary of terms resolved from `docs/`, shared across sessions as a fallback when the documentation has no structured glossary.
+- `.ai-temp/` is internal scratch, never committed or treated as a deliverable. Analysts persist
+  state in `.ai-temp/<repo_key>/<activity_id>/<agent>.yaml` at the workspace root, autosaving
+  material transitions and supporting annotate/resume requests. The business analyst keeps a
+  separate `.ai-temp/<repo_key>/glossary-known-terms.yaml` per repository. Verify ignore rules
+  in tracked workspaces; this checkout's gitignore does not cover its parent. Workspace-required
+  reports and prompt logs follow explicit local policy and permissions, never scratch conventions.
+- Read `src/instructions/workspace.md` for multi-repository operating defaults. Keep shared
+  rules there; repository-specific runners, versions, and conventions remain local.
+- Keep organization-specific paths, report language, prompt logging, and report permissions
+  in deployment configuration and local `AGENTS.md`, not in `src/`. Default analyst writes
+  are scratch-only; report persistence requires both local policy and matching permissions.
 - Every agent, skill, and command MUST emit output that follows the TUI-portable standard below.
 - The `documenter` agent generates or updates documentation (operator role: gates, permissions, workflow); the `documentation` skill owns the domain knowledge (four-guide taxonomy, audit clauses, style, build checks, findings template) and is shared by `documenter`, standalone audits, and any future docs agent. Rules live in only one place: the skill.
 - The `ticket-writing` skill owns the canonical ticket content rules (title, prefixes, body, soft-wrap, diagrams, language) shared by the `Business Analyst` and the `System Analyst`. Rules live in only one place: the skill; agents must load it rather than re-implementing its rules.
@@ -101,6 +118,9 @@ All generated output (handoffs, reviews, reports, commit messages, PR descriptio
 
 When a skills or agent file prescribes an output template, that template is governed by this standard; authors may update templates to match.
 
-## No code
+## Verification
 
-This repository contains no application code, tests, lint, typecheck, or CI. It is purely instruction definitions for coding agents.
+There is no application code or application test suite. Verify definitions with the OpenCode
+loader and review. Run `scripts/test-workspace-install.ps1` when changing the Windows installer
+and `scripts/test-opencode-loader.ps1` for local/global discovery and policy merging.
+`make test` is the Unix install smoke test. See `docs/development/testing.md`.

@@ -1,7 +1,8 @@
 # Agent reference
 
-Who is this for? This page catalogs every agent in `agents/`, with its purpose,
-mode, and key constraints. Source of truth: `agents/*.md` and `AGENTS.md:24-34`.
+Who is this for? This page catalogs the agents in `src/agents/`, with their roles and
+constraints. Source of truth: their frontmatter and prompts. Workspace defaults are in
+`src/instructions/workspace.md`; paths below refer to the assigned repository, not the root.
 
 ## Summary
 
@@ -14,7 +15,7 @@ mode, and key constraints. Source of truth: `agents/*.md` and `AGENTS.md:24-34`.
 | [ticket-context-reader](#ticket-context-reader) | subagent | Read-only ticket and discussion retrieval for the Business Analyst |
 | [docs-glossary-reader](#docs-glossary-reader) | subagent | Resolves a single unknown term from `docs/` with a minimal, capped report |
 | [docs-topic-reader](#docs-topic-reader) | subagent | Returns documented content relevant to one topic |
-| [documenter](#documenter) | primary | Generates or updates documentation for any repository using the docs taxonomy and checks (typically Python/uv) |
+| [documenter](#documenter) | primary | Generates or updates documentation with existing project tools |
 | [researcher](#researcher) | subagent | Searches the web for libraries, frameworks, tools, patterns, and technical solutions |
 
 ## business-analyst
@@ -25,9 +26,10 @@ ready-to-create functional tickets without implementing them
 substantive question per message, and never mutates a ticket before the
 approval gate (`agents/business-analyst.md:56-63`). May read `README*` and
 `docs/`, and delegates retrieval to `ticket-context-reader` and the docs
-readers. Cannot edit the repo, run shell, or spawn arbitrary subagents; the
-only write location is the fixed `.ai-temp/business-analyst.yaml` snapshot
-(annotate/resume). Applies the `ticket-writing` skill for ticket content.
+readers. Cannot edit application code, run shell, or spawn arbitrary subagents. Reports and
+prompt logs require local policy and permissions; default persistence is snapshots under
+`.ai-temp/<repo_key>/<activity_id>/business-analyst.yaml` (annotate/resume).
+Applies the `ticket-writing` skill for ticket content.
 
 ## system-analyst
 
@@ -36,7 +38,8 @@ presents implementation options for a user decision (`agents/system-analyst.md:2
 Distinguishes evidence, facts, assumptions, risks, and recommendations; never
 silently chooses between viable alternatives (`agents/system-analyst.md:34-38`).
 Delegates to `code-impact-explorer`, `ticket-context-reader`, and `researcher`;
-denies edit (except `.ai-temp/`), shell, and other subagents. Output must stay
+denies edit except activity scratch by default, shell,
+and other subagents. Output must stay
 at architectural and design analysis level: no production code, diffs, or
 implementation-ready patches (`agents/system-analyst.md:43-58`). Asks the user
 for explicit permission before delegating web research to the `researcher`
@@ -74,26 +77,26 @@ Analyst; returns a compact, evidence-led business summary
 
 Subagent (hidden). Resolves a single unknown product/domain term from `docs/`,
 returning the term definition plus only the related terms strictly needed,
-with hard output caps (`agents/docs-glossary-reader.md:2`). Read and glob are
-restricted to `docs/**`; edit and shell are denied.
+with hard output caps. Reads are limited to documentation and `AGENTS.md` paths; edits
+and shell are denied. The parent supplies the repository root; searches are bounded to its docs.
 
 ## docs-topic-reader
 
 Subagent (hidden). Read-only documentation subagent that returns only the
 documented content relevant to one requested topic
-(`agents/docs-topic-reader.md:2`). Read and glob are restricted to `docs/**`;
-edit and shell are denied.
+(`src/agents/docs-topic-reader.md`). Reads are limited to documentation and `AGENTS.md`;
+edit and shell are denied. The parent supplies the root and bounded documentation question.
 
 ## documenter
 
 Primary agent. Generates or updates project technical documentation for any
-repository, typically Python/uv projects, using the documented taxonomy and
-checks (`agents/documenter.md:3`). Loads the
+repository, using the existing project tools and documented taxonomy. Loads the
 [documentation skill](skills-reference.md#documentation) and proposes a
 structure for approval before writing (`agents/documenter.md:90-99`). Write
-surface is strictly limited to `docs/**`, `README*`, and
-`properdocs.yml`/`properdocs.yaml`; shell access is limited to
-`uv run properdocs` and `properdocs` (`agents/documenter.md:29-37`).
+surface is limited to documentation and supported site configuration by default; locally
+configured report paths need explicit policy and permissions. Supported site configuration
+files (`properdocs` and `mkdocs` YAML). Shell checks use the host's permission flow.
+No builder or package manager is imposed on the target repository.
 
 ## researcher
 
@@ -111,14 +114,14 @@ pros/cons, and fit classification per solution category
 
 | Agent | Edit | Shell | Subagents |
 |---|---|---|---|
-| business-analyst | `.ai-temp/**` only | deny | 3 named readers |
-| system-analyst | deny | deny | `code-impact-explorer`, `ticket-context-reader`, `researcher` |
+| business-analyst | scratch by default | deny | 3 named readers |
+| system-analyst | scratch by default | deny | 3 named subagents |
 | coder | allow | allow (push: ask) | deny |
 | code-impact-explorer | deny | deny | deny |
 | ticket-context-reader | deny | deny | deny |
 | docs-glossary-reader | deny | deny | deny |
 | docs-topic-reader | deny | deny | deny |
-| documenter | `docs/**`, `README*`, `properdocs.{yml,yaml}` | `uv run properdocs *`, `properdocs *` only | deny |
+| documenter | docs and site config by default | ask | deny |
 | researcher | deny | deny | deny |
 
 ## Next steps

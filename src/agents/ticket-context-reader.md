@@ -4,16 +4,10 @@ mode: subagent
 hidden: true
 color: "#b45309"
 steps: 12
-permissions:
-  - action: edit
-    resource: "*"
-    effect: deny
-  - action: shell
-    resource: "*"
-    effect: deny
-  - action: subagent
-    resource: "*"
-    effect: deny
+permission:
+  edit: deny
+  bash: deny
+  task: deny
 ---
 
 # Ticket Context Reader
