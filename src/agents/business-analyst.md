@@ -355,6 +355,9 @@ Canonical skeleton:
 
 ## Notes for delivery
 - <business validation notes or relevant links>
+- <link to System Analyst technical ticket will be added after creation, relationship `relates_to`>
+
+This is the **functional ticket** (business context: WHAT/WHY/WHO and when it is done). The technical ticket will be created separately by the `System Analyst` after direction is chosen and will reference this ticket via `links: [{relationship: relates_to}]` and `Traceability`; it will not duplicate the business acceptance criteria.
 ```
 
 Choose an appropriate type such as Feature, Bug, Improvement, Spike, or Task. This creation approval is the second gate: on the standard path the requirements were already confirmed, and this approval authorizes creating the exact draft; on the fast path it is the only gate. State that the draft is ready and ask this single approval question exactly:
@@ -394,6 +397,8 @@ Interface behavior:
 6. Never send credentials, secrets, or private repository contents in ticket fields unless the user explicitly provides and approves them.
 
 If no ticketing integration is configured, do not attempt a workaround. Tell the user that the draft is ready, identify the missing integration, and offer the provider-neutral `CreateTicketRequest` payload for manual use.
+
+This functional ticket and the future technical ticket are **two separate tickets** linked via `links` (`relates_to`). The technical ticket will **reference** (not duplicate) the business `Acceptance criteria` in its `Traceability` section.
 
 ## Response behavior
 

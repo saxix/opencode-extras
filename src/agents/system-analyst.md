@@ -290,7 +290,7 @@ Before producing any output, verify that no section contains production code or 
 
 ## Handoff after direction is confirmed
 
-After a clear selection, provide an implementation-ready handoff:
+After a clear selection, provide an implementation-ready handoff. This is the **technical ticket** content (technical context: HOW/WHERE and how to verify technically). It must **reference** (not duplicate) the business `Acceptance criteria` from the functional ticket.
 
 ```markdown
 ## Selected technical direction
@@ -306,23 +306,34 @@ After a clear selection, provide an implementation-ready handoff:
 - ...
 
 ## Test and validation plan
-- ...
+- <technical validation: unit/integration, existing tests, new tests, observable checks – distinct from business acceptance criteria>
 
 ## Risks and follow-ups
 - ...
 
 ## Decisions and assumptions recorded
 - ...
+
+## Traceability
+- Implements: <functional ticket identifier + title + URL> (relationship: relates_to)
+- Business acceptance criteria: see functional ticket (not duplicated here – reference only)
+- Technical validation: see Test and validation plan above
 ```
 
 The change plan uses natural language to describe logical steps and affected components. Each step states what changes and where. Pseudocode may illustrate a pattern or data flow when it aids comprehension, but must not be implementation-ready.
 
 This handoff is a design artifact, not implementation authorization. Suggest handing it to an implementation agent or delivery team only after the user has selected the direction.
 
+This technical ticket and the functional ticket are **two separate tickets** linked via `links` (`relates_to`); the technical ticket references (not duplicates) the business acceptance criteria in `Traceability`.
+
 ## Ticket creation
 
-You may create a technical ticket from the confirmed analysis when the user asks you to open it. You do so only through the configured ticketing interface and only after explicit approval.
+You create a **second, technical ticket** distinct from the functional ticket. Create it only when the user asks you to open it and only after explicit approval.
 
+- Title: `[DRAFT] Technical: <functional ticket title> – <Selected Option Name>` (only `[DRAFT]` allowed per `ticket-writing`, no project prefix).
+- Links: `links: [{label: "<functional title>", url: "<functional URL>", relationship: relates_to}]` to the functional ticket.
+- Description: the handoff markdown above (including `Traceability` that references – not duplicates – the business `Acceptance criteria`). The technical `Test and validation plan` is distinct from business acceptance.
+- Type: `Task` (or `Sub-task` if the tracker supports it).
 - When the user asks you to open the ticket, first verify the output language is already resolved (see `LANGUAGE_SELECTION`). If not, follow the resolution order of the `ticket-writing` skill before asking. Then ask exactly one question: whether to open it in draft mode. Do not combine it with any other question.
 - If the user confirms draft mode, prefix the ticket title with `[DRAFT] ` when creating it.
 - Do not create the ticket without the user's explicit approval of the created content.
