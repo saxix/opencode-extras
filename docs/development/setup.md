@@ -6,25 +6,25 @@ definitions in this repository.
 ## Prerequisites
 
 - `git` to clone the repository.
-- `make` and a Unix shell (macOS or Linux).
-- No Python, `uv`, tox, or any other build toolchain: the repository contains
-  no application code and no CI (`README.md:95`).
-- Optional: an installed TUI (opencode, Claude Code) to exercise the
+- `Node.js 18+` and `npx` for the installer and tests (`package.json:10`, `tests/install.test.mjs:1`); `make` as optional wrapper.
+- Unix shell (macOS or Linux) for `make` targets.
+- No Python, `uv`, tox, or other build toolchain except for optional ticketing
+  MCP servers or `properdocs` site build.
+- Optional: an installed TUI (opencode, Claude Code, Codex) to exercise the
   definitions; `uv` only if you also run the ticketing MCP servers; `properdocs`
-  only if you want to render the documentation site (no build configuration is
-  shipped).
+  only if you want to render the documentation site.
 
 ## Clone and verify
 
 ```sh
 git clone <repository-url> agents-skills
 cd agents-skills
-make test
+npm test          # header/format + installer per-item copy/link tests (Node built-in)
+make test         # sandbox dry-run + copy in ~build/.config/opencode
 ```
 
-`make test` builds a sandbox under `~build/` with the same symlink layout that
-`install-opencode` creates, verifying the install targets (`Makefile:24-27`).
-The sandbox is git-ignored (`.gitignore:1`).
+`npm test` runs `tests/install.test.mjs:1` (header validation for `src/skills/*/SKILL.md:1`, `src/agents/*.md:1`, `src/commands/*.md:1` and isolated `PREFIX` installs).
+`make test` builds a sandbox under `~build/` with the same per-item copy layout that `npx opencode-utils --global --all` creates (`Makefile:47`). The sandbox is git-ignored (`.gitignore:1`).
 
 ## Tooling expectations
 
@@ -45,8 +45,7 @@ The sandbox is git-ignored (`.gitignore:1`).
 
 You can exercise agents and commands directly in an opencode session opened in
 this repository: opencode reads project-scope `opencode.jsonc` and the
-installed global definitions. For a full sandbox, run `make install-opencode`
-(see [Installation](../deploy/installation.md)).
+installed global definitions. For a full sandbox, run `npx opencode-utils --global --all` or `make install` (see [Installation](../deploy/installation.md)).
 
 ## Next steps
 

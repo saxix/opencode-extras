@@ -6,29 +6,30 @@ installation.
 ## Single source of truth
 
 The repository is the single source of truth for every definition. The
-install targets create symlinks, so installed copies are never separate
-copies: editing the repository immediately changes the installed definitions
-(`Makefile:7-18`).
+installer copies per-item by default (`npx opencode-utils --global --all`,
+`scripts/install.mjs:214`), or symlinks per-item with `--link` for live dev
+(`Makefile:7-18` legacy). Default copy is coexistence-safe across skill packs.
 
 ## Installation topology
 
 ```
-agents-skills/
-  agents/        ->  ~/.config/opencode/agents        (opencode only)
-  skills/        ->  ~/.config/opencode/skills        (opencode)
-                ->  ~/.claude/skills                   (Claude Code)
-  commands/      ->  ~/.config/opencode/commands      (opencode only)
-  opencode_cfg.jsonc -> ~/.config/opencode/opencode.jsonc
-  tui_cfg.jsonc      -> ~/.config/opencode/tui.jsonc
+src/agents/*          ->  DEST/agents/*.md        (per-item copy/link)
+src/skills/<name>/    ->  DEST/skills/<name>/     (per-item copy/link)
+src/commands/*.md     ->  DEST/commands/*.md      (per-item copy/link)
 ```
 
-Evidence: `Makefile:7-18`, [Interface navigation](../user-guide/navigation.md).
+`DEST` is `~/.config/opencode` (opencode), `~/.claude` (Claude Code),
+`~/.codex` (Codex), or `./.opencode` etc. for `--project` (`scripts/install.mjs:102`).
+Default `--copy` never creates a directory symlink (`skills -> src/skills`), so
+multiple packs coexist (`Makefile:7-18` legacy used dir symlinks).
+
+Evidence: `scripts/install.mjs:214`, [Installation](installation.md).
 
 ## No runtime services
 
 The toolkit itself runs nothing: no daemons, no servers, no data plane. The
 only external connections are the optional ticketing MCP servers declared in
-`opencode_cfg.jsonc:21-34`, which opencode starts on demand:
+`src/~opencode_cfg.jsonc:21-34`, which opencode starts on demand:
 
 - `github` -- enabled by default;
 - `azure-devops` -- disabled by default.

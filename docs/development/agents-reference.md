@@ -1,7 +1,7 @@
 # Agent reference
 
-Who is this for? This page catalogs every agent in `agents/`, with its purpose,
-mode, and key constraints. Source of truth: `agents/*.md` and `AGENTS.md:24-34`.
+Who is this for? This page catalogs every agent in `src/agents/`, with its purpose,
+mode, and key constraints. Source of truth: `src/agents/*.md` and `AGENTS.md:24-34`.
 
 ## Summary
 
@@ -21,9 +21,9 @@ mode, and key constraints. Source of truth: `agents/*.md` and `AGENTS.md:24-34`.
 
 Primary agent. Refines product and business requests into approved,
 ready-to-create functional tickets without implementing them
-(`agents/business-analyst.md:2`). Works in the problem domain only, asks one
+(`src/agents/business-analyst.md:2`). Works in the problem domain only, asks one
 substantive question per message, and never mutates a ticket before the
-approval gate (`agents/business-analyst.md:56-63`). May read `README*` and
+approval gate (`src/agents/business-analyst.md:56-63`). May read `README*` and
 `docs/`, and delegates retrieval to `ticket-context-reader` and the docs
 readers. Cannot edit the repo, run shell, or spawn arbitrary subagents; the
 only write location is the fixed `.ai-temp/business-analyst.yaml` snapshot
@@ -32,80 +32,80 @@ only write location is the fixed `.ai-temp/business-analyst.yaml` snapshot
 ## system-analyst
 
 Primary agent. Analyzes tickets against the existing codebase read-only and
-presents implementation options for a user decision (`agents/system-analyst.md:2`).
+presents implementation options for a user decision (`src/agents/system-analyst.md:2`).
 Distinguishes evidence, facts, assumptions, risks, and recommendations; never
-silently chooses between viable alternatives (`agents/system-analyst.md:34-38`).
+silently chooses between viable alternatives (`src/agents/system-analyst.md:34-38`).
 Delegates to `code-impact-explorer`, `ticket-context-reader`, and `researcher`;
 denies edit (except `.ai-temp/`), shell, and other subagents. Output must stay
 at architectural and design analysis level: no production code, diffs, or
-implementation-ready patches (`agents/system-analyst.md:43-58`). Asks the user
+implementation-ready patches (`src/agents/system-analyst.md:43-58`). Asks the user
 for explicit permission before delegating web research to the `researcher`
-subagent (`agents/system-analyst.md:46`). Resolves the output language from the
+subagent (`src/agents/system-analyst.md:46`). Resolves the output language from the
 project context (existing ticket, `README*`, recent tickets, `docs/`) via the
 `ticket-writing` skill and asks only when it cannot be determined
-(`agents/system-analyst.md:141`). Can create technical tickets on request,
-with a draft-mode question before creation (`agents/system-analyst.md:260`).
+(`src/agents/system-analyst.md:141`). Can create technical tickets on request,
+with a draft-mode question before creation (`src/agents/system-analyst.md:260`).
 
 ## coder
 
 Primary agent. Implements an approved ticket from its functional requirements
 and selected technical direction, then verifies the change
-(`agents/coder.md:2`). Has full edit and shell access except `git push`, which
-requires a prompt (`agents/coder.md:7-15`). Does not own product discovery or
+(`src/agents/coder.md:2`). Has full edit and shell access except `git push`, which
+requires a prompt (`src/agents/coder.md:7-15`). Does not own product discovery or
 technical direction, and does not commit, push, or deploy without explicit
-request (`agents/coder.md:25`). On explicit request it commits with the
+request (`src/agents/coder.md:25`). On explicit request it commits with the
 [commit skill](skills-reference.md#commit) and opens pull requests with the
 [pull-request skill](skills-reference.md#pull-request), never bypassing their
-confirmation gates (`agents/coder.md:82-97`).
+confirmation gates (`src/agents/coder.md:82-97`).
 
 ## code-impact-explorer
 
 Subagent (hidden). Read-only codebase discovery for the System Analyst; maps
 likely implementation impact without designing a solution
-(`agents/code-impact-explorer.md:2`). Denies edit, shell, and subagents.
+(`src/agents/code-impact-explorer.md:2`). Denies edit, shell, and subagents.
 
 ## ticket-context-reader
 
 Subagent (hidden). Read-only ticket and discussion retrieval for the Business
 Analyst; returns a compact, evidence-led business summary
-(`agents/ticket-context-reader.md:2`). Denies edit, shell, and subagents.
+(`src/agents/ticket-context-reader.md:2`). Denies edit, shell, and subagents.
 
 ## docs-glossary-reader
 
 Subagent (hidden). Resolves a single unknown product/domain term from `docs/`,
 returning the term definition plus only the related terms strictly needed,
-with hard output caps (`agents/docs-glossary-reader.md:2`). Read and glob are
+with hard output caps (`src/agents/docs-glossary-reader.md:2`). Read and glob are
 restricted to `docs/**`; edit and shell are denied.
 
 ## docs-topic-reader
 
 Subagent (hidden). Read-only documentation subagent that returns only the
 documented content relevant to one requested topic
-(`agents/docs-topic-reader.md:2`). Read and glob are restricted to `docs/**`;
+(`src/agents/docs-topic-reader.md:2`). Read and glob are restricted to `docs/**`;
 edit and shell are denied.
 
 ## documenter
 
 Primary agent. Generates or updates project technical documentation for any
 repository, typically Python/uv projects, using the documented taxonomy and
-checks (`agents/documenter.md:3`). Loads the
+checks (`src/agents/documenter.md:3`). Loads the
 [documentation skill](skills-reference.md#documentation) and proposes a
-structure for approval before writing (`agents/documenter.md:90-99`). Write
+structure for approval before writing (`src/agents/documenter.md:90-99`). Write
 surface is strictly limited to `docs/**`, `README*`, and
 `properdocs.yml`/`properdocs.yaml`; shell access is limited to
-`uv run properdocs` and `properdocs` (`agents/documenter.md:29-37`).
+`uv run properdocs` and `properdocs` (`src/agents/documenter.md:29-37`).
 
 ## researcher
 
 Subagent (hidden). Searches the web for libraries, frameworks, tools, patterns,
-and technical solutions to address a given problem (`agents/researcher.md:2`).
+and technical solutions to address a given problem (`src/agents/researcher.md:2`).
 Read-only: denies edit, shell, and subagents; allows websearch and webfetch
-(`agents/researcher.md:7-22`). Called by the System Analyst when a design option
+(`src/agents/researcher.md:7-22`). Called by the System Analyst when a design option
 would benefit from external solutions not yet in the project. The System Analyst
 must ask the user for explicit permission before delegating web research
-(`agents/system-analyst.md:46`). Returns structured findings with verified URLs,
+(`src/agents/system-analyst.md:46`). Returns structured findings with verified URLs,
 pros/cons, and fit classification per solution category
-(`agents/researcher.md:49-74`).
+(`src/agents/researcher.md:49-74`).
 
 ## Permissions at a glance
 

@@ -4,10 +4,35 @@ Reusable **agents**, **skills**, and **commands** for AI coding TUIs. Typeset as
 
 ## Install
 
+Via `npx` (copy per-item, coexistence-safe, no directory symlink):
+
 ```sh
-make install-opencode   # symlink agents/, skills/, commands/ and configs into ~/.config/opencode
-make install-claude     # symlink skills/ into ~/.claude/skills
+npx opencode-utils --global --all              # global ~/.config/opencode + ~/.claude + ~/.codex
+npx opencode-utils --project --all             # project ./.opencode + ./.claude + ./.codex
+npx opencode-utils --global --opencode         # only opencode
+npx opencode-utils --global --claude           # only claude
+npx opencode-utils --global --codex            # only codex
+npx opencode-utils --project --link --all      # dev live symlinks (opt-in)
+
+# preview / remove
+npx opencode-utils --dry-run --global --all
+npx opencode-utils --uninstall --global --all
 ```
+
+Via `make` (wrapper to `npx`):
+
+```sh
+make install              # global --all (copy)
+make install-project      # project --all (copy)
+make install-opencode     # global opencode only
+make install-claude       # global claude only
+make install-codex        # global codex only
+make install-all          # global opencode+claude+codex
+make help                 # show npx help
+make uninstall            # remove global --all
+```
+
+Default is `--copy` per-item (safe with other skill packs). Use `--link` for live dev.
 
 ## Structure
 
@@ -38,7 +63,8 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 | Directory | Description |
 |---|---|
 | `architecture-review/` | Staff-level codebase health review (monoliths, silent failures, type safety, test coverage, LLM friendliness) |
-| `code-review/` | Review following personal engineering practices (security, performance, testing, design) |
+| `code-review-django/` | Review following personal engineering practices (security, performance, testing, design) |
+| `code-review-python/` | Python idioms, PEP 8, type hints and modern Python review |
 | `commit/` | Safely stage and commit changes |
 | `commit-message/` | Draft a structured commit message from uncommitted changes |
 | `create_github_issue/` | Open a GitHub issue via `gh` |

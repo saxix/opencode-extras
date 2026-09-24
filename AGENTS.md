@@ -4,10 +4,27 @@ Reusable agents, skills, and commands for AI coding TUIs. All definitions are pl
 
 ## Install
 
+Via `npx` (copy per-item, coexistence-safe):
+
 ```sh
-make install-opencode   # symlink agents/, skills/, commands/ and configs into ~/.config/opencode
-make install-claude     # symlink skills/ into ~/.claude/skills
+npx opencode-utils --global --all              # global ~/.config/opencode + ~/.claude + ~/.codex
+npx opencode-utils --project --all             # project ./.opencode + ./.claude + ./.codex
+npx opencode-utils --global --opencode         # only opencode
+npx opencode-utils --project --link --all      # dev live symlinks (opt-in)
 ```
+
+Via `make` (wrapper to `npx`):
+
+```sh
+make install              # global --all (copy)
+make install-project      # project --all (copy)
+make install-opencode     # global opencode only
+make install-claude       # global claude only
+make install-codex        # global codex only
+make install-all          # global opencode+claude+codex
+```
+
+Default is `--copy` per-item (safe with other skill packs). Use `--link` for live dev.
 
 ## Structure
 
@@ -38,7 +55,8 @@ make install-claude     # symlink skills/ into ~/.claude/skills
 | Directory | Description |
 |---|---|
 | `architecture-review/` | Staff-level codebase health review |
-| `code-review/` | Code review best practices |
+| `code-review-django/` | Code review following personal engineering practices (Django stack) |
+| `code-review-python/` | Python idioms, PEP 8, type hints and modern Python review |
 | `commit/` | Safely stage and commit changes |
 | `commit-message/` | Draft a structured commit message |
 | `create_github_issue/` | Open a GitHub issue via `gh` |

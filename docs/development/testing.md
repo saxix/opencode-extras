@@ -1,33 +1,31 @@
 # Testing strategy
 
 Who is this for? This page explains how changes to this repository are
-validated, and why there is no code test suite.
+validated.
 
-## No code tests by design
+## Test suite
 
-The repository contains no application code, tests, lint, typecheck, or CI
-(`README.md:95`, `AGENTS.md:102`). There is nothing to unit-test: the artifacts
-are instruction definitions for coding agents.
-
-## `make test`
-
-The only automated check is a sandbox smoke test that verifies the install
-targets:
+The repository ships a minimal test suite for the installer and definition
+headers (`tests/install.test.mjs:1`, `package.json: scripts.test`):
 
 ```sh
-make test
+npm test          # node --test: header/format + installer per-item tests
+make test         # sandbox dry-run + copy in ~build/.config/opencode
 ```
 
-`test` runs `install-opencode` with `PREFIX` pointing at a local `~build/`
-directory and lists the resulting layout (`Makefile:24-27`). It confirms that
-the symlink commands produce the expected `~build/.config/opencode` tree
-without touching the real home directory. The `~build/` sandbox is
+`npm test` covers:
+- every `src/skills/*/SKILL.md:1` has valid `name`/`description` (22), `SKILL.md` at root, quoting when `:` in description;
+- every `src/agents/*.md:1` and `src/commands/*.md:1` has `description`;
+- installer `scripts/install.mjs:1` per-item copy/link, coexistence (`other-pack` preserved), `PREFIX` isolation, `--dry-run`, `--uninstall`, legacy dir-symlink replacement.
+
+`make test` runs the installer with `PREFIX` pointing at local `~build/` and
+lists the resulting layout (`Makefile:47`). The `~build/` sandbox is
 git-ignored (`.gitignore:1`).
 
 ## Definition validation
 
-Changes to agents, skills, and commands are validated manually against the
-repository conventions:
+Changes to agents, skills, and commands are validated both by tests and
+manually against conventions:
 
 | Check | Criterion |
 |---|---|
@@ -40,11 +38,11 @@ repository conventions:
 For TUI behavior, open a session in this repository and trigger the changed
 agent, skill, or command; then restart to confirm it reloads.
 
-## When tests appear
+## When more tests appear
 
-If a future change introduces real code (for example a plugin), it must come
-with an appropriate test suite and CI; the current "no code" status is a
-deliberate constraint, not an oversight.
+If a future change introduces real code (for example a plugin), extend
+`tests/` with an appropriate suite; the current suite is minimal and focused
+on the installer.
 
 ## Next steps
 

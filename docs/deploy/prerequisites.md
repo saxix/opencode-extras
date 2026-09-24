@@ -6,16 +6,17 @@ Who is this for? This page lists what you need before installing the toolkit.
 
 | Prerequisite | Purpose |
 |---|---|
-| Unix-like shell (`bash`) | Running the make targets (`Makefile`) |
-| [GNU make](https://www.gnu.org/software/make/) | Running `install-opencode`, `install-claude`, `test` |
+| `Node.js 18+` + `npx` | Installer and tests (`package.json:10`, `tests/install.test.mjs:1`) |
+| Unix-like shell (`bash`) | Running `make` wrapper (`Makefile:1`) |
+| [GNU make](https://www.gnu.org/software/make/) | Optional wrapper for `npx opencode-utils` (`make install`, `test`) |
 | `git` | Cloning and updating the repository |
-| An AI coding TUI | Consuming the definitions (opencode recommended; Claude Code for skills) |
+| An AI coding TUI | Consuming the definitions (opencode, Claude Code, Codex; all support `npx opencode-utils`) |
 
 ## Optional
 
 | Prerequisite | Purpose |
 |---|---|
-| `uv` | Running the ticketing MCP servers (`uv run mcp-ticketing`, `opencode_cfg.jsonc:24`) |
+| `uv` | Running the ticketing MCP servers (`uv run mcp-ticketing`, `src/~opencode_cfg.jsonc:24`) |
 | `mcp-ticketing` project | Located at `MCP_TICKETING_HOME`; provides the MCP server binary |
 | Ticketing credentials | For the MCP servers (see [Environment variables](environment.md)) |
 | `properdocs` | Optional render tool if you want to build the docs site; no build configuration is shipped (see [Operations](../admin/operations.md)) |

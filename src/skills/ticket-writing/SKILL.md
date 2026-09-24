@@ -1,6 +1,6 @@
 ---
 name: ticket-writing
-description: Canonical rules for ticket content shared by the Business Analyst and System Analyst: title, project-prefix ban, draft prefix, body structure, soft-wrap formatting, diagrams, and language resolution. Trigger on "write a ticket", "open a ticket", "ticket title", "ticket body", "draft mode", "create the ticket". Loaded by the Business Analyst and System Analyst.
+description: 'Canonical rules for ticket content shared by the Business Analyst and System Analyst: title, project-prefix ban, draft prefix, body structure, soft-wrap formatting, diagrams, and language resolution. Trigger on "write a ticket", "open a ticket", "ticket title", "ticket body", "draft mode", "create the ticket". Loaded by the Business Analyst and System Analyst.'
 ---
 
 ## Purpose

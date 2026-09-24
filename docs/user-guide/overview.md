@@ -18,9 +18,10 @@ from scratch each time.
   for example "deconstruct a task into an idempotent plan".
 
 All definitions are plain Markdown with YAML frontmatter. The same files work
-in `opencode`, Claude Code, Gemini CLI, hermes, and other terminal assistants
-(`README.md:3`). The repository is deliberately free of application code,
-tests, and CI (`README.md:95`).
+in `opencode`, Claude Code, Codex, Gemini CLI, hermes, and other terminal
+assistants (`README.md:3`). The repository ships a Node installer
+(`package.json:10`, `scripts/install.mjs:1`) and a minimal test suite
+(`tests/install.test.mjs:1`, `npm test`); no application runtime is required.
 
 ## Key features
 
@@ -40,15 +41,16 @@ tests, and CI (`README.md:95`).
 - **One-skill-per-directory layout.** Each skill has a `SKILL.md` entrypoint
   and optional reference material (see the
   [skill reference](../development/skills-reference.md)).
-- **Plug-and-play install.** One `make` target symlinks the definitions into
-  your TUI configuration (see [getting started](getting-started.md)).
+- **Plug-and-play install.** One `npx` command copies per-item into your TUI
+  config (`npx opencode-utils --global --all`), or `make install` as wrapper
+  (see [getting started](getting-started.md) and [installation](../deploy/installation.md)).
 
 ## What you get
 
 | Artifact | Count | Reference |
 |---|---|---|
-| Agents | 8 | [agent reference](../development/agents-reference.md) |
-| Skills | 21 | [skill reference](../development/skills-reference.md) |
+| Agents | 9 | [agent reference](../development/agents-reference.md) |
+| Skills | 23 | [skill reference](../development/skills-reference.md) |
 | Commands | 9 | [command reference](../development/commands/debug-code.md) |
 
 ## Next steps
