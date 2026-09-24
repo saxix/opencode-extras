@@ -1,6 +1,6 @@
 ---
 name: documentation
-description: Canonical rules and checks for the docs site: site taxonomy, audit clauses, style, and build verification. Trigger on "audit docs", "fix documentation", "docs coverage", "check docs", "generate docs", "document the project", or when a feature branch touches docs/. Also loaded by the documenter agent to plan, write, and verify generated documentation.
+description: 'Canonical rules and checks for the docs site: site taxonomy, audit clauses, style, and build verification. Trigger on "audit docs", "fix documentation", "docs coverage", "check docs", "generate docs", "document the project", or when a feature branch touches docs/. Also loaded by the documenter agent to plan, write, and verify generated documentation.'
 ---
 
 ## Purpose
@@ -42,21 +42,49 @@ The docs site is organized in four guides plus shared sections. Required sub-sec
 
 **Shared sections:** landing page/index, glossary (one term per entry, index page, first-use links), API reference (usage already belongs to the User Guide; a Development Guide page explains how to add endpoints).
 
-Rules of the taxonomy:
+> **CLI / MCP Server note:** for these project types the taxonomy still applies, but the following sub-sections become *mandatory* and must be detailed (see profile below): User Guide must contain **Installation**, **Arguments/Commands**, **Usage Examples**; Development Guide must contain **Development / Contributing**. Treat their absence as a missing required sub-section.
+
+## Scope tailoring -- mandatory scoping question
+
+Not every project needs all four guides. Before generating or auditing, you MUST ask the user which guides/sections they want.
+
+- Ask explicitly which of the four guides are in scope: **User Guide**, **Administrative Guide**, **Development Guide**, **Deploy Guide** (plus shared sections as needed). Do not assume the full set.
+- Propose presets and let the user pick or customize:
+  - **Library / SDK** -- typically User Guide + Development Guide (+ API reference if it exposes one); Administrative Guide and Deploy Guide are usually out of scope unless the library has runtime config or a deployment story.
+  - **CLI tool / MCP Server** -- User Guide (Installation + Arguments/Commands + Usage Examples) + Development Guide (Contributing). Administrative/Deploy only if there is a service component. This profile has *mandatory* detailed coverage (see CLI / MCP Server profile below).
+  - **Application / Service** -- typically all four guides.
+  - **Custom** -- any combination the user confirms.
+- Example question (adapt language to the project's default language): "What type of project is this? For a library, User Guide and Development Guide are usually enough, without Deploy/Administrative. Which guides do you want to include? [ ] User [ ] Administrative [ ] Development [ ] Deploy"
+- Record the confirmed scope and use it as the baseline for coverage, gaps, and verification. Never generate excluded guides without explicit confirmation.
+- If the user does not answer, do not proceed to `WRITE`; stay in `INTAKE`/`SCOPE` and re-ask. A vague "everything" / "full set" means all four guides; otherwise tailor.
+
+### CLI / MCP Server profile -- mandatory detailed coverage
+
+When the project is a CLI (or an MCP Server, which is a CLI with an MCP interface), the documentation MUST contain detailed, verified coverage for these four areas regardless of which preset label the user picks. Map them to the selected guides and flag any missing area as High severity.
+
+1. **Installation** -- prerequisites (OS, Python/Node version, dependencies), all supported install methods (for example `pipx`, `uv tool`, `pip`, `brew`, `docker`, `npm`), version check / smoke test, upgrade/uninstall notes, and troubleshooting for common install failures. Sync with `pyproject.toml`, `package.json`, `Dockerfile`, and install scripts; test every command.
+2. **Arguments / Commands** -- complete reference of every command, sub-command, argument, option/flag, and env-var/config-file key that affects CLI behaviour: name, type, required/optional, default, allowed values, effect, and mutual-exclusion or dependency rules. Source of truth is the CLI definition (`argparse`/`click`/`typer`/`commander`/`yargs`, MCP `tools`/`resources`/`prompts` definitions). One page per command for rich CLIs; single-page table only for trivial single-command tools. For MCP Servers also document transport (stdio/SSE), tool list with input/output schemas, and client configuration snippets.
+3. **Usage Examples** -- copy-pasteable, tested examples covering: minimal happy path, common real-world invocations (at least 3-5), edge cases and error handling, and, for MCP Servers, an end-to-end client interaction (for example Claude Desktop / MCP Inspector config + tool call + expected response). Each example must state prerequisites, exact command, expected output/exit code, and where to find logs. Flag invented or untested examples.
+4. **Development (Contributing)** -- local environment setup, codebase structure relevant to the CLI/MCP, branch workflow, code style/lint, testing strategy (unit/integration for commands/tools), how to add a new command/flag/tool, CI/CD, and contribution guidelines (issue/PR template, DCO/CLA if any, release process).
+
+Verification for this profile: every install command is runnable, every argument/flag exists in code with correct default/type, every example was executed (or explicitly marked as "requires credentials/network" with a dry-run alternative), and the Development page lets a new contributor go from clone to passing tests.
+
+Rules of the taxonomy (applied to the *selected* scope only):
 
 - If the project has an existing structure, map every page to one of the four guides or shared sections; flag pages whose content targets a different guide than the one they are placed in (for example a deployment topic inside the Development Guide).
-- Flag missing required sub-sections per guide, or sub-sections present but empty.
-- When the `documenter` agent generates a set, this taxonomy defines the required coverage; when auditing, it defines the baseline to verify.
+- Flag missing required sub-sections per *selected* guide, or sub-sections present but empty. Do not flag a missing guide that the user explicitly excluded.
+- When the `documenter` agent generates a set, this taxonomy defines the required coverage *for the selected guides only*; when auditing, it defines the baseline to verify *for the selected scope*. Excluded guides are not gaps.
 
 ## How to apply
 
 Determine the scope first:
 
-- If the user names a page or section, audit or generate only that (plus its interlock points).
-- If a feature branch is given (or `docs/` changed), cover the touched sections plus the interlock points of the change.
-- Default: full sweep over all four guides and any shared sections.
+- **Mandatory scoping question:** before any generation or full audit, ask which guides are wanted (see Scope tailoring above). Do not start writing until the user confirms the set.
+- If the user names a page or section, audit or generate only that (plus its interlock points) -- but still confirm that the owning guide is in the selected scope.
+- If a feature branch is given (or `docs/` changed), cover the touched sections plus the interlock points of the change, constrained to the selected guides.
+- Default if the user explicitly says "full" / "everything": full sweep over all four guides and any shared sections. Otherwise scope is exactly what the user confirmed; an unanswered question is not a default.
 
-Then run the applicable clauses below, grouped: NAV / COVERAGE / LINKS / CONTENT / STYLE.
+Then run the applicable clauses below, grouped: NAV / COVERAGE / LINKS / CONTENT / STYLE, limited to the confirmed scope.
 
 ## NAV -- registration
 
@@ -72,7 +100,8 @@ Documentation must stay in sync with the source of truth for every project artif
 - **Settings reference**: a complete Configuration Reference in the Administrative Guide listing every configuration flag/value the application exposes, each with description and effect, kept in sync with the settings source of truth (settings files, config fragments, environment variables, admin-editable values). Flag missing settings, undocumented flags, outdated defaults, or documented settings that no longer exist.
 - **Environment variables**: every runtime configuration variable in the Deploy Guide, synced with `.env.example`, compose/container env blocks, and deployment manifests. Flag undocumented or obsolete variables.
 - **Model reference (Django)**: every model page in the Development Guide with purpose, connections (FKs, relations, reverse relations), and field meaning (name, type, purpose, optionality, defaults). Flag models without a page, stale pages, or pages describing fields that do not exist.
-- **CLI reference**: every command documented in the Development Guide, synced with the CLI source of truth (argparse/click definitions, management commands): name, type, purpose, defaults, interplay between options. Flag undocumented commands/arguments, outdated defaults, or documented options that no longer exist.
+- **CLI reference (and MCP tool reference)**: every command documented in the Development Guide, synced with the CLI source of truth (argparse/click/typer definitions, management commands, MCP `tools`/`resources`/`prompts`): name, type, purpose, defaults, interplay between options. Flag undocumented commands/arguments, outdated defaults, or documented options that no longer exist.
+- **CLI / MCP Server mandatory sections**: when the project is a CLI or MCP Server (detected via CLI entry points in `pyproject.toml`/`package.json` or `mcp` dependencies), flag missing or shallow Installation, Arguments, Usage Examples, or Development/Contributing pages as High. Each must meet the detail level defined in the CLI / MCP Server profile above.
 - **REST API reference**: a User Guide usage page (endpoints, methods, request/response examples, authentication, error cases) and a Development Guide page explaining how to add endpoints (routing conventions, serializers, permissions, testing). Flag missing pages, uncovered endpoints, or staleness against router/URL definitions.
 - **Export/Import reference**: when the application provides export/import functionality, a User Guide page with format, column list (name, type, required/optional, allowed values), constraints (size/row limits, encoding, format version), whether import runs synchronously or in background, and how the outcome is reported. Flag missing, incomplete, or stale coverage.
 - **Admin-registered models**: every admin-registered model covered by an Administrative Guide page or a `HELP_LINKS`-style URL-to-doc mapping; if the project ships a system check for that mapping, run it.
@@ -106,8 +135,8 @@ Documentation must stay in sync with the source of truth for every project artif
 
 ## Verify & report
 
-- Rebuild the docs site and run the link checker if available (must pass).
+- Rebuild the docs site and run the link checker if available (must pass) -- for the selected scope only; excluded guides must not be built or flagged.
 - Run lint/type/tests only if code files changed (for example a URL-to-doc mapping).
 - Report findings grouped by clause with severity (High/Medium/Low), a proposed fix per finding, and up to three fix-verify loops. Present findings before editing; ask which to apply when the scope is ambiguous (default: all High + Medium).
-- Report with inline evidence: `path/to/file:line` references in the findings, and a summary of fixes applied, checks green, and remaining blockers.
+- Report with inline evidence: `path/to/file:line` references in the findings, and a summary of fixes applied, checks green, and remaining blockers. Explicitly list the confirmed scope (included vs. excluded guides) at the top of the report.
 - Do not commit unless asked.

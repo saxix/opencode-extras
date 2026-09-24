@@ -1,51 +1,52 @@
-UNAME_S := $(shell uname -s 2>/dev/null)
-ifeq ($(UNAME_S),)
-  WIN := 1
-else
-  WIN := 0
-endif
-
-ifeq ($(WIN),0)
-  PREFIX ?= $(HOME)
-else
-  PREFIX ?= $(shell echo %USERPROFILE%)
-endif
-
-DEST = $(PREFIX)/.config/opencode
+PREFIX?=${HOME}
 
 help:
-	@echo "install: symlink skills/, agents/, commands/ into ~/.config/opencode"
-
-ifeq ($(WIN),0)
+	@echo "opencode-utils installer (copy default, per-item coexistence-safe)"
+	@echo ""
+	@echo "Usage (make wrapper -> npx):"
+	@echo "  make install              # global --all (copy)"
+	@echo "  make install-project      # project ./.opencode (copy)"
+	@echo "  make install-opencode     # global opencode only"
+	@echo "  make install-claude       # global claude only"
+	@echo "  make install-codex        # global codex only"
+	@echo "  make install-all          # global opencode+claude+codex"
+	@echo "  make uninstall            # remove global --all"
+	@echo ""
+	@echo "Direct npx (consumers, no clone needed):"
+	@echo "  npx opencode-utils --help"
+	@echo "  npx opencode-utils --global --all --copy"
+	@echo "  npx opencode-utils --project --all --link   # dev live symlinks"
+	@echo ""
+	@echo "Makefile delegates to: node ./scripts/install.mjs"
 
 install:
-	@mkdir -p $(DEST)
-	@ln -sfn "$(PWD)/src/skills"   "$(DEST)/skills"
-	@ln -sfn "$(PWD)/src/agents"   "$(DEST)/agents"
-	@ln -sfn "$(PWD)/src/commands" "$(DEST)/commands"
+	@node ./scripts/install.mjs --global --all
+
+install-project:
+	@node ./scripts/install.mjs --project --all
+
+install-opencode:
+	@node ./scripts/install.mjs --global --opencode
+
+install-claude:
+	@node ./scripts/install.mjs --global --claude
+
+install-codex:
+	@node ./scripts/install.mjs --global --codex
+
+install-all:
+	@node ./scripts/install.mjs --global --all
+
+uninstall:
+	@node ./scripts/install.mjs --uninstall --global --all
 
 clean:
 	rm -fr ./~build
 
 test:
-	mkdir -p ~build/.config/opencode
-	@PREFIX=$(PWD)/~build/ $(MAKE) install
-	ls -al $(PWD)/~build/.config/opencode
-
-else
-
-install:
-	@cmd /c "if not exist \"$(DEST)\" mkdir \"$(DEST)\""
-	@cmd /c mklink /D "$(DEST)\skills"   "$(PWD)\src\skills"
-	@cmd /c mklink /D "$(DEST)\agents"   "$(PWD)\src\agents"
-	@cmd /c mklink /D "$(DEST)\commands" "$(PWD)\src\commands"
-
-clean:
-	@cmd /c "if exist ~build rmdir /s /q ~build"
-
-test:
-	@cmd /c "if not exist ~build\.config\opencode mkdir ~build\.config\opencode"
-	@cmd /c set "PREFIX=$(PWD)\~build\" && $(MAKE) install
-	@cmd /c dir /b "$(PWD)\~build\.config\opencode"
-
-endif
+	@mkdir -p ~build/.config/opencode
+	@PREFIX=${PWD}/~build node ./scripts/install.mjs --global --opencode --dry-run
+	@PREFIX=${PWD}/~build node ./scripts/install.mjs --global --opencode
+	@ls -R ${PWD}/~build/.config/opencode
+	@echo "--- dry-run project ---"
+	@node ./scripts/install.mjs --project --opencode --dry-run

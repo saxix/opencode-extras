@@ -5,31 +5,37 @@ commands available in their terminal-based AI coding assistant.
 
 ## Prerequisites
 
-- A Unix-like shell (`bash`) and [GNU make](https://www.gnu.org/software/make/).
-- At least one supported TUI: opencode (all artifacts), Claude Code (skills
-  only), or another terminal assistant that reads the same Markdown formats.
+- Node.js 18+ and `npx` (for `npx opencode-utils`), or [GNU make](https://www.gnu.org/software/make/) as wrapper.
+- At least one supported TUI: opencode, Claude Code, or Codex (all artifacts: agents, skills, commands).
 - No Python, `uv`, or other build toolchain is required to install or run the
   definitions. `uv` is used only by the optional ticketing MCP servers
   ([environment variables](../deploy/environment.md)).
 
 ## Install
 
-Install the definitions as symlinks, so the repository stays the single
-source of truth:
+Via `npx` (copy per-item, coexistence-safe):
 
 ```sh
-make install-opencode   # symlink agents/, skills/, commands/ and configs into ~/.config/opencode
-make install-claude     # symlink skills/ into ~/.claude/skills
+npx opencode-utils --global --all              # global ~/.config/opencode + ~/.claude + ~/.codex
+npx opencode-utils --project --all             # project ./.opencode + ./.claude + ./.codex
+npx opencode-utils --global --opencode         # only opencode
+npx opencode-utils --global --claude           # only claude
+npx opencode-utils --global --codex            # only codex
+npx opencode-utils --project --link --all      # dev live symlinks (opt-in)
 ```
 
-The commands are defined in `Makefile:7-18`. `install-opencode` creates
-`~/.config/opencode/` and links:
+Via `make` (wrapper to `npx`):
 
-- `agents/`, `skills/`, `commands/` as directories;
-- `opencode_cfg.jsonc` as `~/.config/opencode/opencode.jsonc`;
-- `tui_cfg.jsonc` as `~/.config/opencode/tui.jsonc`.
+```sh
+make install              # global --all (copy)
+make install-project      # project --all (copy)
+```
 
-Details and alternatives (including manual symlinks and a custom `PREFIX`) are
+The installer copies per-item (`skills/<name>/`, `agents/*.md`, `commands/*.md`)
+so multiple skill packs coexist (no directory symlink). Use `--link` for live
+dev symlinks: `npx opencode-utils --project --link --all`.
+
+Details and alternatives (including `PREFIX` and `--dry-run`) are
 in the [installation guide](../deploy/installation.md).
 
 ## Restart your TUI

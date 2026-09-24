@@ -4,57 +4,54 @@ Who is this for? This page is the operational reference for installing the
 toolkit into a TUI. End users should start with
 [Getting started](../user-guide/getting-started.md).
 
-## Install for opencode
+## Install via npx (recommended)
 
 ```sh
-make install-opencode
+npx opencode-utils --global --all              # global ~/.config/opencode + ~/.claude + ~/.codex
+npx opencode-utils --project --all             # project ./.opencode + ./.claude + ./.codex
+npx opencode-utils --global --opencode         # only opencode
+npx opencode-utils --global --claude           # only claude
+npx opencode-utils --global --codex            # only codex
+npx opencode-utils --project --link --all      # dev live symlinks (opt-in)
+npx opencode-utils --dry-run --global --all    # preview
 ```
 
-This target (`Makefile:7-18`) creates `~/.config/opencode/` and symlinks:
+Via `make` (wrapper to `npx`):
+
+```sh
+make install              # global --all (copy)
+make install-project      # project --all (copy)
+make install-opencode     # global opencode only
+make install-claude       # global claude only
+make install-codex        # global codex only
+make install-all          # global opencode+claude+codex
+```
+
+Default is `--copy` per-item (safe with other skill packs). Use `--link` for live dev.
+The installer never creates a directory symlink (`skills -> src/skills`); it copies
+or links per-item (`skills/<name>`) so multiple skill packs can coexist.
+
+## What gets installed
 
 | Repository path | Installed as |
 |---|---|
-| `agents/` | `~/.config/opencode/agents` |
-| `skills/` | `~/.config/opencode/skills` |
-| `commands/` | `~/.config/opencode/commands` |
-| `opencode_cfg.jsonc` | `~/.config/opencode/opencode.jsonc` |
-| `tui_cfg.jsonc` | `~/.config/opencode/tui.jsonc` |
+| `src/skills/<name>/` | `DEST/skills/<name>/` |
+| `src/agents/*.md` | `DEST/agents/*.md` |
+| `src/commands/*.md` | `DEST/commands/*.md` |
 
-The symlinks are created with `ln -sfn`, so the command is idempotent and can
-be re-run to repair stale links. The root-level `opencode.jsonc` project
-sample is not installed by this target.
-
-## Install for Claude Code
-
-```sh
-make install-claude
-```
-
-This target (`Makefile:17-18`) symlinks only `skills/` into
-`~/.claude/skills`. Agents, commands, and configs are opencode-specific.
+`DEST` is `~/.config/opencode` (global opencode), `~/.claude` (global claude),
+`~/.codex` (global codex), or `./.opencode` etc. for `--project`.
 
 ## Custom prefix
 
-`install-opencode` supports overriding the destination home with `PREFIX`:
+All targets support overriding the destination home with `PREFIX`:
 
 ```sh
-make PREFIX=/some/other/home install-opencode
+PREFIX=/some/other/home npx opencode-utils --global --all
+make PREFIX=/some/other/home install
 ```
 
-The same mechanism powers the sandbox smoke test (`Makefile:24-27`).
-
-## Manual install
-
-Instead of make, create the symlinks by hand:
-
-```sh
-mkdir -p ~/.config/opencode
-ln -sfn "$PWD/skills"   ~/.config/opencode/skills
-ln -sfn "$PWD/agents"   ~/.config/opencode/agents
-ln -sfn "$PWD/commands" ~/.config/opencode/commands
-ln -sfn "$PWD/opencode_cfg.jsonc" ~/.config/opencode/opencode.jsonc
-ln -sfn "$PWD/tui_cfg.jsonc"      ~/.config/opencode/tui.jsonc
-```
+The same mechanism powers the sandbox smoke test (`Makefile:clean/test`).
 
 ## After install
 
@@ -66,12 +63,10 @@ ln -sfn "$PWD/tui_cfg.jsonc"      ~/.config/opencode/tui.jsonc
 
 ## Uninstall
 
-Remove the symlinks (and any `tui.jsonc` created by the install):
-
 ```sh
-rm ~/.config/opencode/agents ~/.config/opencode/skills ~/.config/opencode/commands
-rm ~/.config/opencode/opencode.jsonc ~/.config/opencode/tui.jsonc
-rm -rf ~/.claude/skills   # if installed for Claude Code
+npx opencode-utils --uninstall --global --all
+npx opencode-utils --uninstall --project --all
+make uninstall
 ```
 
 ## Next steps

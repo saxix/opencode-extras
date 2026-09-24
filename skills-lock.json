@@ -1,0 +1,155 @@
+{
+  "version": 1,
+  "skills": {
+    "accelerate": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/accelerate/SKILL.md",
+      "computedHash": "e19b6ab064452ecf3ef7d3efb9be9be33ce1c281d427d0c996516574bf133752"
+    },
+    "adapt-workflow": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/adapt-workflow/SKILL.md",
+      "computedHash": "92d1a5acca23deb81ff70b8f19627714be921b82a9c1ba893e81d306390e8bc5"
+    },
+    "agent-workflow": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/agent-workflow/SKILL.md",
+      "computedHash": "ca76cfe43ffb0c9686513715a80dae9cb17e6552768adb891a5d566aa3264a5f"
+    },
+    "amplify": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/amplify/SKILL.md",
+      "computedHash": "12beb1d5944e8eda34df59589eb5a91d8ccb0920382e65c35feb2185f9b7dded"
+    },
+    "calibrate": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/calibrate/SKILL.md",
+      "computedHash": "26be231da68ef2ad45a04af18956916c19d43350aef6769d4471a9f58d8bc16f"
+    },
+    "capture": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/capture/SKILL.md",
+      "computedHash": "df6768adcb3ba109d4d7e579077e244947f1530a7c85aa34d447f35626210d43"
+    },
+    "chain": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/chain/SKILL.md",
+      "computedHash": "d85c02862384eb9a6249064cbace519b6661c80720e44d57ec6c7d92f7341d12"
+    },
+    "compose": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/compose/SKILL.md",
+      "computedHash": "1c9e4bf83c75f8d073d9e7de9b719a8880bc795dd47ebd122032cce152fcdf0d"
+    },
+    "diagnose": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/diagnose/SKILL.md",
+      "computedHash": "7cf8202f14499a48f62a9dddb62bf64ebd2b42f8d796e32cd4732b964d54e08c"
+    },
+    "enrich": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/enrich/SKILL.md",
+      "computedHash": "d64447334c56ad96b11c5f97b1d1a53890ca707d800e31f5639201bea3b9753e"
+    },
+    "evaluate": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/evaluate/SKILL.md",
+      "computedHash": "9027d67ec62844d386b1750da1d303ac64b283ac41c73073219118422cb8de17"
+    },
+    "extract-pattern": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/extract-pattern/SKILL.md",
+      "computedHash": "0624b2c13212b44f2cfd9b7c26d0896c959836855797c3c072411002ab51047d"
+    },
+    "fortify": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/fortify/SKILL.md",
+      "computedHash": "1b533917d4548ebc84b528dd1491f7e93d64a091e268b0c465fbde0b9036c24b"
+    },
+    "guard": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/guard/SKILL.md",
+      "computedHash": "0ac80a73a0abb650feb8a260fc99fd264bbd31f245e637a72b6a868377ca2169"
+    },
+    "iterate": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/iterate/SKILL.md",
+      "computedHash": "d19ee6e0ae13d0379beeb2e7806cc5226218c7554d86502111cbd6a13ae100d3"
+    },
+    "onboard-agent": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/onboard-agent/SKILL.md",
+      "computedHash": "ebfaf4fd6266f0929a04db3b5c0d44302c0395dd81fff793e32cc7b693fa0a06"
+    },
+    "recap": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/recap/SKILL.md",
+      "computedHash": "b9f43c4cfbe6a86f075900f1f8d032941452c9c31610ffd4a0569fb17a5aa8b1"
+    },
+    "refine": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/refine/SKILL.md",
+      "computedHash": "22baa11f1af99662ee5cf0546c87dfacc121aabc02e5882dfd24e365e11fe381"
+    },
+    "reflect": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/reflect/SKILL.md",
+      "computedHash": "eefe5c504192d2e7ae838211e98a9eb5a899a37efec4f1338e5534f147b25af9"
+    },
+    "specialize": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/specialize/SKILL.md",
+      "computedHash": "b68d21a8a5c66ffbabe127e1d03726e6dc1bab973d57ca77928c952c2d957e4b"
+    },
+    "streamline": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/streamline/SKILL.md",
+      "computedHash": "3958fe2fcab8aafbaec26dc96b99f153d7c4af28549a2ca6792c247928a4dbe6"
+    },
+    "teach-maestro": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/teach-maestro/SKILL.md",
+      "computedHash": "ea2bf5f81921a6f113eb91938cfb2cd50c1bd6021446eb2077cef80fc0d17858"
+    },
+    "temper": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/temper/SKILL.md",
+      "computedHash": "334b89fd5e7a7e57fd0a4712c1630a8451caa2d8160fa0dd30051c7c1c0a792b"
+    },
+    "turbocharge": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/turbocharge/SKILL.md",
+      "computedHash": "be189b7a824fbdc1343c77f2063f396c5bcd19a5d477ead44b1a5ed4325ebaae"
+    },
+    "zero-defect": {
+      "source": "sharpdeveye/maestro",
+      "sourceType": "github",
+      "skillPath": "source/skills/zero-defect/SKILL.md",
+      "computedHash": "77795320f54f129942342725f814a381e6ce55a367782bc6e4198cce240a7f65"
+    }
+  }
+}
