@@ -238,6 +238,23 @@ function installForDest(dest) {
       console.log(`  copied agents/${name}`);
     }
   }
+  // copy shared agent assets (e.g., _shared) so relative references remain valid after install
+  const sharedSrc = path.join(SRC, 'agents', '_shared');
+  if (fs.existsSync(sharedSrc)) {
+    const sharedDest = path.join(agentsDest, '_shared');
+    if (dryRun) console.log(`  would ${useLink ? 'link' : 'copy'} agents/_shared`);
+    else {
+      removeRecursive(sharedDest);
+      if (useLink) {
+        const type = process.platform === 'win32' ? 'junction' : 'dir';
+        fs.symlinkSync(sharedSrc, sharedDest, type);
+        console.log(`  linked agents/_shared`);
+      } else {
+        copyRecursive(sharedSrc, sharedDest);
+        console.log(`  copied agents/_shared`);
+      }
+    }
+  }
   for (const name of commands) {
     const srcPath = path.join(SRC, 'commands', name);
     const destPath = path.join(commandsDest, name);

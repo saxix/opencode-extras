@@ -28,7 +28,7 @@ All profiles inherit `common.md` (language, evidence, style, verification base).
 
 ## How to Add a New Profile
 
-1. Create `src/documenter/specs/<type>.md` with sections: Purpose, Required Guides, Mandatory Sections, Evidence Sources, Verification Checklist, Example Structure.
+1. Create `src/skills/documentation/specs/<type>.md` with sections: Purpose, Required Guides, Mandatory Sections, Evidence Sources, Verification Checklist, Example Structure.
 2. Add a row to the table above.
 3. Update `src/agents/documenter.md` scoping question checklist to include the new type.
 4. Update `src/skills/documentation/SKILL.md` scope tailoring if the taxonomy changes.
