@@ -70,24 +70,13 @@ Use chain-of-thought: restate the scope, trace required evidence for each select
 Do not assume the full four-guide set. Before `DISCOVERY` completes, ask which guides to include:
 
 - Present the four guides as a checklist: **User Guide**, **Administrative Guide**, **Development Guide**, **Deploy Guide** (plus shared sections: index, glossary, API reference as needed).
-- Propose presets and let the user pick or customize:
-  - **Library / SDK** (e.g., Python library) -- User Guide + Development Guide; Administrative and Deploy guides not needed unless there is runtime configuration or a dedicated deploy component.
-  - **CLI tool / MCP Server** -- User Guide (Installation + Arguments/Commands + Usage Examples) + Development Guide (Contributing / Development). If the project is a CLI or MCP Server the documentation MUST contain detailed installation, arguments, usage examples, and development sections; map each area to a dedicated page or section. Administrative/Deploy only if there is a service component.
-  - **Application / Service** -- all four guides.
-  - **Custom** -- any combination confirmed by the user.
+- For presets and guide mapping, see `src/documenter/specs/index.md` (Library → `library.md`, CLI → `cli.md`, Skill → `skill.md`, MCP Server → `mcp-server.md`, Project → `project.md`). Propose presets and let the user pick or customize; record the confirmed scope as the baseline for taxonomy coverage, gap list, `PLAN`/`APPROVAL`, writing, and verification. Do not generate excluded guides without explicit confirmation. If the user does not answer, stay in `INTAKE`/`SCOPE` and re-ask. A vague "everything"/"full set" means all four guides.
 - Example (adapt to project language): "What type of project is this? For a library, User Guide and Development Guide are usually enough, without Deploy/Administrative. Which guides do you want to include? [ ] User [ ] Administrative [ ] Development [ ] Deploy"
-- Record the confirmed scope; it becomes the baseline for taxonomy coverage, gap list, `PLAN`/`APPROVAL`, writing, and verification. Do not generate excluded guides without explicit confirmation. If the user does not answer, stay in `INTAKE`/`SCOPE` and re-ask. A vague "everything"/"full set" means all four guides.
+- For profile details, see the corresponding spec: `src/documenter/specs/library.md`, `cli.md`, `skill.md`, `mcp-server.md`, `project.md`; all profiles inherit `common.md`.
 
-### CLI / MCP Server -- mandatory detailed documentation
+### Profile-specific mandatory documentation
 
-When the project is a CLI (or MCP Server = CLI + MCP interface), the four areas below are *mandatory* and must be detailed, tested, and synced to code. In `PLAN`/`WRITE` map each to a dedicated page/section and flag any missing area as a High gap.
-
-1. **Installation** -- prerequisites (OS, Python/Node version), all supported methods (`pipx`/`uv tool`/`pip`/`brew`/`docker`/`npm` -- only those actually configured in `pyproject.toml`/`package.json`/`Dockerfile`), installation verification (`--version` / `--help` / smoke run), upgrade/uninstall, installation troubleshooting. Every command must be executable.
-2. **Arguments / Commands** -- complete reference of commands, subcommands, arguments, flags/options, env vars and config keys: name, type, required/optional, default, allowed values, effect, dependencies/mutual exclusion. Source of truth: CLI definitions (`argparse`/`click`/`typer`/`commander`/`yargs`/management commands) and, for MCP, `tools`/`resources`/`prompts` definitions, transport (stdio/SSE), input/output schemas, client configuration snippets (e.g., Claude Desktop, MCP Inspector).
-3. **Usage Examples** -- copyable and tested examples: happy path, at least 3-5 typical real invocations, edge cases/error handling, and for MCP an end-to-end flow (client config + tool call + expected response). Each example: prerequisites, exact command, expected output/exit code, where to read logs. Do not invent unexecuted examples.
-4. **Development (Contributing)** -- local setup, codebase structure relevant to the CLI/MCP, branch workflow, style/lint, test strategy (unit/integration for commands/tools), how to add a new command/flag/tool, CI/CD, contribution guidelines (issue/PR template, release).
-
-If the user confirmed "CLI" or "MCP Server", include all four even if they initially asked for a smaller scope; ask for confirmation to add the missing ones rather than silently omitting.
+When the project type is confirmed, load the corresponding profile from `src/documenter/specs/` and treat its Mandatory Sections as required. See `cli.md`, `mcp-server.md`, `skill.md`, `library.md`, `project.md` for the four areas per type (e.g., CLI: Installation, Arguments/Commands, Usage Examples, Development; MCP Server: plus Tools/Resources/Prompts and Transport; Skill: Installation, Skill Structure, Available Skills). In `PLAN`/`WRITE` map each mandatory area to a dedicated page/section and flag any missing area as a High gap. If the user confirmed a type that implies mandatory sections, include them even if they initially asked for a smaller scope; ask for confirmation to add the missing ones rather than silently omitting.
 
 ## Build tool resolution
 
@@ -152,7 +141,7 @@ Use chain-of-thought: restate the confirmed scope, trace required evidence for e
    - API routes, endpoints, and schemas;
    - database models and migrations;
    - configuration and deployment files (`docker-compose*.yml`, `.env.example`, `pyproject.toml`, `tox.ini`, and similar) -- only if Administrative/Deploy guides are in scope; skip for pure libraries;
-   - **for CLI / MCP Server**: entry points and CLI definitions (`pyproject.toml` `[project.scripts]` / `[project.entry-points]`, `package.json` `bin`, `argparse`/`click`/`typer`/`commander`/`yargs` definitions, MCP `tools`/`resources`/`prompts` and transport config, `Dockerfile` install steps) -- required to derive Installazione, Argomenti, and Esempi d'uso accurately; test every command/flag against code.
+   - **per profile:** load `src/documenter/specs/<type>.md` for evidence sources: for `library` check `pyproject.toml` and docstrings; for `cli` check entry points and `argparse`/`click`/`typer` definitions; for `skill` check `src/skills/<name>/SKILL.md` and `package.json` bin; for `mcp-server` check MCP `tools`/`resources`/`prompts` and transport config plus `Dockerfile` install steps; test every command/flag against code.
 5. Map required coverage to existing pages using the skill taxonomy filtered to the selected guides; produce a gap list. Excluded guides are not gaps -- except for CLI/MCP projects where Installazione, Argomenti, Esempi d'uso, and Development are always gaps if missing (see CLI / MCP Server profile).
 6. Present the proposed structure and gap list (clearly listing included vs. excluded guides; for CLI/MCP explicitly list the four mandatory areas as covered/gap) and ask for confirmation before writing anything. Never include an excluded guide in the proposal without stating it is excluded.
 7. Write page by page following the skill's style rules (timeout 30s per edit, retry per Layer 2 on transient, fallback per Layer 3). Never leave placeholder text, empty sections, or dummy examples.
@@ -181,7 +170,7 @@ Use chain-of-thought: restate the confirmed scope, trace required evidence for e
 
 For every documentation set, verify before reporting (limited to the confirmed scope):
 
-- structure and coverage against the skill taxonomy *for selected guides only* (missing pages, orphan pages, misplaced topics); do not flag excluded guides as missing -- but for CLI/MCP always verify the four mandatory areas (Installazione, Argomenti, Esempi d'uso, Development) are present and detailed;
+- structure and coverage against the skill taxonomy and the profile in `src/documenter/specs/<type>.md` *for selected guides only* (missing pages, orphan pages, misplaced topics); do not flag excluded guides as missing -- but for `cli`/`skill`/`mcp-server` always verify the profile's mandatory areas (e.g., CLI: Installation, Arguments, Usage Examples, Development; Skill: Installation, Skill Structure, Available Skills) are present and detailed;
 - internal navigation and links (build result, dead anchors, dead page entries) for the selected scope;
 - content consistency: entity names, defaults, and endpoints cross-checked against source; for CLI/MCP, every flag/argument/tool exists in code with correct type/default;
 - CLI/MCP examples and install commands: every snippet is runnable and was checked against the installed binary / `uv run` / `npx` invocation; flag invented or untested examples;

@@ -49,25 +49,23 @@ The docs site is organized in four guides plus shared sections. Required sub-sec
 Not every project needs all four guides. Before generating or auditing, you MUST ask the user which guides/sections they want.
 
 - Ask explicitly which of the four guides are in scope: **User Guide**, **Administrative Guide**, **Development Guide**, **Deploy Guide** (plus shared sections as needed). Do not assume the full set.
-- Propose presets and let the user pick or customize:
-  - **Library / SDK** -- typically User Guide + Development Guide (+ API reference if it exposes one); Administrative Guide and Deploy Guide are usually out of scope unless the library has runtime config or a deployment story.
-  - **CLI tool / MCP Server** -- User Guide (Installation + Arguments/Commands + Usage Examples) + Development Guide (Contributing). Administrative/Deploy only if there is a service component. This profile has *mandatory* detailed coverage (see CLI / MCP Server profile below).
-  - **Application / Service** -- typically all four guides.
-  - **Custom** -- any combination the user confirms.
+- For presets and guide mapping, see `src/documenter/specs/index.md` (Library → `library.md`, CLI → `cli.md`, Skill → `skill.md`, MCP Server → `mcp-server.md`, Project → `project.md`). Propose presets and let the user pick or customize; record the confirmed scope as the baseline for coverage, gaps, and verification. Never generate excluded guides without explicit confirmation.
 - Example question (adapt language to the project's default language): "What type of project is this? For a library, User Guide and Development Guide are usually enough, without Deploy/Administrative. Which guides do you want to include? [ ] User [ ] Administrative [ ] Development [ ] Deploy"
-- Record the confirmed scope and use it as the baseline for coverage, gaps, and verification. Never generate excluded guides without explicit confirmation.
+- For profile details, see the corresponding spec in `src/documenter/specs/` (`library.md`, `cli.md`, `skill.md`, `mcp-server.md`, `project.md`); all profiles inherit `common.md`.
 - If the user does not answer, do not proceed to `WRITE`; stay in `INTAKE`/`SCOPE` and re-ask. A vague "everything" / "full set" means all four guides; otherwise tailor.
 
-### CLI / MCP Server profile -- mandatory detailed coverage
+### Profile-specific mandatory coverage
 
-When the project is a CLI (or an MCP Server, which is a CLI with an MCP interface), the documentation MUST contain detailed, verified coverage for these four areas regardless of which preset label the user picks. Map them to the selected guides and flag any missing area as High severity.
+When the project type is confirmed, load the corresponding profile from `src/documenter/specs/` and treat its Mandatory Sections as required. See `library.md`, `cli.md`, `skill.md`, `mcp-server.md`, `project.md` for the per-type mandatory areas. Map them to the selected guides and flag any missing area as High severity. For per-type details, see the corresponding spec: `src/documenter/specs/<type>.md`.
+
+For reference, the CLI/MCP mandatory areas are:
 
 1. **Installation** -- prerequisites (OS, Python/Node version, dependencies), all supported install methods (for example `pipx`, `uv tool`, `pip`, `brew`, `docker`, `npm`), version check / smoke test, upgrade/uninstall notes, and troubleshooting for common install failures. Sync with `pyproject.toml`, `package.json`, `Dockerfile`, and install scripts; test every command.
 2. **Arguments / Commands** -- complete reference of every command, sub-command, argument, option/flag, and env-var/config-file key that affects CLI behaviour: name, type, required/optional, default, allowed values, effect, and mutual-exclusion or dependency rules. Source of truth is the CLI definition (`argparse`/`click`/`typer`/`commander`/`yargs`, MCP `tools`/`resources`/`prompts` definitions). One page per command for rich CLIs; single-page table only for trivial single-command tools. For MCP Servers also document transport (stdio/SSE), tool list with input/output schemas, and client configuration snippets.
 3. **Usage Examples** -- copy-pasteable, tested examples covering: minimal happy path, common real-world invocations (at least 3-5), edge cases and error handling, and, for MCP Servers, an end-to-end client interaction (for example Claude Desktop / MCP Inspector config + tool call + expected response). Each example must state prerequisites, exact command, expected output/exit code, and where to find logs. Flag invented or untested examples.
 4. **Development (Contributing)** -- local environment setup, codebase structure relevant to the CLI/MCP, branch workflow, code style/lint, testing strategy (unit/integration for commands/tools), how to add a new command/flag/tool, CI/CD, and contribution guidelines (issue/PR template, DCO/CLA if any, release process).
 
-Verification for this profile: every install command is runnable, every argument/flag exists in code with correct default/type, every example was executed (or explicitly marked as "requires credentials/network" with a dry-run alternative), and the Development page lets a new contributor go from clone to passing tests.
+Verification for this profile: every install command is runnable, every argument/flag exists in code with correct default/type, every example was executed (or explicitly marked as "requires credentials/network" with a dry-run alternative), and the Development page lets a new contributor go from clone to passing tests. For per-type verification, see the checklist in the corresponding spec file.
 
 Rules of the taxonomy (applied to the *selected* scope only):
 
