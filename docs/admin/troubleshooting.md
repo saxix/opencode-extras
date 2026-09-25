@@ -31,7 +31,7 @@ restart after any change to `agents/`, `skills/`, `commands/`, or the
 Check frontmatter validity first: missing `name:`/`description:` in a skill
 filters it out; an unknown agent field is silently routed into per-TUI
 options. Then verify the file still follows the TUI-portable output standard
-(`AGENTS.md:85-98`) and restart.
+(`AGENTS.md:100-113`) and restart.
 
 ## MCP ticketing server fails to start
 
@@ -46,11 +46,18 @@ with `cwd` set from `{env:MCP_TICKETING_HOME}`. If it fails:
    additionally needs `MCP_AZURE_DEVOPS_ORG` and `MCP_AZURE_DEVOPS_PROJECT`.
 3. Check the repo has a `uv` virtualenv with `mcp-ticketing` installed.
 
-## `make install-opencode` complains about an existing path
+## An install target complains about an existing path
 
-The target uses symlinks; an existing real directory at the destination must
-be removed first. For example, if `~/.config/opencode/agents` exists as a
-directory, remove it, then re-run make (`Makefile:12-14`).
+The default installer copies definitions per item. If a linked installation
+reports a conflict at the destination, remove the stale real directory or
+symlink, then rerun the command with `--link`. For example:
+
+```sh
+npx opencode-utils --agent opencode --global
+```
+
+The same applies to project installs; use `--agent compat --project` for the
+`.agents` layout.
 
 ## A stale editor backup is mistaken for a definition
 

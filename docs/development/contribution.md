@@ -6,14 +6,14 @@ commands in this repository.
 ## General rules
 
 - Every artifact is plain Markdown with YAML frontmatter.
-- Every skill MUST have a `SKILL.md` at its directory root (`README.md:75`).
+- Every skill MUST have a `SKILL.md` at its directory root (`README.md:155`).
 - Agents and commands require `description:` frontmatter; other fields
   (`agent`, `mode`, `color`, `steps`, `permissions`) are optional per-TUI
-  settings that other TUIs ignore (`README.md:77`).
+  settings that other TUIs ignore (`README.md:157`).
 - Rules live in only one place. For example, the
   [documenter agent](../development/agents-reference.md#documenter) owns the
   docs workflow, while the [documentation skill](../development/skills-reference.md#documentation)
-  owns the domain knowledge; do not duplicate the content (`AGENTS.md:83`).
+  owns the domain knowledge; do not duplicate the content (`AGENTS.md:97`).
 
 ## Authoring a skill
 
@@ -53,7 +53,7 @@ commands in this repository.
 ## The TUI-portable output standard
 
 Any template or output an artifact prescribes must follow the standard in
-`AGENTS.md:89-102`:
+`AGENTS.md:100-113`:
 
 - Plain CommonMark only: no raw HTML, no custom containers or admonitions. Use
   Mermaid fenced code blocks only when the user asks for a diagram or chart.

@@ -23,12 +23,13 @@ A minimal project-scope sample that allows editing files under
 ```
 
 Evidence: `opencode.jsonc:1-8`. It is a sample intended for users of this
-glossary repository, not installed by the make targets.
+glossary repository, not installed by the target installer.
 
 ### `opencode_cfg.jsonc` (global opencode config)
 
-Installed as `~/.config/opencode/opencode.jsonc` by `install-opencode`
-(`Makefile:9-10`). Declared settings (`opencode_cfg.jsonc`):
+Installed as `~/.config/opencode/opencode.jsonc` by
+`npx opencode-utils --agent opencode --global`. Declared settings
+(`opencode_cfg.jsonc`):
 
 | Setting | Value | Effect |
 |---|---|---|
@@ -83,8 +84,9 @@ override those loaded by `uv run` from the server's `.envrc`.
 
 ### `tui_cfg.jsonc` (TUI interface config)
 
-Installed as `~/.config/opencode/tui.jsonc` by `install-opencode`
-(`Makefile:10`). Declared settings (`tui_cfg.jsonc:1-22`):
+Installed as `~/.config/opencode/tui.jsonc` by
+`npx opencode-utils --agent opencode --global`. Declared settings
+(`tui_cfg.jsonc:1-22`):
 
 | Setting | Value | Effect |
 |---|---|---|
@@ -108,7 +110,7 @@ Installed as `~/.config/opencode/tui.jsonc` by `install-opencode`
 | `compatibility` | no | TUI or version compatibility notes |
 | `metadata` | no | String-string map of extra metadata |
 
-Evidence: `README.md:75-76`, `skills/security-owasp/SKILL.md:2-4`.
+Evidence: `README.md:155-157`, `skills/security-owasp/SKILL.md:2-4`.
 
 ### Agents and commands
 
@@ -121,7 +123,7 @@ Evidence: `README.md:75-76`, `skills/security-owasp/SKILL.md:2-4`.
 | `steps` | no | Suggested step budget |
 | `permissions` | no | Per-action allow/deny list, see below |
 
-Evidence: `README.md:77`, the frontmatter blocks in `agents/*.md` and
+Evidence: `README.md:155-157`, the frontmatter blocks in `agents/*.md` and
 `commands/*.md`.
 
 ## Permissions format
@@ -143,7 +145,7 @@ The repository convention is deny-by-default: a broad `*` deny rule comes
 first, then narrow allow rules. Read and glob are the only actions most agents
 allow broadly; editing is restricted to explicit paths, and shell access is
 denied for all analysis agents (`agents/system-analyst.md:7-21`). Per-TUI
-handling of this list varies; other TUIs ignore it (`README.md:77`).
+handling of this list varies; other TUIs ignore it (`README.md:155-157`).
 
 ## Keeping this page in sync
 

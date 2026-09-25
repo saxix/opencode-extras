@@ -6,37 +6,38 @@ definitions, managing scratch state, and keeping documentation in sync.
 ## Updating agents, skills, and commands
 
 Definitions are plain Markdown files under `agents/`, `skills/`, and
-`commands/`. Editing a file updates the installed copy immediately because the
-install targets create symlinks (`Makefile:7-18`). After editing:
+`commands/`. Copy installations update when the installer is rerun; linked
+installations update from the checkout. After editing:
 
 1. Restart the TUI so it reloads configuration and agent lists.
 2. Verify frontmatter: `description:` is required; a skill directory must keep
-   a file named exactly `SKILL.md` (`README.md:75-77`).
+   a file named exactly `SKILL.md` (`README.md:155-157`).
 3. Verify the change still emits TUI-portable output
-   (`AGENTS.md:85-98`).
+   (`AGENTS.md:100-113`).
 
-## Symlink management
+## Install management
 
-The install targets are idempotent `ln -sfn` commands; re-running them repairs
-broken or stale links:
+The installer is idempotent. Re-run the command for each target when a copy is
+stale or a linked destination is broken:
 
 ```sh
-make install-opencode
-make install-claude
+npx opencode-utils --agent opencode --global
+npx opencode-utils --agent claude --global
 ```
 
-`make clean` removes the local test sandbox `~build` (`Makefile:21-22`). The `~build`
-directory and editor backups (for example `spec.md~`) are git-ignored
-(`.gitignore:1-2`).
+Use `--copy` (the default) for coexistence-safe copies or `--link` for live
+local development. Test fixtures are created under `~work/` and removed after
+the test run unless `KEEP_WORK=1` is set. The `~work` directory and editor
+backups (for example `spec.md~`) are git-ignored (`.gitignore:1-2`).
 
 ## Scratch state
 
 - `.ai-temp/` is agent working scratch (for example Business Analyst state
   snapshots): git-ignored, never committed, and never treated as a deliverable
-  (`AGENTS.md:81`).
+  (`AGENTS.md:95`).
 - The Business Analyst also maintains
   `.ai-temp/glossary-known-terms.yaml` as an accumulating project glossary of
-  terms resolved from `docs/` (`AGENTS.md:81`).
+  terms resolved from `docs/` (`AGENTS.md:95`).
 - `.ai/*` instruction files are loaded as context by opencode
   (`opencode_cfg.jsonc:35-37`) and are created or updated by the
   [init-project command](../development/commands/init-project.md).
@@ -57,7 +58,7 @@ verification standard is the static checklist in the documentation skill
 
 ## Housekeeping checklist
 
-- [ ] No tracked dotfiles besides `.gitignore` (`AGENTS.md:80`).
+- [ ] No tracked dotfiles besides `.gitignore` (`AGENTS.md:94`).
 - [ ] No secrets committed; `.envrc` stays untracked (see
   [Security](security.md)).
 - [ ] Skills have a `SKILL.md` entrypoint and frontmatter is valid.

@@ -10,17 +10,16 @@ headers (`tests/install.test.mjs:1`, `package.json: scripts.test`):
 
 ```sh
 npm test          # node --test: header/format + installer per-item tests
-make test         # sandbox dry-run + copy in ~build/.config/opencode
 ```
 
 `npm test` covers:
 - every `src/skills/*/SKILL.md:1` has valid `name`/`description` (22), `SKILL.md` at root, quoting when `:` in description;
 - every `src/agents/*.md:1` and `src/commands/*.md:1` has `description`;
-- installer `scripts/install.mjs:1` per-item copy/link, coexistence (`other-pack` preserved), `PREFIX` isolation, `--dry-run`, `--uninstall`, legacy dir-symlink replacement.
+- installer `scripts/install.mjs:1` per-item copy/link, coexistence (`other-pack` preserved), `PREFIX` isolation, `--dry-run`, `--uninstall`, target selection, `pi`, `compat`, and rejection of removed selector flags.
 
-`make test` runs the installer with `PREFIX` pointing at local `~build/` and
-lists the resulting layout (`Makefile:47`). The `~build/` sandbox is
-git-ignored (`.gitignore:1`).
+The tests use isolated temporary prefixes and clean them up automatically. Set
+`KEEP_WORK=1` when inspecting the test fixtures under `~work/`. The directory
+is git-ignored (`.gitignore:1`).
 
 ## Definition validation
 
@@ -29,9 +28,9 @@ manually against conventions:
 
 | Check | Criterion |
 |---|---|
-| Skill entrypoint | `SKILL.md` exists at the skill directory root (`README.md:75`) |
-| Frontmatter | `name:`/`description:` for skills; `description:` for agents and commands (`README.md:75-77`) |
-| Output standard | Content follows the TUI-portable standard (`AGENTS.md:85-98`) |
+| Skill entrypoint | `SKILL.md` exists at the skill directory root (`README.md:155`) |
+| Frontmatter | `name:`/`description:` for skills; `description:` for agents and commands (`README.md:155-157`) |
+| Output standard | Content follows the TUI-portable standard (`AGENTS.md:100-113`) |
 | Permissions | Deny-first, allow-last convention and a restricted write surface |
 | Docs consistency | Documentation changes match the docs taxonomy (`skills/documentation/SKILL.md`) |
 

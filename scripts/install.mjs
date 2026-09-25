@@ -19,21 +19,20 @@ function get(flag, def = undefined) {
   if (i !== -1 && i + 1 < args.length && !args[i + 1].startsWith('--')) return args[i + 1];
   return def;
 }
+function fail(message) {
+  console.error(`Error: ${message}`);
+  process.exit(1);
+}
 
 const showHelp = has('--help') || has('-h');
 const dryRun = has('--dry-run');
 const uninstall = has('--uninstall');
 const useLink = has('--link');
-const useCopy = has('--copy') || !useLink; // default copy
 const globalFlag = has('--global');
 const projectFlag = has('--project');
-const compatFlag = has('--compat');
-const opencodeFlag = has('--opencode');
-const claudeFlag = has('--claude');
-const codexFlag = has('--codex');
-const allFlag = has('--all');
 const prefixFlag = get('--prefix');
 let prefix = prefixFlag || process.env.PREFIX || os.homedir();
+const agentValues = ['opencode', 'compat', 'claude', 'codex', 'pi'];
 
 function help() {
   console.log(`
@@ -45,32 +44,33 @@ Usage:
   opencode-utils [options]          (via npm bin)
 
 Options:
-  --global        Install to HOME (~/.config/opencode, ~/.claude, ~/.codex) [default if no --project]
-  --project       Install to project ./.opencode, ./.claude, ./.codex
-  --compat        With --project, install to ./.agents (compat) instead of dedicated folders (only with --project)
-  --opencode      Only opencode
-  --claude        Only claude
-  --codex         Only codex
-  --all           All runtimes (opencode + claude + codex)
-  --copy          Copy files per-item (default, coexistence-safe)
-  --link          Symlink per-item (dev live, opt-in)
-  --prefix <dir>  Override HOME prefix (also env PREFIX)
-  --uninstall     Remove installed items
-  --dry-run       Show what would be done
-  --help, -h      Show this help
+  --agent <target>  Select one target: opencode (default), compat, claude, codex, pi
+  --global          Install globally (default unless --project)
+  --project         Install in the current project
+  --copy            Copy files per-item (default, coexistence-safe)
+  --link            Symlink per-item (local dev live, opt-in)
+  --prefix <dir>    Override HOME prefix (also env PREFIX)
+  --uninstall       Remove installed items
+  --dry-run         Show what would be done
+  --help, -h        Show this help
 
 Examples:
-  npx opencode-utils --global --all                 # global, all runtimes, copy
-  npx opencode-utils --project --opencode          # project-local opencode only
-  npx opencode-utils --project --compat            # project-local compat: .agents/saxix-utils
-  npx opencode-utils --global --claude --copy      # only claude global
-  npx opencode-utils --project --link              # dev live symlinks
-  npx opencode-utils --uninstall --global --all    # remove
-  npx opencode-utils --dry-run --global --all      # preview
+  npx opencode-utils                              # opencode global (default)
+  npx opencode-utils --project                    # opencode project
+  npx opencode-utils --agent claude --global      # claude global
+  npx opencode-utils --agent codex --project      # codex project
+  npx opencode-utils --agent pi --global          # pi global
+  npx opencode-utils --agent compat --link        # project .agents layout
+  npx --yes github:saxix/opencode-utils --project --agent opencode
+  npx opencode-utils --uninstall --agent opencode --global
+  npx opencode-utils --dry-run --agent claude --global
 
 Notes:
+  - --agent accepts one target per invocation and defaults to opencode.
+  - --agent compat uses ./.agents and implies --project; it cannot use --global.
   - Default is --copy per-item (coexistence-safe, no directory symlink conflict).
   - --link creates per-item symlinks: DEST/skills/sax-<name> -> src/skills/<name>.
+  - With GitHub specs, --link points to npx's fetched copy/cache, not a local checkout.
   - Never creates a directory symlink (avoids conflict with other skill packs).
   - Skills are installed with prefix "${SKILL_PREFIX}" to avoid collisions (DEST/skills/sax-<name>).
 `);
@@ -78,29 +78,39 @@ Notes:
 
 if (showHelp) { help(); process.exit(0); }
 
-if (compatFlag && !projectFlag) {
-  console.error('Error: --compat requires --project');
-  process.exit(1);
+const booleanFlags = new Set(['--dry-run', '--uninstall', '--link', '--copy', '--global', '--project']);
+const valueFlags = new Set(['--agent', '--prefix']);
+const removedFlags = new Map([
+  ['--compat', '--agent compat'],
+  ['--opencode', '--agent opencode'],
+  ['--claude', '--agent claude'],
+  ['--codex', '--agent codex'],
+  ['--all', 'separate --agent invocations'],
+]);
+
+for (let i = 0; i < args.length; i += 1) {
+  const arg = args[i];
+  if (booleanFlags.has(arg)) continue;
+  if (valueFlags.has(arg)) {
+    if (i + 1 >= args.length || args[i + 1].startsWith('--')) fail(`${arg} requires a value`);
+    i += 1;
+    continue;
+  }
+  if (removedFlags.has(arg)) fail(`${arg} has been removed; use ${removedFlags.get(arg)}`);
+  fail(`Unknown option: ${arg}`);
 }
 
-// Resolve scope: if nothing specified, default to global + opencode
-let scopeGlobal = globalFlag || (!globalFlag && !projectFlag);
+if (args.filter((arg) => arg === '--agent').length > 1) fail('--agent may be specified only once');
+const agent = get('--agent', 'opencode');
+if (!agentValues.includes(agent)) fail(`--agent must be one of: ${agentValues.join(', ')}`);
+
+let scopeGlobal = globalFlag;
 let scopeProject = projectFlag;
-// allow both --global --project
+if (agent === 'compat') {
+  if (globalFlag) fail('--agent compat cannot be combined with --global');
+  scopeProject = true;
+}
 if (!scopeGlobal && !scopeProject) scopeGlobal = true;
-
-let wantOpencode = opencodeFlag;
-let wantClaude = claudeFlag;
-let wantCodex = codexFlag;
-let wantAll = allFlag;
-if (!wantOpencode && !wantClaude && !wantCodex && !wantAll) {
-  // default: opencode only (backward compat); with --all flag later
-  // if user asked npx without flags -> install opencode global
-  wantOpencode = true;
-}
-if (wantAll) {
-  wantOpencode = wantClaude = wantCodex = true;
-}
 
 // Expand prefix
 function expandPrefix(p) {
@@ -109,21 +119,15 @@ function expandPrefix(p) {
 }
 prefix = expandPrefix(prefix);
 
+const cwd = process.cwd();
 const dests = [];
 if (scopeGlobal) {
-  if (wantOpencode) dests.push({ label: 'opencode (global)', base: path.join(prefix, '.config', 'opencode') });
-  if (wantClaude) dests.push({ label: 'claude (global)', base: path.join(prefix, '.claude') });
-  if (wantCodex) dests.push({ label: 'codex (global)', base: path.join(prefix, '.codex') });
+  const base = agent === 'opencode' ? path.join(prefix, '.config', 'opencode') : path.join(prefix, `.${agent}`);
+  dests.push({ label: `${agent} (global)`, base });
 }
 if (scopeProject) {
-  const cwd = process.cwd();
-  if (compatFlag) {
-    dests.push({ label: 'agents (compat project)', base: path.join(cwd, '.agents') });
-  } else {
-    if (wantOpencode) dests.push({ label: 'opencode (project)', base: path.join(cwd, '.opencode') });
-    if (wantClaude) dests.push({ label: 'claude (project)', base: path.join(cwd, '.claude') });
-    if (wantCodex) dests.push({ label: 'codex (project)', base: path.join(cwd, '.codex') });
-  }
+  const base = agent === 'compat' ? path.join(cwd, '.agents') : path.join(cwd, `.${agent === 'opencode' ? 'opencode' : agent}`);
+  dests.push({ label: agent === 'compat' ? 'agents (compat project)' : `${agent} (project)`, base });
 }
 
 function listSkills() {
@@ -364,6 +368,6 @@ for (const d of dests) {
 console.log('\nDone.');
 if (!uninstall && !dryRun) {
   console.log(`Installed skills with prefix "${SKILL_PREFIX}" per-item (coexistence-safe, no directory symlink).`);
-  console.log('Tip: npx opencode-utils --project --all  for project-local install');
-  console.log('     npx opencode-utils --link --global --all  for dev live symlinks');
+  console.log('Tip: npx opencode-utils --project  for project-local opencode install');
+  console.log('     npx opencode-utils --agent compat --link  for project .agents links');
 }

@@ -1,30 +1,23 @@
 # agents-skills
 
-Reusable agents, skills, and commands for AI coding TUIs. All definitions are plain Markdown and all generated output follows the TUI-portable standard in this file, so they render correctly in `opencode`, Claude Code, Gemini CLI, hermes, and other terminal assistants.
+Reusable agents, skills, and commands for AI coding TUIs. All definitions are plain Markdown and all generated output follows the TUI-portable standard in this file, so they render correctly in `opencode`, Claude Code, Codex, pi, Gemini CLI, hermes, and other terminal assistants.
 
 ## Install
 
 Via `npx` (copy per-item, coexistence-safe):
 
 ```sh
-npx opencode-utils --global --all              # global ~/.config/opencode + ~/.claude + ~/.codex
-npx opencode-utils --project --all             # project ./.opencode + ./.claude + ./.codex
-npx opencode-utils --global --opencode         # only opencode
-npx opencode-utils --project --link --all      # dev live symlinks (opt-in)
+npx opencode-utils                              # global opencode (default)
+npx opencode-utils --project                    # project opencode
+npx opencode-utils --agent claude --global      # global claude
+npx opencode-utils --agent codex --project      # project codex
+npx opencode-utils --agent pi --global          # global pi
+npx opencode-utils --agent compat               # project .agents layout
+npx opencode-utils --agent opencode --link      # global live symlinks
+npx opencode-utils --help
 ```
 
-Via `make` (wrapper to `npx`):
-
-```sh
-make install              # global --all (copy)
-make install-project      # project --all (copy)
-make install-opencode     # global opencode only
-make install-claude       # global claude only
-make install-codex        # global codex only
-make install-all          # global opencode+claude+codex
-```
-
-Default is `--copy` per-item (safe with other skill packs). Use `--link` for live dev.
+Default is `--copy` per-item (safe with other skill packs). Use `--link` for live dev. Use `--agent compat` for the project `.agents` layout.
 
 ## Structure
 
@@ -92,6 +85,11 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `truthmode` | Strict empirical rigor and epistemic calibration |
 | `git-status` | Explain what pending changes are trying to do |
 
+## Git workflow
+
+- Do not create or use branches in this project.
+- Work directly on `main` and commit changes there.
+
 ## Conventions
 
 - Each skill MUST have a `SKILL.md` at its directory root.
@@ -121,4 +119,4 @@ When a skills or agent file prescribes an output template, that template is gove
 
 ## No code
 
-This repository contains no application code, tests, lint, typecheck, or CI. It is purely instruction definitions for coding agents.
+This repository contains a small Node installer and tests, but no application runtime, lint, typecheck, or CI. Its primary content is instruction definitions for coding agents.

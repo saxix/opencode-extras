@@ -5,19 +5,19 @@ once installed, and how the toolkit maps onto each TUI.
 
 ## Where definitions live
 
-Source of truth is the repository; installed copies are symlinks.
+The repository is the source of truth. The installer copies definitions by
+default; `--link` creates live symlinks to a local checkout.
 
-| Artifact | Repository | Installed by `install-opencode` | Installed by `install-claude` |
-|---|---|---|---|
-| Agents | `agents/` | `~/.config/opencode/agents/` | not installed |
-| Skills | `skills/` | `~/.config/opencode/skills/` | `~/.claude/skills/` |
-| Commands | `commands/` | `~/.config/opencode/commands/` | not installed |
-| Global config | `opencode_cfg.jsonc` | `~/.config/opencode/opencode.jsonc` | not installed |
-| TUI config | `tui_cfg.jsonc` | `~/.config/opencode/tui.jsonc` | not installed |
+| `--agent` value | Global destination | Project destination |
+|---|---|---|
+| `opencode` | `~/.config/opencode` | `./.opencode` |
+| `claude` | `~/.claude` | `./.claude` |
+| `codex` | `~/.codex` | `./.codex` |
+| `pi` | `~/.pi` | `./.pi` |
+| `compat` | not supported | `./.agents` (implies `--project`) |
 
-Evidence: `Makefile:7-18`. The root-level `opencode.jsonc` in the repository
-is a project-scope sample and is not installed by the make targets
-(`opencode.jsonc`).
+The root-level `opencode.jsonc` in the repository is a project-scope sample and
+is not installed by the target installer (`opencode.jsonc`).
 
 ## opencode
 
@@ -33,24 +33,21 @@ is a project-scope sample and is not installed by the make targets
   MCP servers) and `tui.jsonc` (interface settings). Both are loaded once at
   startup.
 
-## Claude Code
+## Claude Code, Codex, and pi
 
-- **Skills only.** `install-claude` symlinks `skills/` into
-  `~/.claude/skills/` (`Makefile:17-18`). Agents, commands, and the opencode
-  configs are not installed for Claude Code.
+The installer writes the portable `agents/`, `skills/`, and `commands/` layout
+to the selected target directory. Each TUI decides which parts it loads.
 
 ## Other TUIs
 
-Terminal assistants that read the same Markdown formats (Gemini CLI, hermes)
-consume the definitions as portable Markdown. Per-TUI settings in frontmatter
-(`agent`, `mode`, `color`, `steps`, `permissions`) are optional and ignored by
-TUIs that do not use them (`README.md:77`).
+Terminal assistants that read the same Markdown formats consume the definitions
+as portable Markdown. Per-TUI settings in frontmatter (`agent`, `mode`, `color`,
+`steps`, `permissions`) are optional and ignored by TUIs that do not use them.
 
 ## After any change
 
-Because definitions are symlinked, editing the repository is enough to update
-the installed copy; then restart the TUI to reload configuration and agent
-lists.
+Copy installations update when the installer is rerun. Linked installations
+update when the checkout changes; restart the TUI in either case.
 
 ## Next steps
 

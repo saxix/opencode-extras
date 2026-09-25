@@ -7,16 +7,16 @@ toolkit. Operators should also read the
 ## My new agent does not appear
 
 Configurations are loaded once when the TUI starts. Quit and restart the
-assistant. Symlinks point at the repository, so a file created there is
-already installed; only the running session is stale.
+assistant. Copy installations must be refreshed with `npx opencode-utils`; linked
+installations update from the checkout automatically.
 
 ## A skill never triggers
 
 Skills load on demand when the task matches the skill's `description:`
 frontmatter. The description must carry the literal keywords users are likely
-to say (`README.md:76`). Check:
+to say (`README.md:156`). Check:
 
-- the skill directory has a file named exactly `SKILL.md` (`README.md:75`);
+- the skill directory has a file named exactly `SKILL.md` (`README.md:155`);
 - `name:` and `description:` are present and the description front-loads the
   trigger keywords;
 - the TUI was restarted after the change.
@@ -29,30 +29,33 @@ Commands are Markdown prompt bodies under `commands/`. If the command has no
 git-ignored editor backup (for example `commands/~spec-inspect.~md`) is not a
 command.
 
-## The install symlinks went stale or broke
+## The installed copy is stale or missing
 
-Re-run the make target:
+Re-run the install command for the selected target:
 
 ```sh
-make install-opencode
-make install-claude
+npx opencode-utils
+npx opencode-utils --agent claude
+npx opencode-utils --agent codex
+npx opencode-utils --agent pi
 ```
 
-The targets recreate the symlinks under `~/.config/opencode/` and
-`~/.claude/skills/` (`Makefile:7-18`). If a path conflicts with an existing
-directory, remove the old directory first and re-run make.
+Use `--agent compat` for the project `.agents` layout, or pass `--link` when
+the installed files should follow a local checkout. If a path conflicts with an
+existing directory, remove the old directory first and retry.
 
 ## My report renders badly (emoji, wide tables, raw HTML)
 
 Every definition in this repository must produce TUI-portable output: plain
 CommonMark, ASCII-first, ATX headings, narrow tables, fenced code blocks, and
-no TUI-specific directives (`AGENTS.md:85-98`). Flag the offending definition
+no TUI-specific directives (`AGENTS.md:100-113`). Flag the offending definition
 or ask the `init-project` / documentation workflows to conform.
 
-## Why is there no application code in this repository?
+## Why is there no application runtime in this repository?
 
-By design. The repository is purely instruction definitions for coding agents
-(`README.md:95`). Features are the definitions themselves, not a runtime.
+By design. The repository contains a small installer and tests, but its primary
+content is instruction definitions for coding agents (`README.md:173-175`).
+Features are the definitions themselves, not a runtime.
 
 ## Two agents claim the same task
 

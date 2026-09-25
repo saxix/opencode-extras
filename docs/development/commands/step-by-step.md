@@ -1,6 +1,6 @@
 # step-by-step
 
-Deconstructs a task into an idempotent sequential plan (`README.md:71`).
+Deconstructs a task into an idempotent sequential plan (`README.md:149`).
 
 ## Details
 

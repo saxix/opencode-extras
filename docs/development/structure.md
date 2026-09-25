@@ -13,14 +13,13 @@ Who is this for? This page maps the repository layout for contributors.
 | `scripts/install.mjs` | Node installer for `npx opencode-utils` (per-item copy/link, `PREFIX` support) |
 | `tests/install.test.mjs` | Minimal test suite (`node --test`, header + installer) |
 | `package.json` | NPM package `@saxix/opencode-utils` with `bin` and `test` script |
-| `Makefile` | Wrapper to `node scripts/install.mjs` (`install`, `install-project`, `test`) |
 | `AGENTS.md` | Project instructions loaded by coding agents |
 | `README.md` | Project readme |
 | `.envrc` | Local credentials, git-ignored |
 | `.ai-temp/` | Agent scratch state, git-ignored (may not exist in a fresh clone) |
-| `~build/` | Sandbox produced by `make test`, git-ignored |
+| `~work/` | Temporary test fixtures, git-ignored |
 
-Evidence: directory listing, `README.md:12-20`, `Makefile:1`, `package.json:10`.
+Evidence: directory listing, `README.md:5-26`, `package.json:6-8,30-32`.
 
 ## `src/agents/`
 
@@ -34,7 +33,7 @@ and a handoff/report format.
 
 One directory per skill under `src/skills/`. Each directory must contain `SKILL.md`; reference
 material lives alongside in named subdirectories such as `refs/`,
-`references/`, `languages/`, `infrastructure/` (`README.md:17`). The
+`references/`, `languages/`, `infrastructure/` (`README.md:94`). The
 `documentation` skill defines the docs site taxonomy; the security skills
 group orchestration, threat modeling, and OWASP reviews.
 
@@ -47,9 +46,9 @@ specific agent (`src/commands/new-spec.md:3`).
 
 ## Conventions that shape the layout
 
-- Every skill MUST have a `SKILL.md` at its directory root (`README.md:75`).
+- Every skill MUST have a `SKILL.md` at its directory root (`README.md:155`).
 - `.gitignore` excludes all dotfiles and editor backups (`~*`); only
-  `.gitignore` itself is kept among dotfiles (`AGENTS.md:80`).
+  `.gitignore` itself is kept among dotfiles (`AGENTS.md:94`).
 - `plugins/` is reserved but currently empty.
 
 ## Next steps
