@@ -6,32 +6,40 @@ toolkit into a TUI. End users should start with
 
 ## Install via npx (recommended)
 
-```sh
-npx opencode-utils --global --all              # global ~/.config/opencode/skills/sax-* + ~/.claude/skills/sax-* + ~/.codex/skills/sax-*
-npx opencode-utils --project --all             # project ./.opencode/skills/sax-* + ./.claude/skills/sax-* + ./.codex/skills/sax-*
-npx opencode-utils --global --opencode         # only opencode
-npx opencode-utils --global --claude           # only claude
-npx opencode-utils --global --codex            # only codex
-npx opencode-utils --project --link --all      # dev live symlinks (opt-in)
-npx opencode-utils --project --compat          # project compat ./.agents/skills/sax-* (instead of dedicated folders)
-npx opencode-utils --dry-run --global --all    # preview
-```
-
-Via `make` (wrapper to `npx`):
+The default target is `opencode`, installed globally:
 
 ```sh
-make install              # global --all (copy)
-make install-project      # project --all (copy)
-make install-opencode     # global opencode only
-make install-claude       # global claude only
-make install-codex        # global codex only
-make install-all          # global opencode+claude+codex
+npx opencode-utils
+npx opencode-utils --project
+npx opencode-utils --agent claude --global
+npx opencode-utils --agent codex --project
+npx opencode-utils --agent pi --global
+npx opencode-utils --agent compat
+npx opencode-utils --agent opencode --link
+npx opencode-utils --dry-run --agent opencode --global
 ```
 
-Default is `--copy` per-item (safe with other skill packs). Use `--link` for live dev.
-The installer never creates a directory symlink (`skills -> src/skills`); it copies
+`--agent compat` selects the project `.agents` layout and implies `--project`.
+Use `--agent` with one target per invocation; `opencode` is the default.
+
+Default is `--copy` per-item (safe with other skill packs). Use `--link` for symlink
+installs. For live updates, use a local checkout. The installer never creates a
+directory symlink (`skills -> src/skills`); it copies
 or links per-item (`skills/sax-<name>`) so multiple skill packs can coexist.
-Skills are installed with prefix `sax-` to avoid collisions.
+Skills are installed with prefix `sax-` to avoid collisions. Use `--agent compat`
+for the project `.agents` layout.
+
+## Install from GitHub
+
+Run the default branch directly from GitHub without a published npm release:
+
+```sh
+npx --yes github:saxix/opencode-utils --project --agent opencode
+```
+
+**Warning:** `npx github:... --link` points the symlinks to the package copy/cache
+managed by `npx`, not to a local Git checkout. Existing links do not update when the
+remote branch changes. Use the local checkout workflow below for live development.
 
 ## What gets installed
 
@@ -43,25 +51,23 @@ Skills are installed with prefix `sax-` to avoid collisions.
 | `src/agents/_shared/state-persistence.md` | `DEST/sax/shared/state-persistence.md` (shared spec, not an agent) |
 
 `DEST` is `~/.config/opencode` (global opencode), `~/.claude` (global claude),
-`~/.codex` (global codex), or `./.opencode` etc. for `--project`.
-With `--project --compat`, `DEST` is `./.agents` -> `./.agents/skills/sax-*`.
+`~/.codex` (global codex), `~/.pi` (global pi), or `./.opencode` etc. for
+`--project`. With `--agent compat`, `DEST` is `./.agents` and the command
+implies `--project`.
 
 ### Install from a local clone (dev with --link)
+
+For a local checkout, use `node` to install directly from this working tree:
 
 ```sh
 git clone https://github.com/saxix/opencode-utils.git
 cd opencode-utils
-# install this clone into itself as project (live symlinks)
-node ./scripts/install.mjs --project --link --all
-# install this clone into another project
+node ./scripts/install.mjs --project --link --agent opencode
 cd /path/to/your/project
-node /path/to/opencode-utils/scripts/install.mjs --project --link --all
-# compat variant (single .agents)
-node /path/to/opencode-utils/scripts/install.mjs --project --compat --link
-# verify
-ls -l .opencode/skills/sax-security        # symlink -> src/skills/sax-security
-ls -l .agents/skills/sax-security          # compat
-ls -l .opencode/sax/shared/state-persistence.md  # shared spec (not an agent)
+node /path/to/opencode-utils/scripts/install.mjs --project --link --agent opencode
+node /path/to/opencode-utils/scripts/install.mjs --agent compat --link
+ls -l .opencode/skills/sax-security
+ls -l .agents/skills/sax-security
 readlink .opencode/skills/sax-security
 ```
 
@@ -70,11 +76,11 @@ readlink .opencode/skills/sax-security
 All targets support overriding the destination home with `PREFIX`:
 
 ```sh
-PREFIX=/some/other/home npx opencode-utils --global --all
-make PREFIX=/some/other/home install
+PREFIX=/some/other/home npx opencode-utils --agent opencode --global
 ```
 
-The same mechanism powers the sandbox smoke test (`Makefile:clean/test`).
+The same mechanism powers the installer tests. The Node test suite uses an isolated
+`PREFIX` sandbox under `~work/`.
 
 ## After install
 
@@ -87,10 +93,9 @@ The same mechanism powers the sandbox smoke test (`Makefile:clean/test`).
 ## Uninstall
 
 ```sh
-npx opencode-utils --uninstall --global --all
-npx opencode-utils --uninstall --project --all
-npx opencode-utils --uninstall --project --compat
-make uninstall
+npx opencode-utils --uninstall --agent opencode --global
+npx opencode-utils --uninstall --project --agent opencode
+npx opencode-utils --uninstall --agent compat
 ```
 
 ## Next steps

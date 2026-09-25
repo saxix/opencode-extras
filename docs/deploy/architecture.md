@@ -6,9 +6,10 @@ installation.
 ## Single source of truth
 
 The repository is the single source of truth for every definition. The
-installer copies per-item by default (`npx opencode-utils --global --all`,
-`scripts/install.mjs:214`), or symlinks per-item with `--link` for live dev
-(`Makefile:7-18` legacy). Default copy is coexistence-safe across skill packs.
+installer copies per-item by default (`npx opencode-utils`,
+`scripts/install.mjs`), or symlinks per-item with `--link` for live dev. The
+selected `--agent` target determines the destination; default copy is
+coexistence-safe across skill packs.
 
 ## Installation topology
 
@@ -19,11 +20,12 @@ src/commands/*.md     ->  DEST/commands/*.md      (per-item copy/link)
 ```
 
 `DEST` is `~/.config/opencode` (opencode), `~/.claude` (Claude Code),
-`~/.codex` (Codex), or `./.opencode` etc. for `--project` (`scripts/install.mjs:102`).
-Default `--copy` never creates a directory symlink (`skills -> src/skills`), so
-multiple packs coexist (`Makefile:7-18` legacy used dir symlinks).
+`~/.codex` (Codex), `~/.pi` (pi), or `./.opencode` etc. for `--project`.
+`--agent compat` uses `./.agents` and implies project scope. Default `--copy`
+never creates a directory symlink (`skills -> src/skills`), so multiple packs
+coexist.
 
-Evidence: `scripts/install.mjs:214`, [Installation](installation.md).
+Evidence: `scripts/install.mjs`, [Installation](installation.md).
 
 ## No runtime services
 

@@ -7,10 +7,9 @@ Who is this for? This page lists what you need before installing the toolkit.
 | Prerequisite | Purpose |
 |---|---|
 | `Node.js 18+` + `npx` | Installer and tests (`package.json:10`, `tests/install.test.mjs:1`) |
-| Unix-like shell (`bash`) | Running `make` wrapper (`Makefile:1`) |
-| [GNU make](https://www.gnu.org/software/make/) | Optional wrapper for `npx opencode-utils` (`make install`, `test`) |
+| Unix-like shell (`bash`) | Running the Node installer and tests |
 | `git` | Cloning and updating the repository |
-| An AI coding TUI | Consuming the definitions (opencode, Claude Code, Codex; all support `npx opencode-utils`) |
+| An AI coding TUI | Consuming the definitions (opencode, Claude Code, Codex, pi; all support `npx opencode-utils`) |
 
 ## Optional
 

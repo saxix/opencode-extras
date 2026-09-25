@@ -42,7 +42,7 @@ See [Slash command](#slash-command).
 The YAML block at the top of a Markdown definition file, delimited by `---`
 lines. Skills require `name:` and `description:`; agents and commands require
 `description:` and may carry per-TUI settings such as `agent`, `mode`, `color`,
-`steps`, and `permissions` (`README.md:75-77`). See the
+`steps`, and `permissions` (`README.md:155-157`). See the
 [configuration reference](admin/configuration.md).
 
 ## MCP
@@ -78,7 +78,7 @@ on demand when a task matches their description
 
 The required entrypoint file of every skill. It uses `name:` and `description:`
 frontmatter; the description carries the trigger keywords
-(`README.md:75-76`).
+(`README.md:155-156`).
 
 ## Slash command
 
@@ -104,5 +104,5 @@ hermes, and similar (`README.md:3`).
 The output standard required of every agent, skill, and command in this
 repository: plain CommonMark, ASCII-first charset, ATX headings, narrow tables,
 fenced code blocks with language tags, self-contained evidence, no
-TUI-specific directives (`AGENTS.md:85-98`). See the
+TUI-specific directives (`AGENTS.md:100-113`). See the
 [contribution guidelines](development/contribution.md).

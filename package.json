@@ -1,7 +1,7 @@
 {
   "name": "@saxix/opencode-utils",
   "version": "1.0.0",
-  "description": "Reusable agents, skills and commands for opencode, Claude Code and Codex",
+  "description": "Reusable agents, skills and commands for opencode, Claude Code, Codex and pi",
   "type": "module",
   "bin": {
     "opencode-utils": "./scripts/install.mjs"

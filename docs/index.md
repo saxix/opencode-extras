@@ -6,8 +6,9 @@ hermes, and similar terminal assistants). All definitions are plain Markdown
 and all generated output follows the TUI-portable output standard, so the same
 definitions render correctly in every terminal assistant.
 
-The repository contains no application code, tests, lint, typecheck, or CI
-(`README.md:95`). It is purely instruction definitions for coding agents.
+The repository contains a small Node installer and tests, but no application
+runtime, lint, typecheck, or CI (`README.md:173-175`). Its primary content is
+instruction definitions for coding agents.
 
 ## Guides
 

@@ -18,7 +18,7 @@ from scratch each time.
   for example "deconstruct a task into an idempotent plan".
 
 All definitions are plain Markdown with YAML frontmatter. The same files work
-in `opencode`, Claude Code, Codex, Gemini CLI, hermes, and other terminal
+in `opencode`, Claude Code, Codex, pi, Gemini CLI, hermes, and other terminal
 assistants (`README.md:3`). The repository ships a Node installer
 (`package.json:10`, `scripts/install.mjs:1`) and a minimal test suite
 (`tests/install.test.mjs:1`, `npm test`); no application runtime is required.
@@ -28,7 +28,7 @@ assistants (`README.md:3`). The repository ships a Node installer
 - **TUI-portable output standard.** Every agent, skill, and command must emit
   output that renders correctly in any terminal assistant: plain CommonMark,
   ASCII-first, ATX headings, narrow tables, self-contained evidence
-  (`AGENTS.md:85-98`).
+  (`AGENTS.md:100-113`).
 - **Read-only analysis roles.** The System Analyst and its discovery subagents
   inspect the codebase without editing, then present implementation options
   for a human decision (`agents/system-analyst.md:26-28`).
@@ -41,9 +41,10 @@ assistants (`README.md:3`). The repository ships a Node installer
 - **One-skill-per-directory layout.** Each skill has a `SKILL.md` entrypoint
   and optional reference material (see the
   [skill reference](../development/skills-reference.md)).
-- **Plug-and-play install.** One `npx` command copies per-item into your TUI
-  config (`npx opencode-utils --global --all`), or `make install` as wrapper
-  (see [getting started](getting-started.md) and [installation](../deploy/installation.md)).
+- **Plug-and-play install.** One `npx` command copies per-item into the default
+  OpenCode config (`npx opencode-utils`), with `--agent` for other targets
+  (see [getting started](getting-started.md) and
+  [installation](../deploy/installation.md)).
 
 ## What you get
 

@@ -4,56 +4,99 @@ Reusable **agents**, **skills**, and **commands** for AI coding TUIs. Typeset as
 
 ## Install
 
-Via `npx` (copy per-item, coexistence-safe, no directory symlink):
+The default target is `opencode`, installed globally:
 
 ```sh
-npx opencode-utils --global --all              # global ~/.config/opencode/skills/sax-* + ~/.claude/skills/sax-* + ~/.codex/skills/sax-*
-npx opencode-utils --project --all             # project ./.opencode/skills/sax-* + ./.claude/skills/sax-* + ./.codex/skills/sax-*
-npx opencode-utils --global --opencode         # only opencode
-npx opencode-utils --global --claude           # only claude
-npx opencode-utils --global --codex            # only codex
-npx opencode-utils --project --link --all      # dev live symlinks (opt-in)
-npx opencode-utils --project --compat          # project compat ./.agents/skills/sax-* (instead of dedicated folders)
-
-# preview / remove
-npx opencode-utils --dry-run --global --all
-npx opencode-utils --uninstall --global --all
+npx opencode-utils
+npx opencode-utils --project
 ```
 
-Skills are installed with prefix `sax-` (`DEST/skills/sax-<name>`) to avoid collisions; agents/commands are per-item, coexistence-safe.
+You can also run the default branch directly from GitHub:
 
-#### Install from a local clone (dev with --link)
+```sh
+npx --yes github:saxix/opencode-utils --project --agent opencode
+```
+
+**Warning:** `npx github:... --link` links the package copy/cache managed by
+`npx`, not a local Git checkout. Existing links do not update when the remote
+branch changes. Use the local checkout workflow below for live development.
+
+Select another target with `--agent`:
+
+```sh
+npx opencode-utils --agent claude --global
+npx opencode-utils --agent codex --project
+npx opencode-utils --agent pi --global
+npx opencode-utils --agent compat
+npx opencode-utils --agent opencode --link
+```
+
+`--agent compat` selects the project `.agents` layout and implies `--project`.
+Use `--copy` (the default) for coexistence-safe copies or `--link` for symlink
+installs. For live updates, use the local checkout workflow below.
+
+### Local checkout
+
+For a local checkout, use `node` to install directly from this working tree:
 
 ```sh
 git clone https://github.com/saxix/opencode-utils.git
 cd opencode-utils
-# install this clone into itself as project (live symlinks)
-node ./scripts/install.mjs --project --link --all
-# install this clone into another project
-cd /path/to/your/project
-node /path/to/opencode-utils/scripts/install.mjs --project --link --all
-# compat variant (single .agents)
-node /path/to/opencode-utils/scripts/install.mjs --project --compat --link
-# preview / verify
-ls -l .opencode/skills/sax-security            # symlink -> src/skills/security
-ls -l .agents/skills/sax-security              # compat
-readlink .opencode/skills/sax-security
+node ./scripts/install.mjs --project --link --agent opencode
 ```
 
-Via `make` (wrapper to `npx`):
+Skills use the `sax-` prefix and are installed per item for coexistence.
+
+## CLI help
+
+Run the installer help with:
 
 ```sh
-make install              # global --all (copy)
-make install-project      # project --all (copy)
-make install-opencode     # global opencode only
-make install-claude       # global claude only
-make install-codex        # global codex only
-make install-all          # global opencode+claude+codex
-make help                 # show npx help
-make uninstall            # remove global --all
+npx opencode-utils --help
 ```
 
-Default is `--copy` per-item (safe with other skill packs). Use `--link` for live dev. Skills use prefix `sax-` to avoid collisions. Use `--project --compat` to install to `./.agents/skills/sax-*` instead of dedicated folders.
+The current output is:
+
+```text
+opencode-utils installer
+
+Usage:
+  npx opencode-utils [options]
+  npx github:saxix/opencode-utils [options]
+  opencode-utils [options]          (via npm bin)
+
+Options:
+  --agent <target>  Select one target: opencode (default), compat, claude, codex, pi
+  --global          Install globally (default unless --project)
+  --project         Install in the current project
+  --copy            Copy files per-item (default, coexistence-safe)
+  --link            Symlink per-item (local dev live, opt-in)
+  --prefix <dir>    Override HOME prefix (also env PREFIX)
+  --uninstall       Remove installed items
+  --dry-run         Show what would be done
+  --help, -h        Show this help
+
+Examples:
+  npx opencode-utils                              # opencode global (default)
+  npx opencode-utils --project                    # opencode project
+  npx opencode-utils --agent claude --global      # claude global
+  npx opencode-utils --agent codex --project      # codex project
+  npx opencode-utils --agent pi --global          # pi global
+  npx opencode-utils --agent compat --link        # project .agents layout
+  npx --yes github:saxix/opencode-utils --project --agent opencode
+  npx opencode-utils --uninstall --agent opencode --global
+  npx opencode-utils --dry-run --agent claude --global
+
+Notes:
+  - --agent accepts one target per invocation and defaults to opencode.
+  - --agent compat uses ./.agents and implies --project; it cannot use --global.
+  - Default is --copy per-item (coexistence-safe, no directory symlink conflict).
+  - --link creates per-item symlinks: DEST/skills/sax-<name> -> src/skills/<name>.
+  - With GitHub specs, --link points to npx's fetched copy/cache, not a local checkout.
+  - Never creates a directory symlink (avoids conflict with other skill packs).
+  - Skills are installed with prefix "sax-" to avoid collisions (DEST/skills/sax-<name>).
+```
+
 
 ## Structure
 
@@ -139,6 +182,6 @@ All generated output (handoffs, reviews, reports, commit messages, PR descriptio
 - **Self-contained output.** No relative links to repo files the reader may not have; inline the evidence (path:line) instead.
 - **Literal special characters** must be escaped or placed in code spans so no TUI mis-parses them.
 
-## No code
+## Scope
 
-This repository contains no application code, tests, lint, typecheck, or CI. It is purely instruction definitions for coding agents.
+This repository contains a small Node installer and tests, but no application runtime, lint, typecheck, or CI. Its primary content is instruction definitions for coding agents.

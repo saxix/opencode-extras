@@ -1,6 +1,6 @@
 # humanize
 
-Rewrites text without corporate or AI markers (`README.md:68`).
+Rewrites text without corporate or AI markers (`README.md:146`).
 
 ## Details
 

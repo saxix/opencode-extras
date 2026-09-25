@@ -10,7 +10,7 @@ There is no automated release pipeline. Observed evidence:
 - repository history is two commits: `initial commit` and `updates`
   (`git log`);
 - no git tags exist (`git tag` is empty);
-- the repository declares it contains no CI (`README.md:95`).
+- the repository declares it contains no CI (`README.md:173-175`).
 
 Releases are therefore manual: a "release" is a commit that updates the
 definitions. The toolkit itself ships a
@@ -20,31 +20,30 @@ run against this repository.
 
 ## Installing a given version
 
-Because install targets are symlinks to a checkout
-([Installation](installation.md)), the installed version is always the
-checkout version:
+The default installation copies definitions from the checkout. Refresh a copy
+after updating or checking out a version:
 
 ```sh
-git pull                 # update the checkout
-make install-opencode    # repair symlinks if needed (idempotent)
+git pull
+npx opencode-utils --agent opencode --global
 ```
 
-Then restart the TUI to reload. The symlink target stays valid as long as the
-checkout path does not move ([Provisioning](provisioning.md)).
+Linked installations follow the checkout automatically, but must be refreshed
+if their destination path moves. Restart the TUI after installing.
 
 ## Rollback
 
-Installed copies are never separate; rolling back means moving the checkout to
-a previous state:
+To roll back a copy installation, check out the previous version and rerun the
+installer:
 
 ```sh
 git checkout <previous-commit-or-branch>
-make install-opencode   # optional; symlinks usually still valid
+npx opencode-utils --agent opencode --global
 ```
 
-Restart the TUI afterwards. To pin an entire deployment, tag the checkout and
-check out the tag. If the checkout directory itself moves, re-run the install
-targets to recreate the symlinks.
+Restart the TUI afterwards. For a linked installation, checking out the
+previous version changes the linked files without rerunning the installer. If
+the checkout directory moves, rerun the install with `--link`.
 
 ## Versioning guidance
 

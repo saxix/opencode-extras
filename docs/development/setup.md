@@ -6,11 +6,11 @@ definitions in this repository.
 ## Prerequisites
 
 - `git` to clone the repository.
-- `Node.js 18+` and `npx` for the installer and tests (`package.json:10`, `tests/install.test.mjs:1`); `make` as optional wrapper.
-- Unix shell (macOS or Linux) for `make` targets.
+- `Node.js 18+` and `npx` for the installer and tests (`package.json:10`, `tests/install.test.mjs:1`).
+- Unix shell (macOS or Linux) for the commands below.
 - No Python, `uv`, tox, or other build toolchain except for optional ticketing
   MCP servers or `properdocs` site build.
-- Optional: an installed TUI (opencode, Claude Code, Codex) to exercise the
+- Optional: an installed TUI (opencode, Claude Code, Codex, pi) to exercise the
   definitions; `uv` only if you also run the ticketing MCP servers; `properdocs`
   only if you want to render the documentation site.
 
@@ -20,23 +20,22 @@ definitions in this repository.
 git clone https://github.com/saxix/opencode-utils.git agents-skills
 cd agents-skills
 npm test          # header/format + installer per-item copy/link tests (Node built-in, uses ./~work)
-make test         # sandbox dry-run + copy in ~build/.config/opencode
 ```
 
 ### Install this clone into a project with --link (dev live)
 
 ```sh
 # install this clone into itself
-node ./scripts/install.mjs --project --link --all
-ls -l .opencode/skills/sax-security   # symlink -> src/skills/security
+node ./scripts/install.mjs --project --link --agent opencode
+ls -l .opencode/skills/sax-security
 
 # install this clone into another project
 cd /path/to/your/project
-node /path/to/opencode-utils/scripts/install.mjs --project --link --all
+node /path/to/opencode-utils/scripts/install.mjs --project --link --agent opencode
 ls -l .opencode/skills/sax-security
 
-# compat mode (single .agents instead of .opencode/.claude/.codex)
-node /path/to/opencode-utils/scripts/install.mjs --project --compat --link
+# compat layout
+node /path/to/opencode-utils/scripts/install.mjs --agent compat --link
 ls -l .agents/skills/sax-security
 readlink .agents/skills/sax-security
 
@@ -46,7 +45,6 @@ ls -R ./~work
 ```
 
 `npm test` runs `tests/install.test.mjs:1` (header validation for `src/skills/*/SKILL.md:1`, `src/agents/*.md:1`, `src/commands/*.md:1` and isolated `PREFIX` installs).
-`make test` builds a sandbox under `~build/` with the same per-item copy layout that `npx opencode-utils --global --all` creates (`Makefile:47`). The sandbox is git-ignored (`.gitignore:1`).
 
 ## Tooling expectations
 
@@ -67,7 +65,8 @@ ls -R ./~work
 
 You can exercise agents and commands directly in an opencode session opened in
 this repository: opencode reads project-scope `opencode.jsonc` and the
-installed global definitions. For a full sandbox, run `npx opencode-utils --global --all` or `make install` (see [Installation](../deploy/installation.md)).
+installed global definitions. For a full sandbox, run `npx opencode-utils` (see
+[Installation](../deploy/installation.md)).
 
 ## Next steps
 

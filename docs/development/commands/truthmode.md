@@ -1,6 +1,6 @@
 # truthmode
 
-Applies strict empirical rigor and epistemic calibration (`README.md:72`).
+Applies strict empirical rigor and epistemic calibration (`README.md:150`).
 
 ## Details
 
