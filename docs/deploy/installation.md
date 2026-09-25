@@ -7,12 +7,13 @@ toolkit into a TUI. End users should start with
 ## Install via npx (recommended)
 
 ```sh
-npx opencode-utils --global --all              # global ~/.config/opencode + ~/.claude + ~/.codex
-npx opencode-utils --project --all             # project ./.opencode + ./.claude + ./.codex
+npx opencode-utils --global --all              # global ~/.config/opencode/skills/sax-* + ~/.claude/skills/sax-* + ~/.codex/skills/sax-*
+npx opencode-utils --project --all             # project ./.opencode/skills/sax-* + ./.claude/skills/sax-* + ./.codex/skills/sax-*
 npx opencode-utils --global --opencode         # only opencode
 npx opencode-utils --global --claude           # only claude
 npx opencode-utils --global --codex            # only codex
 npx opencode-utils --project --link --all      # dev live symlinks (opt-in)
+npx opencode-utils --project --compat          # project compat ./.agents/skills/sax-* (instead of dedicated folders)
 npx opencode-utils --dry-run --global --all    # preview
 ```
 
@@ -29,18 +30,40 @@ make install-all          # global opencode+claude+codex
 
 Default is `--copy` per-item (safe with other skill packs). Use `--link` for live dev.
 The installer never creates a directory symlink (`skills -> src/skills`); it copies
-or links per-item (`skills/<name>`) so multiple skill packs can coexist.
+or links per-item (`skills/sax-<name>`) so multiple skill packs can coexist.
+Skills are installed with prefix `sax-` to avoid collisions.
 
 ## What gets installed
 
 | Repository path | Installed as |
 |---|---|
-| `src/skills/<name>/` | `DEST/skills/<name>/` |
+| `src/skills/<name>/` | `DEST/skills/sax-<name>/` |
 | `src/agents/*.md` | `DEST/agents/*.md` |
 | `src/commands/*.md` | `DEST/commands/*.md` |
+| `src/agents/_shared/state-persistence.md` | `DEST/sax/shared/state-persistence.md` (shared spec, not an agent) |
 
 `DEST` is `~/.config/opencode` (global opencode), `~/.claude` (global claude),
 `~/.codex` (global codex), or `./.opencode` etc. for `--project`.
+With `--project --compat`, `DEST` is `./.agents` -> `./.agents/skills/sax-*`.
+
+### Install from a local clone (dev with --link)
+
+```sh
+git clone https://github.com/saxix/opencode-utils.git
+cd opencode-utils
+# install this clone into itself as project (live symlinks)
+node ./scripts/install.mjs --project --link --all
+# install this clone into another project
+cd /path/to/your/project
+node /path/to/opencode-utils/scripts/install.mjs --project --link --all
+# compat variant (single .agents)
+node /path/to/opencode-utils/scripts/install.mjs --project --compat --link
+# verify
+ls -l .opencode/skills/sax-security        # symlink -> src/skills/sax-security
+ls -l .agents/skills/sax-security          # compat
+ls -l .opencode/sax/shared/state-persistence.md  # shared spec (not an agent)
+readlink .opencode/skills/sax-security
+```
 
 ## Custom prefix
 
@@ -66,6 +89,7 @@ The same mechanism powers the sandbox smoke test (`Makefile:clean/test`).
 ```sh
 npx opencode-utils --uninstall --global --all
 npx opencode-utils --uninstall --project --all
+npx opencode-utils --uninstall --project --compat
 make uninstall
 ```
 

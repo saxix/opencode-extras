@@ -43,12 +43,12 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `business-analyst` | primary | Refines software requests into approved, ready-to-create tickets |
 | `system-analyst` | primary | Analyzes tickets against the codebase and presents implementation options for a decision |
 | `coder` | primary | Implements an approved ticket from its requirements and selected direction, then verifies |
-| `code-impact-explorer` | subagent | Read-only codebase discovery for the System Analyst |
-| `ticket-context-reader` | subagent | Read-only ticket and discussion retrieval for the Business Analyst |
-| `docs-glossary-reader` | subagent | Resolves a single unknown term from `docs/` with a minimal, capped report |
-| `docs-topic-reader` | subagent | Returns documented content relevant to one topic |
+| `sub-code-impact-explorer` | subagent | Read-only codebase discovery for the System Analyst |
+| `sub-ticket-context-reader` | subagent | Read-only ticket and discussion retrieval for the Business Analyst |
+| `sub-docs-glossary-reader` | subagent | Resolves a single unknown term from `docs/` with a minimal, capped report |
+| `sub-docs-topic-reader` | subagent | Returns documented content relevant to one topic |
 | `documenter` | primary | Generates or updates documentation for any repository using the docs taxonomy and checks (typically Python/uv) |
-| `researcher` | subagent | Searches the web for libraries, frameworks, tools, patterns, and technical solutions |
+| `sub-researcher` | subagent | Searches the web for libraries, frameworks, tools, patterns, and technical solutions |
 
 ## Skills
 

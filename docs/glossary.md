@@ -90,8 +90,8 @@ the [command reference](development/commands/debug-code.md).
 ## Subagent
 
 An agent with `mode: subagent` that runs as a bounded, delegated task from
-another agent (for example `code-impact-explorer`, `ticket-context-reader`).
-Most subagents are read-only and hidden (`agents/code-impact-explorer.md:3`).
+another agent (for example `sub-code-impact-explorer`, `sub-ticket-context-reader`).
+Most subagents are read-only and hidden (`agents/sub-code-impact-explorer.md:3`).
 
 ## TUI
 

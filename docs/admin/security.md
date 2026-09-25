@@ -29,7 +29,7 @@ Agents are granted the minimum access needed:
 
 - **Read-only roles**: Business Analyst, System Analyst, and all subagents
   cannot edit or run shell commands (`agents/system-analyst.md:7-8`,
-  `agents/code-impact-explorer.md:4-6`).
+  `agents/sub-code-impact-explorer.md:4-6`).
 - **Deny-by-default**: the Documenter denies all edits except `docs/**`,
   `README*`, and `properdocs.yml`/`properdocs.yaml`
   (`agents/documenter.md:14-28`).
@@ -38,8 +38,8 @@ Agents are granted the minimum access needed:
   the Documenter only for `uv run properdocs` and `properdocs`,
   `agents/documenter.md:29-37`).
 - **Subagent limits**: subagents are either read-only or read with bounded
-  scope (for example `docs-glossary-reader` may only read `docs/**`,
-  `agents/docs-glossary-reader.md:5-8`).
+  scope (for example `sub-docs-glossary-reader` may only read `docs/**`,
+  `agents/sub-docs-glossary-reader.md:5-8`).
 
 Permission lists follow a deny-first, allow-last convention
 ([configuration reference](configuration.md)).

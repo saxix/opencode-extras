@@ -38,7 +38,7 @@ commands in this repository.
    `*` deny rule before narrow allow rules
    ([configuration reference](../admin/configuration.md)).
 4. For subagents, prefer read-only access: deny `edit` and `shell`, restrict
-   `read`/`glob` to the needed scope (`agents/docs-topic-reader.md`).
+   `read`/`glob` to the needed scope (`agents/sub-docs-topic-reader.md`).
 
 ## Authoring a command
 
