@@ -30,8 +30,8 @@ Operating rules that shape the interaction:
 - It does not mutate tickets until the approval gate has passed
   (`agents/business-analyst.md:63`).
 - It may consult `README*` and `docs/` for product terminology and relies on
-  the [docs-glossary-reader](../../development/agents-reference.md#docs-glossary-reader)
-  and [docs-topic-reader](../../development/agents-reference.md#docs-topic-reader)
+  the [sub-docs-glossary-reader](../../development/agents-reference.md#sub-docs-glossary-reader)
+  and [sub-docs-topic-reader](../../development/agents-reference.md#sub-docs-topic-reader)
   subagents (`agents/business-analyst.md:37-45`).
 
 Approve the draft ticket when the requirements are complete and testable; only
@@ -51,8 +51,8 @@ Operating rules:
 - It distinguishes repository evidence, ticket facts, assumptions, risks, and
   recommendations (`agents/system-analyst.md:34`).
 - It delegates bounded retrieval to the
-  [code-impact-explorer](../../development/agents-reference.md#code-impact-explorer)
-  and [ticket-context-reader](../../development/agents-reference.md#ticket-context-reader)
+  [sub-code-impact-explorer](../../development/agents-reference.md#sub-code-impact-explorer)
+  and [sub-ticket-context-reader](../../development/agents-reference.md#sub-ticket-context-reader)
   subagents (`agents/system-analyst.md:17-21`).
 - It may always inspect documentation and usage patterns of libraries already
   installed in the project (local research, no permission needed).

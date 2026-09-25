@@ -7,16 +7,37 @@ Reusable **agents**, **skills**, and **commands** for AI coding TUIs. Typeset as
 Via `npx` (copy per-item, coexistence-safe, no directory symlink):
 
 ```sh
-npx opencode-utils --global --all              # global ~/.config/opencode + ~/.claude + ~/.codex
-npx opencode-utils --project --all             # project ./.opencode + ./.claude + ./.codex
+npx opencode-utils --global --all              # global ~/.config/opencode/skills/sax-* + ~/.claude/skills/sax-* + ~/.codex/skills/sax-*
+npx opencode-utils --project --all             # project ./.opencode/skills/sax-* + ./.claude/skills/sax-* + ./.codex/skills/sax-*
 npx opencode-utils --global --opencode         # only opencode
 npx opencode-utils --global --claude           # only claude
 npx opencode-utils --global --codex            # only codex
 npx opencode-utils --project --link --all      # dev live symlinks (opt-in)
+npx opencode-utils --project --compat          # project compat ./.agents/skills/sax-* (instead of dedicated folders)
 
 # preview / remove
 npx opencode-utils --dry-run --global --all
 npx opencode-utils --uninstall --global --all
+```
+
+Skills are installed with prefix `sax-` (`DEST/skills/sax-<name>`) to avoid collisions; agents/commands are per-item, coexistence-safe.
+
+#### Install from a local clone (dev with --link)
+
+```sh
+git clone https://github.com/saxix/opencode-utils.git
+cd opencode-utils
+# install this clone into itself as project (live symlinks)
+node ./scripts/install.mjs --project --link --all
+# install this clone into another project
+cd /path/to/your/project
+node /path/to/opencode-utils/scripts/install.mjs --project --link --all
+# compat variant (single .agents)
+node /path/to/opencode-utils/scripts/install.mjs --project --compat --link
+# preview / verify
+ls -l .opencode/skills/sax-security            # symlink -> src/skills/security
+ls -l .agents/skills/sax-security              # compat
+readlink .opencode/skills/sax-security
 ```
 
 Via `make` (wrapper to `npx`):
@@ -32,7 +53,7 @@ make help                 # show npx help
 make uninstall            # remove global --all
 ```
 
-Default is `--copy` per-item (safe with other skill packs). Use `--link` for live dev.
+Default is `--copy` per-item (safe with other skill packs). Use `--link` for live dev. Skills use prefix `sax-` to avoid collisions. Use `--project --compat` to install to `./.agents/skills/sax-*` instead of dedicated folders.
 
 ## Structure
 
@@ -41,8 +62,6 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `agents/` | Agent definitions (Markdown with YAML frontmatter: role, permissions, state machine, handoff format) |
 | `skills/` | Skills (one subdirectory per skill with a `SKILL.md` entrypoint and optional `refs/`, `references/`, `languages/`, `infrastructure/`) |
 | `commands/` | Slash-command definitions (Markdown prompt bodies with an optional YAML frontmatter: `description:`, `agent:`) |
-| `plugins/` | Reserved for TUI plugins |
-| `*.jsonc` | Sample opencode global/TUI configs (`opencode.jsonc`, `opencode_cfg.jsonc`, `tui_cfg.jsonc`) |
 
 ## Agents
 
@@ -51,12 +70,12 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `business-analyst` | primary | Refines software requests into approved, ready-to-create tickets |
 | `system-analyst` | primary | Analyzes tickets against the codebase and presents implementation options for a decision |
 | `coder` | primary | Implements an approved ticket from its requirements and selected direction, then verifies |
-| `code-impact-explorer` | subagent | Read-only codebase discovery for the System Analyst |
-| `ticket-context-reader` | subagent | Read-only ticket and discussion retrieval for the Business Analyst |
-| `docs-glossary-reader` | subagent | Resolves a single unknown term from `docs/`, cached in `.ai-temp/` so terms are not re-searched each session |
-| `docs-topic-reader` | subagent | Returns documented content relevant to one topic |
+| `sub-code-impact-explorer` | subagent | Read-only codebase discovery for the System Analyst |
+| `sub-ticket-context-reader` | subagent | Read-only ticket and discussion retrieval for the Business Analyst |
+| `sub-docs-glossary-reader` | subagent | Resolves a single unknown term from `docs/`, cached in `.ai-temp/` so terms are not re-searched each session |
+| `sub-docs-topic-reader` | subagent | Returns documented content relevant to one topic |
 | `documenter` | primary | Generates or updates project documentation for any repository using the docs taxonomy and checks (typically Python/uv) |
-| `researcher` | subagent | Searches the web for libraries, frameworks, tools, patterns, and technical solutions |
+| `sub-researcher` | subagent | Searches the web for libraries, frameworks, tools, patterns, and technical solutions |
 
 ## Skills
 
