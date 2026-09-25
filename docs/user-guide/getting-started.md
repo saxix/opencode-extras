@@ -16,12 +16,13 @@ commands available in their terminal-based AI coding assistant.
 Via `npx` (copy per-item, coexistence-safe):
 
 ```sh
-npx opencode-utils --global --all              # global ~/.config/opencode + ~/.claude + ~/.codex
-npx opencode-utils --project --all             # project ./.opencode + ./.claude + ./.codex
+npx opencode-utils --global --all              # global ~/.config/opencode/skills/sax-* + ~/.claude/skills/sax-* + ~/.codex/skills/sax-*
+npx opencode-utils --project --all             # project ./.opencode/skills/sax-* + ./.claude/skills/sax-* + ./.codex/skills/sax-*
 npx opencode-utils --global --opencode         # only opencode
 npx opencode-utils --global --claude           # only claude
 npx opencode-utils --global --codex            # only codex
 npx opencode-utils --project --link --all      # dev live symlinks (opt-in)
+npx opencode-utils --project --compat          # project compat ./.agents/skills/sax-* (instead of dedicated folders)
 ```
 
 Via `make` (wrapper to `npx`):
@@ -31,9 +32,17 @@ make install              # global --all (copy)
 make install-project      # project --all (copy)
 ```
 
-The installer copies per-item (`skills/<name>/`, `agents/*.md`, `commands/*.md`)
-so multiple skill packs coexist (no directory symlink). Use `--link` for live
-dev symlinks: `npx opencode-utils --project --link --all`.
+The installer copies per-item (`skills/sax-<name>/`, `agents/*.md`, `commands/*.md`)
+so multiple skill packs coexist (no directory symlink). Skills use prefix `sax-` to avoid collisions. Use `--link` for live
+dev symlinks: `npx opencode-utils --project --link --all`. For a local clone use `node ./scripts/install.mjs --project --link --all` from the target project (see [installation guide](../deploy/installation.md) for clone + `.agents` compat).
+
+Install from a local clone (dev):
+
+```sh
+git clone https://github.com/saxix/opencode-utils.git
+node ./scripts/install.mjs --project --link --all          # .opencode/skills/sax-*
+node ./scripts/install.mjs --project --compat --link       # .agents/skills/sax-*
+```
 
 Details and alternatives (including `PREFIX` and `--dry-run`) are
 in the [installation guide](../deploy/installation.md).

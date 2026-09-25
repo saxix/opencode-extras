@@ -17,10 +17,32 @@ definitions in this repository.
 ## Clone and verify
 
 ```sh
-git clone <repository-url> agents-skills
+git clone https://github.com/saxix/opencode-utils.git agents-skills
 cd agents-skills
-npm test          # header/format + installer per-item copy/link tests (Node built-in)
+npm test          # header/format + installer per-item copy/link tests (Node built-in, uses ./~work)
 make test         # sandbox dry-run + copy in ~build/.config/opencode
+```
+
+### Install this clone into a project with --link (dev live)
+
+```sh
+# install this clone into itself
+node ./scripts/install.mjs --project --link --all
+ls -l .opencode/skills/sax-security   # symlink -> src/skills/security
+
+# install this clone into another project
+cd /path/to/your/project
+node /path/to/opencode-utils/scripts/install.mjs --project --link --all
+ls -l .opencode/skills/sax-security
+
+# compat mode (single .agents instead of .opencode/.claude/.codex)
+node /path/to/opencode-utils/scripts/install.mjs --project --compat --link
+ls -l .agents/skills/sax-security
+readlink .agents/skills/sax-security
+
+# keep work dir for inspection (tests use ./~work)
+KEEP_WORK=1 node --test tests/install.test.mjs
+ls -R ./~work
 ```
 
 `npm test` runs `tests/install.test.mjs:1` (header validation for `src/skills/*/SKILL.md:1`, `src/agents/*.md:1`, `src/commands/*.md:1` and isolated `PREFIX` installs).

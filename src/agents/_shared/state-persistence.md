@@ -29,7 +29,7 @@ Maintain a separate project-scoped file at `.ai-temp/glossary-known-terms.yaml`:
 
 Rules:
 
-- Load the file at `INTAKE`. Before delegating a term to `docs-glossary-reader`, consult it: if the entry is documented and fresh, use its definition as a documentation observation; if it is `not_found`, skip the delegation and record the limitation instead of re-searching.
+- Load the file at `INTAKE`. Before delegating a term to `sub-docs-glossary-reader`, consult it: if the entry is documented and fresh, use its definition as a documentation observation; if it is `not_found`, skip the delegation and record the limitation instead of re-searching.
 - After each delegation, merge the report: the requested term (as `documented` with definition and source, or `not_found`), every co-term in `Related terms needed to understand it` that got a documented meaning, and any alias encountered. Dedup by term key, overwrite in place, latest `resolved_at` wins.
 - Invalidate and re-resolve when (i) the user contradicts a cached entry -- the user correction wins and the entry becomes `user_confirmed` -- or (ii) the mtime of a `docs/` file referenced in `source` is newer than `resolved_at`.
 - Entries are documentation observations, never confirmed requirements; the cache is not a substitute for user confirmation.
