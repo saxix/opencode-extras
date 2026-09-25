@@ -31,7 +31,7 @@ restart after any change to `agents/`, `skills/`, `commands/`, or the
 Check frontmatter validity first: missing `name:`/`description:` in a skill
 filters it out; an unknown agent field is silently routed into per-TUI
 options. Then verify the file still follows the TUI-portable output standard
-(`AGENTS.md:100-113`) and restart.
+(`AGENTS.md:118-131`) and restart.
 
 ## MCP ticketing server fails to start
 

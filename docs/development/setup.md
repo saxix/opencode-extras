@@ -19,7 +19,7 @@ definitions in this repository.
 ```sh
 git clone https://github.com/saxix/opencode-utils.git agents-skills
 cd agents-skills
-npm test          # header/format + installer per-item copy/link tests (Node built-in, uses ./~work)
+npm test
 ```
 
 ### Install this clone into a project with --link (dev live)
@@ -44,7 +44,9 @@ KEEP_WORK=1 node --test tests/install.test.mjs
 ls -R ./~work
 ```
 
-`npm test` runs `tests/install.test.mjs:1` (header validation for `src/skills/*/SKILL.md:1`, `src/agents/*.md:1`, `src/commands/*.md:1` and isolated `PREFIX` installs).
+`npm test` runs `tests/install.test.mjs:1` (validation for skill, agent, and
+command contracts, including the guarded analyst bookmark commands, plus
+isolated `PREFIX` installs).
 
 ## Tooling expectations
 
@@ -57,7 +59,8 @@ ls -R ./~work
 
 - `.envrc` -- local environment variables for ticketing credentials
   (see [Security](../admin/security.md)). It is git-ignored.
-- `.ai-temp/` -- agent scratch state (git-ignored).
+- `.ai-temp/` -- explicit analyst bookmarks and the project glossary cache
+  (git-ignored; never committed).
 - `.idea/` -- editor preferences (git-ignored via the `.*` rule,
   `.gitignore:2`).
 

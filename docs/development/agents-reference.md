@@ -1,7 +1,7 @@
 # Agent reference
 
 Who is this for? This page catalogs every agent in `src/agents/`, with its purpose,
-mode, and key constraints. Source of truth: `src/agents/*.md` and `AGENTS.md:32-44`.
+mode, and key constraints. Source of truth: `src/agents/*.md` and `AGENTS.md:32-45`.
 
 ## Summary
 
@@ -14,6 +14,7 @@ mode, and key constraints. Source of truth: `src/agents/*.md` and `AGENTS.md:32-
 | [sub-ticket-context-reader](#sub-ticket-context-reader) | subagent | Read-only ticket and discussion retrieval for the Business Analyst |
 | [sub-docs-glossary-reader](#sub-docs-glossary-reader) | subagent | Resolves a single unknown term from `docs/` with a minimal, capped report |
 | [sub-docs-topic-reader](#sub-docs-topic-reader) | subagent | Returns documented content relevant to one topic |
+| [sub-universal-code-reviewer](#sub-universal-code-reviewer) | subagent | Reviews code across languages for bugs, security, performance, and maintainability |
 | [documenter](#documenter) | primary | Generates or updates documentation for any repository using the docs taxonomy and checks (typically Python/uv) |
 | [sub-researcher](#sub-researcher) | subagent | Searches the web for libraries, frameworks, tools, patterns, and technical solutions |
 
@@ -23,28 +24,50 @@ Primary agent. Refines product and business requests into approved,
 ready-to-create functional tickets without implementing them
 (`src/agents/business-analyst.md:2`). Works in the problem domain only, asks one
 substantive question per message, and never mutates a ticket before the
-approval gate (`src/agents/business-analyst.md:56-63`). May read `README*` and
+approval gate (`src/agents/business-analyst.md:76-85`). May read `README*` and
 `docs/`, and delegates retrieval to `sub-ticket-context-reader` and the docs
 readers. Cannot edit the repo, run shell, or spawn arbitrary subagents; the
-only write location is the fixed `.ai-temp/business-analyst.yaml` snapshot
-(annotate/resume). Applies the `ticket-writing` skill for ticket content.
+only write locations are its explicit bookmark directory
+`.ai-temp/business-analyst/**` and the separate glossary cache
+`.ai-temp/glossary-known-terms.yaml`. It never autosaves work: persistence occurs
+only through `issue-save`, followed by the role-scoped `issue-load` and
+`issue-list` commands (`src/agents/business-analyst.md:151-177`). Applies the
+`ticket-writing` skill for ticket content.
 
 ## system-analyst
 
 Primary agent. Analyzes tickets against the existing codebase read-only and
 presents implementation options for a user decision (`src/agents/system-analyst.md:2`).
 Distinguishes evidence, facts, assumptions, risks, and recommendations; never
-silently chooses between viable alternatives (`src/agents/system-analyst.md:34-38`).
-Delegates to `sub-code-impact-explorer`, `sub-ticket-context-reader`, and `sub-researcher`;
-denies edit (except `.ai-temp/`), shell, and other subagents. Output must stay
+silently chooses between viable alternatives (`src/agents/system-analyst.md:61-74`).
+Delegates to `sub-code-impact-explorer`, `sub-ticket-context-reader`, and
+`sub-researcher`; denies shell and other subagents. Its only write permission is
+the explicit bookmark directory `.ai-temp/system-analyst/**`
+(`src/agents/system-analyst.md:160-185`). Output must stay
 at architectural and design analysis level: no production code, diffs, or
-implementation-ready patches (`src/agents/system-analyst.md:43-58`). Asks the user
+implementation-ready patches (`src/agents/system-analyst.md:42-74`). Asks the user
 for explicit permission before delegating web research to the `sub-researcher`
-subagent (`src/agents/system-analyst.md:46`). Resolves the output language from the
+subagent (`src/agents/system-analyst.md:74`). Resolves the output language from the
 project context (existing ticket, `README*`, recent tickets, `docs/`) via the
 `ticket-writing` skill and asks only when it cannot be determined
-(`src/agents/system-analyst.md:141`). Can create technical tickets on request,
-with a draft-mode question before creation (`src/agents/system-analyst.md:260`).
+(`src/agents/system-analyst.md:72`). Can create technical tickets on request,
+with a draft-mode question before creation (`src/agents/system-analyst.md:388-398`).
+
+## Analyst bookmarks
+
+The two analysts share one persistence contract but never share a bookmark
+directory. `issue-save <name>` writes only when the user explicitly invokes it
+while that analyst is active. `issue-list` reads only the same analyst's regular
+`*.md` files, and `issue-load <name>` restores the compact projection and its
+`Next action`. A missing, unknown, or non-analyst active role stops all file
+access.
+
+Bookmark names are 1-64 characters and accept only letters, digits, `_`, and `-`
+after an initial letter or digit. Overwrite requires confirmation. Legacy
+`.ai-temp/business-analyst.yaml` and `.ai-temp/system-analyst.yaml` files are
+ignored and are not migrated. The project glossary cache remains independent.
+Source: `src/agents/_shared/state-persistence.md:7-141` and
+`src/commands/issue-save.md`.
 
 ## coder
 
@@ -84,6 +107,15 @@ documented content relevant to one requested topic
 (`src/agents/sub-docs-topic-reader.md:2`). Read and glob are restricted to `docs/**`;
 edit and shell are denied.
 
+## sub-universal-code-reviewer
+
+Subagent (hidden). Reviews code in any language for bugs, security,
+performance, and maintainability within the requested scope
+(`src/agents/sub-universal-code-reviewer.md:2-3`). It may read code and adjacent
+documentation and load a matching review skill, but denies edit, shell, and
+subagents. It returns findings only and never implements fixes
+(`src/agents/sub-universal-code-reviewer.md:28-30`).
+
 ## documenter
 
 Primary agent. Generates or updates project technical documentation for any
@@ -103,7 +135,7 @@ Read-only: denies edit, shell, and subagents; allows websearch and webfetch
 (`src/agents/sub-researcher.md:7-22`). Called by the System Analyst when a design option
 would benefit from external solutions not yet in the project. The System Analyst
 must ask the user for explicit permission before delegating web research
-(`src/agents/system-analyst.md:46`). Returns structured findings with verified URLs,
+(`src/agents/system-analyst.md:65`). Returns structured findings with verified URLs,
 pros/cons, and fit classification per solution category
 (`src/agents/sub-researcher.md:49-74`).
 
@@ -111,13 +143,14 @@ pros/cons, and fit classification per solution category
 
 | Agent | Edit | Shell | Subagents |
 |---|---|---|---|
-| business-analyst | `.ai-temp/**` only | deny | 3 named readers |
-| system-analyst | deny | deny | `sub-code-impact-explorer`, `sub-ticket-context-reader`, `sub-researcher` |
+| business-analyst | `.ai-temp/business-analyst/**`, glossary cache | deny | 3 named readers |
+| system-analyst | `.ai-temp/system-analyst/**` only | deny | `sub-code-impact-explorer`, `sub-ticket-context-reader`, `sub-researcher` |
 | coder | allow | allow (push: ask) | deny |
 | sub-code-impact-explorer | deny | deny | deny |
 | sub-ticket-context-reader | deny | deny | deny |
 | sub-docs-glossary-reader | deny | deny | deny |
 | sub-docs-topic-reader | deny | deny | deny |
+| sub-universal-code-reviewer | deny | deny | deny |
 | documenter | `docs/**`, `README*`, `properdocs.{yml,yaml}` | `uv run properdocs *`, `properdocs *` only | deny |
 | sub-researcher | deny | deny | deny |
 

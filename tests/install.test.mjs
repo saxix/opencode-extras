@@ -14,12 +14,16 @@ import {
   runInstall,
 } from './helpers.mjs';
 
+const BOOKMARK_COMMANDS = ['issue-save.md', 'issue-load.md', 'issue-list.md'];
+const ANALYST_AGENTS = ['business-analyst.md', 'system-analyst.md'];
+const normalize = value => value.replace(/\s+/g, ' ').trim();
+
 // --- Header / format tests ---
 
 describe('skill frontmatter', () => {
   it('every skill has SKILL.md with valid name and description', () => {
     const skills = listSkills();
-    assert.ok(skills.length >= 22, `expected >=22 skills, got ${skills.length}`);
+    assert.equal(skills.length, 23, `expected 23 skills, got ${skills.length}`);
     for (const name of skills) {
       const fm = parseFrontmatter(path.join(SRC_SKILLS, name, 'SKILL.md'));
       assert.ok(fm, `${name}/SKILL.md missing frontmatter`);
@@ -60,7 +64,7 @@ describe('skill frontmatter', () => {
 describe('agent frontmatter', () => {
   it('every agent has description', () => {
     const agents = listAgents();
-    assert.ok(agents.length >= 9, `expected >=9 agents`);
+    assert.equal(agents.length, 10, `expected 10 agents, got ${agents.length}`);
     for (const f of agents) {
       const fm = parseFrontmatter(path.join(SRC_AGENTS, f));
       assert.ok(fm, `${f} missing frontmatter`);
@@ -73,9 +77,9 @@ describe('agent frontmatter', () => {
 describe('command frontmatter', () => {
   it('every command with frontmatter has description', () => {
     const cmds = listCommands();
-    assert.ok(cmds.length >= 9);
+    assert.equal(cmds.length, 12, `expected 12 commands, got ${cmds.length}`);
     const withFm = cmds.filter(f => parseFrontmatter(path.join(SRC_COMMANDS, f)));
-    assert.ok(withFm.length >= 4, `expected >=4 commands with frontmatter`);
+    assert.ok(withFm.length >= 7, `expected >=7 commands with frontmatter`);
     for (const f of withFm) {
       const fm = parseFrontmatter(path.join(SRC_COMMANDS, f));
       assert.ok(fm.description, `${f} missing description`);
@@ -87,6 +91,76 @@ describe('command frontmatter', () => {
       const content = fs.readFileSync(path.join(SRC_COMMANDS, f), 'utf8');
       assert.ok(content.trim().length > 10, `${f} empty`);
     }
+  });
+
+  it('defines the three bookmark commands without forcing an agent', () => {
+    const cmds = listCommands();
+    for (const command of BOOKMARK_COMMANDS) {
+      assert.ok(cmds.includes(command), `${command} missing`);
+      const fm = parseFrontmatter(path.join(SRC_COMMANDS, command));
+      assert.ok(fm?.description, `${command} missing description`);
+      assert.equal(fm.agent, undefined, `${command} must run in the active session`);
+    }
+  });
+
+  it('guards bookmark commands to the two analyst roles', () => {
+    for (const command of BOOKMARK_COMMANDS) {
+      const content = normalize(fs.readFileSync(path.join(SRC_COMMANDS, command), 'utf8'));
+      assert.match(content, /session's loaded agent identity/);
+      assert.match(content, /business-analyst/);
+      assert.match(content, /system-analyst/);
+      assert.match(content, /stop without reading/);
+      assert.match(content, /other analyst/);
+    }
+  });
+
+  it('requires a bookmark name for save and load', () => {
+    for (const command of ['issue-save.md', 'issue-load.md']) {
+      const content = normalize(fs.readFileSync(path.join(SRC_COMMANDS, command), 'utf8'));
+      assert.match(content, /First positional argument: `\$1`/);
+      assert.match(content, /If the first positional argument is absent, ask one question/);
+      assert.match(content, /\^\[A-Za-z0-9\]\[A-Za-z0-9_-\]\{0,63\}\$/);
+    }
+  });
+
+  it('keeps analyst persistence explicit and compact', () => {
+    for (const agent of ANALYST_AGENTS) {
+      const content = normalize(fs.readFileSync(path.join(SRC_AGENTS, agent), 'utf8'));
+      assert.match(content, /Never autosave it or persist it on a state transition/);
+      assert.match(content, /only when `issue-save` is explicitly invoked/);
+      assert.match(content, /active role/);
+      assert.doesNotMatch(content, /session_notes/);
+      assert.doesNotMatch(content, /annotate|resume work|restart from note|create note|note draft|pause now/);
+    }
+  });
+
+  it('restricts each analyst to its own bookmark directory', () => {
+    const business = fs.readFileSync(path.join(SRC_AGENTS, 'business-analyst.md'), 'utf8');
+    const system = fs.readFileSync(path.join(SRC_AGENTS, 'system-analyst.md'), 'utf8');
+    assert.match(business, /resource: "\.ai-temp\/business-analyst\/\*\*"/);
+    assert.doesNotMatch(business, /resource: "\.ai-temp\/\*\*"/);
+    assert.match(system, /resource: "\.ai-temp\/system-analyst\/\*\*"/);
+  });
+
+  it('defines one compact shared bookmark contract', () => {
+    const content = normalize(fs.readFileSync(path.join(SRC_AGENTS, '_shared', 'state-persistence.md'), 'utf8'));
+    assert.match(content, /Every bookmark command must pass this guard/);
+    assert.match(content, /user explicitly invokes `issue-save`/);
+    assert.match(content, /schema_version: 1/);
+    assert.match(content, /Never copy the complete internal model/);
+    assert.doesNotMatch(content, /## Snapshot file|### Autosave|### Annotate|### Resume/);
+  });
+
+  it('serializes bookmark YAML safely and applies one validity contract', () => {
+    const save = normalize(fs.readFileSync(path.join(SRC_COMMANDS, 'issue-save.md'), 'utf8'));
+    const load = normalize(fs.readFileSync(path.join(SRC_COMMANDS, 'issue-load.md'), 'utf8'));
+    const list = normalize(fs.readFileSync(path.join(SRC_COMMANDS, 'issue-list.md'), 'utf8'));
+    const shared = normalize(fs.readFileSync(path.join(SRC_AGENTS, '_shared', 'state-persistence.md'), 'utf8'));
+    assert.match(save, /valid YAML double-quoted scalars/);
+    assert.match(shared, /Bookmark validity/);
+    assert.match(load, /Do not coerce or repair values/);
+    assert.match(list, /same validity rules as `issue-load`/);
+    assert.match(load, /mark absent provenance as unknown or unconfirmed/);
   });
 });
 

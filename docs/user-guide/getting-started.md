@@ -61,7 +61,24 @@ A running session keeps using the configuration it loaded at startup.
    (triggers the [Business Analyst](../development/agents-reference.md#business-analyst)).
 4. Review the agent's proposal before it acts: the Business Analyst and System
    Analyst stop at explicit approval gates before creating a ticket or locking
-   a technical direction (`agents/business-analyst.md:63`).
+   a technical direction (`agents/business-analyst.md:85`, `agents/system-analyst.md:69`).
+
+## Save and resume analyst work
+
+Start a session with the Business Analyst or System Analyst, then invoke the
+bookmark commands explicitly:
+
+```text
+issue-save requirements-review
+issue-list
+issue-load requirements-review
+```
+
+`issue-save` stores compact current work under the active analyst's `.ai-temp/`
+directory. `issue-list` shows that analyst's bookmarks, newest first, and
+`issue-load` restores one. The commands do nothing if the loaded agent is not
+exactly `business-analyst` or `system-analyst`. They do not autosave and do not
+respond to natural-language save or resume requests.
 
 ## Verify the install
 
