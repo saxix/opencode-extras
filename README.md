@@ -42,7 +42,13 @@ For a local checkout, use `node` to install directly from this working tree:
 ```sh
 git clone https://github.com/saxix/opencode-utils.git
 cd opencode-utils
-node ./scripts/install.mjs --project --link --agent opencode
+node ./scripts/install.mjs --global --link --agent opencode
+```
+
+To remove the development installation
+
+```sh
+node ./scripts/install.mjs --uninstall --global --link --agent opencode
 ```
 
 Skills use the `sax-` prefix and are installed per item for coexistence.
@@ -117,6 +123,7 @@ Notes:
 | `sub-ticket-context-reader` | subagent | Read-only ticket and discussion retrieval for the Business Analyst |
 | `sub-docs-glossary-reader` | subagent | Resolves a single unknown term from `docs/`, cached in `.ai-temp/` so terms are not re-searched each session |
 | `sub-docs-topic-reader` | subagent | Returns documented content relevant to one topic |
+| `sub-universal-code-reviewer` | subagent | Reviews code across languages for bugs, security, performance, and maintainability |
 | `documenter` | primary | Generates or updates project documentation for any repository using the docs taxonomy and checks (typically Python/uv) |
 | `sub-researcher` | subagent | Searches the web for libraries, frameworks, tools, patterns, and technical solutions |
 
@@ -161,6 +168,18 @@ Notes:
 | `step-by-step` | Deconstruct a task into an idempotent sequential plan |
 | `truthmode` | Strict empirical rigor and epistemic calibration |
 | `git-status` | Explain what the pending git changes are trying to do |
+| `issue-save` | Save the active analyst's current work as a named compact bookmark |
+| `issue-load` | Load a named bookmark for the active analyst |
+| `issue-list` | List bookmarks belonging to the active analyst |
+
+### Analyst bookmarks
+
+The `Business Analyst` and `System Analyst` can explicitly save compact resume
+state with `issue-save <name>`, then restore it with `issue-load <name>` or list
+saved names with `issue-list`. These commands run in the active session and do
+nothing unless that session's loaded agent is exactly `business-analyst` or
+`system-analyst`. Bookmarks stay under that analyst's `.ai-temp/` directory;
+there is no autosave or natural-language save/resume trigger.
 
 ## Conventions
 

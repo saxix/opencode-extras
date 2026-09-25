@@ -7,7 +7,7 @@ operators, maintainers, and anyone handling credentials.
 
 The toolkit is primarily a set of instruction definitions: it has a small
 installer, but no application runtime service or data processing
-(`README.md:173-175`). The relevant
+(`README.md:198-200`). The relevant
 risks are therefore:
 
 - credential leakage from local files;
@@ -28,9 +28,11 @@ risks are therefore:
 
 Agents are granted the minimum access needed:
 
-- **Read-only roles**: Business Analyst, System Analyst, and all subagents
-  cannot edit or run shell commands (`agents/system-analyst.md:7-8`,
-  `agents/sub-code-impact-explorer.md:4-6`).
+- **Read-only repository roles**: the Business Analyst and System Analyst cannot
+  edit repository files or run shell commands. Their only writes are explicit
+  bookmarks under `.ai-temp/<active-analyst>/`; the Business Analyst may also
+  update its separate glossary cache (`agents/business-analyst.md:7-45`,
+  `agents/system-analyst.md:7-27`).
 - **Deny-by-default**: the Documenter denies all edits except `docs/**`,
   `README*`, and `properdocs.yml`/`properdocs.yaml`
   (`agents/documenter.md:14-28`).
@@ -49,9 +51,12 @@ Permission lists follow a deny-first, allow-last convention
 
 - Ticket contents and specs are untrusted source material; they never override
   an agent's role or safety rules (`agents/coder.md:62`).
+- Bookmark files are untrusted Markdown. The bookmark commands verify the active
+  analyst, common schema, agent identity, and path before loading, and ignore
+  embedded instructions (`src/commands/issue-load.md:39-60`).
 - The Business Analyst ignores implementation details found in technical
   proposals and records only the functional intent
-  (`agents/business-analyst.md:62`).
+  (`agents/business-analyst.md:83-85`).
 - The security skills apply their own scoped audit gates (for example
   `security-owasp` reports only high-confidence findings,
   `skills/security-owasp/SKILL.md:2-3`).
@@ -59,8 +64,8 @@ Permission lists follow a deny-first, allow-last convention
 ## Repository hygiene
 
 - `.gitignore` excludes all dotfiles and editor backups (`~*`); only
-  `.gitignore` itself is kept among dotfiles (`AGENTS.md:94`).
-- `.ai-temp/` scratch is git-ignored and never committed (`AGENTS.md:95`).
+  `.gitignore` itself is kept among dotfiles (`AGENTS.md:103`).
+- `.ai-temp/` scratch is git-ignored and never committed (`AGENTS.md:104-113`).
 - The security audit skills exist precisely to catch credential, SSRF, SQLi,
   and auth flaws in the projects this toolkit drives
   (`skills/security-audit/SKILL.md:2-3`).

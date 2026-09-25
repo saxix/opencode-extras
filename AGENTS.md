@@ -40,6 +40,7 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `sub-ticket-context-reader` | subagent | Read-only ticket and discussion retrieval for the Business Analyst |
 | `sub-docs-glossary-reader` | subagent | Resolves a single unknown term from `docs/` with a minimal, capped report |
 | `sub-docs-topic-reader` | subagent | Returns documented content relevant to one topic |
+| `sub-universal-code-reviewer` | subagent | Reviews code across languages for bugs, security, performance, and maintainability |
 | `documenter` | primary | Generates or updates documentation for any repository using the docs taxonomy and checks (typically Python/uv) |
 | `sub-researcher` | subagent | Searches the web for libraries, frameworks, tools, patterns, and technical solutions |
 
@@ -84,6 +85,9 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `step-by-step` | Deconstruct a task into an idempotent sequential plan |
 | `truthmode` | Strict empirical rigor and epistemic calibration |
 | `git-status` | Explain what pending changes are trying to do |
+| `issue-save` | Save the active analyst's current work as a named compact bookmark |
+| `issue-load` | Load a named bookmark for the active analyst |
+| `issue-list` | List bookmarks belonging to the active analyst |
 
 ## Git workflow
 
@@ -97,7 +101,16 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 - Agents and commands use Markdown with YAML frontmatter; `description:` is required, and `agent`, `mode`, `color`, `steps`, `permissions` are optional per-TUI settings that other TUIs ignore.
 - Reference materials live alongside `SKILL.md` in named subdirectories (no enforced convention).
 - `.gitignore` excludes all dotfiles and editor backup files (`~*`); only `.gitignore` itself is kept among dotfiles.
-- `.ai-temp/` is agent working scratch: git-ignored, never committed, never treated as a deliverable. The `Business Analyst` and `System Analyst` each persist the current ticket state in a single fixed file (`.ai-temp/business-analyst.yaml`, `.ai-temp/system-analyst.yaml`) with autosave at material state transitions and "annota il lavoro|ticket" / "riprendi il lavoro|ticket" commands. The business-analyst also maintains `.ai-temp/glossary-known-terms.yaml` there as an accumulating project glossary of terms resolved from `docs/`, shared across sessions as a fallback when the documentation has no structured glossary.
+- `.ai-temp/` is git-ignored agent scratch, never a deliverable. The `Business
+  Analyst` and `System Analyst` persist compact resume state only when the user
+  explicitly invokes `issue-save`, using `.ai-temp/business-analyst/<name>.md`
+  and `.ai-temp/system-analyst/<name>.md` respectively. The matching `issue-load`
+  and `issue-list` commands operate only in the active analyst role. There is no
+  autosave, fixed analyst snapshot, migration, or natural-language save/resume
+  trigger. The business-analyst separately maintains
+  `.ai-temp/glossary-known-terms.yaml` as an accumulating project glossary of
+  terms resolved from `docs/`, shared across sessions as a fallback when the
+  documentation has no structured glossary.
 - Every agent, skill, and command MUST emit output that follows the TUI-portable standard below.
 - The `documenter` agent generates or updates documentation (operator role: gates, permissions, workflow); the `documentation` skill owns the domain knowledge (four-guide taxonomy, audit clauses, style, build checks, findings template) and is shared by `documenter`, standalone audits, and any future docs agent. Rules live in only one place: the skill.
 - The `ticket-writing` skill owns the canonical ticket content rules (title, prefixes, body, soft-wrap, diagrams, language) shared by the `Business Analyst` and the `System Analyst`. Rules live in only one place: the skill; agents must load it rather than re-implementing its rules.

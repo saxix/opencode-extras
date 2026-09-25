@@ -7,7 +7,7 @@ and all generated output follows the TUI-portable output standard, so the same
 definitions render correctly in every terminal assistant.
 
 The repository contains a small Node installer and tests, but no application
-runtime, lint, typecheck, or CI (`README.md:173-175`). Its primary content is
+runtime, lint, typecheck, or CI (`README.md:198-200`). Its primary content is
 instruction definitions for coding agents.
 
 ## Guides

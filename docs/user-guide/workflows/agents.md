@@ -19,20 +19,20 @@ change:
 Start with a raw product or business idea. The Business Analyst works in the
 problem domain only: it clarifies goals, scope, requirements, and testable
 acceptance criteria using process and user language, and never discusses
-implementation details (`agents/business-analyst.md:61-62`).
+implementation details (`agents/business-analyst.md:76-85`).
 
 Operating rules that shape the interaction:
 
 - It asks **exactly one substantive question per message**
-  (`agents/business-analyst.md:56`).
+  (`agents/business-analyst.md:78`).
 - It never invents business decisions, criteria, owners, or deadlines; open
-  items are recorded instead (`agents/business-analyst.md:59`).
+  items are recorded instead (`agents/business-analyst.md:81`).
 - It does not mutate tickets until the approval gate has passed
-  (`agents/business-analyst.md:63`).
+  (`agents/business-analyst.md:85`).
 - It may consult `README*` and `docs/` for product terminology and relies on
   the [sub-docs-glossary-reader](../../development/agents-reference.md#sub-docs-glossary-reader)
   and [sub-docs-topic-reader](../../development/agents-reference.md#sub-docs-topic-reader)
-  subagents (`agents/business-analyst.md:37-45`).
+  subagents (`agents/business-analyst.md:17-36,52-63`).
 
 Approve the draft ticket when the requirements are complete and testable; only
 then it is created in the ticketing system.
@@ -42,30 +42,47 @@ then it is created in the ticketing system.
 Give the approved ticket to the System Analyst. It inspects the repository
 read-only, identifies impact and constraints, and presents meaningful
 implementation options for your decision
-(`agents/system-analyst.md:26-28`).
+(`agents/system-analyst.md:42-74`).
 
 Operating rules:
 
 - It never silently chooses between viable alternatives; it asks you to pick a
-  direction (`agents/system-analyst.md:38`).
+  direction (`agents/system-analyst.md:69`).
 - It distinguishes repository evidence, ticket facts, assumptions, risks, and
-  recommendations (`agents/system-analyst.md:34`).
+  recommendations (`agents/system-analyst.md:65`).
 - It delegates bounded retrieval to the
   [sub-code-impact-explorer](../../development/agents-reference.md#sub-code-impact-explorer)
   and [sub-ticket-context-reader](../../development/agents-reference.md#sub-ticket-context-reader)
-  subagents (`agents/system-analyst.md:17-21`).
+  subagents (`agents/system-analyst.md:31-39`).
 - It may always inspect documentation and usage patterns of libraries already
   installed in the project (local research, no permission needed).
 - Before searching the web for new libraries, frameworks, tools, or external
-  patterns via the [researcher](../../development/agents-reference.md#researcher)
+  patterns via the [researcher](../../development/agents-reference.md#sub-researcher)
   subagent, it asks you for explicit permission
-  (`agents/system-analyst.md:46`).
+  (`agents/system-analyst.md:74`).
 - Output must stay at architectural and design analysis level: no production
   code, diffs, or implementation-ready patches
-  (`agents/system-analyst.md:43-58`).
+  (`agents/system-analyst.md:42-74`).
 
 Choose a direction; the System Analyst then prepares the implementation handoff
 for the Ticket Implementer.
+
+### Pause and resume analyst work
+
+The Business Analyst and System Analyst keep the full working model in the
+current conversation. They do not autosave it. To move work across sessions,
+run one of the bookmark commands while the relevant analyst is the active agent:
+
+- [`issue-save <name>`](../../development/commands/issue-save.md) writes a compact
+  resume state under that analyst's `.ai-temp/` directory;
+- [`issue-list`](../../development/commands/issue-list.md) lists only that
+  analyst's bookmarks, newest first;
+- [`issue-load <name>`](../../development/commands/issue-load.md) restores the selected
+  bookmark and continues from its next action.
+
+The commands stop without reading or changing files if the active agent is not
+exactly `business-analyst` or `system-analyst`. Natural-language requests do
+not trigger persistence, and the analysts cannot inspect each other's bookmarks.
 
 ### 3. Coder -- implement and verify
 

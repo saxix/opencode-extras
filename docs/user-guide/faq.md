@@ -16,7 +16,7 @@ Skills load on demand when the task matches the skill's `description:`
 frontmatter. The description must carry the literal keywords users are likely
 to say (`README.md:156`). Check:
 
-- the skill directory has a file named exactly `SKILL.md` (`README.md:155`);
+- the skill directory has a file named exactly `SKILL.md` (`README.md:180`);
 - `name:` and `description:` are present and the description front-loads the
   trigger keywords;
 - the TUI was restarted after the change.
@@ -48,13 +48,13 @@ existing directory, remove the old directory first and retry.
 
 Every definition in this repository must produce TUI-portable output: plain
 CommonMark, ASCII-first, ATX headings, narrow tables, fenced code blocks, and
-no TUI-specific directives (`AGENTS.md:100-113`). Flag the offending definition
+no TUI-specific directives (`AGENTS.md:118-131`). Flag the offending definition
 or ask the `init-project` / documentation workflows to conform.
 
 ## Why is there no application runtime in this repository?
 
 By design. The repository contains a small installer and tests, but its primary
-content is instruction definitions for coding agents (`README.md:173-175`).
+content is instruction definitions for coding agents (`README.md:198-200`).
 Features are the definitions themselves, not a runtime.
 
 ## Two agents claim the same task

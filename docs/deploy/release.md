@@ -10,7 +10,7 @@ There is no automated release pipeline. Observed evidence:
 - repository history is two commits: `initial commit` and `updates`
   (`git log`);
 - no git tags exist (`git tag` is empty);
-- the repository declares it contains no CI (`README.md:173-175`).
+- the repository declares it contains no CI (`README.md:198-200`).
 
 Releases are therefore manual: a "release" is a commit that updates the
 definitions. The toolkit itself ships a

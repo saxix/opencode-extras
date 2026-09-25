@@ -28,7 +28,8 @@ is not installed by the target installer (`opencode.jsonc`).
   `~/.config/opencode/skills/`. A skill is loaded on demand only when its
   description matches the task.
 - **Commands** come from `~/.config/opencode/commands/`, one Markdown file per
-  command.
+  command. Bookmark commands omit a forced `agent:` so they can verify and use
+  the analyst loaded in the current session.
 - **Configuration** is split: `opencode.jsonc` (global behavior, providers,
   MCP servers) and `tui.jsonc` (interface settings). Both are loaded once at
   startup.

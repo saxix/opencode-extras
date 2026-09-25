@@ -24,4 +24,4 @@ tree is clean. It never stages, commits, pushes, or changes branches.
 
 - [Git workflow](../git-workflow.md)
 - [commit skill](../skills-reference.md#commit)
-- [code-review skill](../skills-reference.md#code-review)
+- [code-review skill](../skills-reference.md#code-review-django)

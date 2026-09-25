@@ -6,6 +6,7 @@ One term per entry. Terms are linked from their first use on each page.
 
 - [Agent](#agent)
 - [AGENTS.md](#agentsmd)
+- [Bookmark](#bookmark)
 - [Command](#command)
 - [Frontmatter](#frontmatter)
 - [MCP](#mcp)
@@ -24,7 +25,7 @@ A reusable role definition for an AI coding assistant, stored under
 `agents/` as Markdown with YAML frontmatter. Each agent has a purpose, a
 description that carries trigger keywords, optional per-TUI settings
 (`mode`, `color`, `steps`, `permissions`), and an operating contract
-(`agents/business-analyst.md:48`). See the [agent reference](development/agents-reference.md).
+(`agents/business-analyst.md:74-85`). See the [agent reference](development/agents-reference.md).
 
 ## AGENTS.md
 
@@ -32,6 +33,15 @@ The project-level instruction file that every coding agent loads first. It
 declares this repository's structure, conventions, and output standard
 (`AGENTS.md:1`). The `init-project` command creates or updates it
 (`commands/init-project.md`).
+
+## Bookmark
+
+A compact, named Markdown resume point for Business Analyst or System Analyst
+ticket work. It is created only by `issue-save <name>` under the active
+analyst's `.ai-temp/` directory, then discovered or restored with `issue-list`
+and `issue-load`. A bookmark is explicit scratch state, not an autosave,
+transcript, or session backup. See
+[Analyst bookmarks](development/agents-reference.md#analyst-bookmarks).
 
 ## Command
 
@@ -42,7 +52,7 @@ See [Slash command](#slash-command).
 The YAML block at the top of a Markdown definition file, delimited by `---`
 lines. Skills require `name:` and `description:`; agents and commands require
 `description:` and may carry per-TUI settings such as `agent`, `mode`, `color`,
-`steps`, and `permissions` (`README.md:155-157`). See the
+`steps`, and `permissions` (`README.md:180-182`). See the
 [configuration reference](admin/configuration.md).
 
 ## MCP
@@ -63,8 +73,9 @@ initiate work (for example `business-analyst`, `system-analyst`, `coder`,
 A Markdown static site generator for project documentation. It is the
 preferred rendering tool for generated docs sites (`agents/documenter.md:60`)
 and is configured with `properdocs.yml` / `properdocs.yaml` when a project
-uses it. This documentation site is plain static Markdown and ships no build
-configuration; verification uses the static checklist in the
+uses it. This documentation site is plain static Markdown configured by
+`properdocs.yml`; when the renderer is available, its build supplements the
+static checklist in the
 [documentation skill](development/skills-reference.md#documentation).
 
 ## Skill
@@ -78,14 +89,15 @@ on demand when a task matches their description
 
 The required entrypoint file of every skill. It uses `name:` and `description:`
 frontmatter; the description carries the trigger keywords
-(`README.md:155-156`).
+(`README.md:180-181`).
 
 ## Slash command
 
 A reusable prompt body stored under `commands/`, invoked by name in a TUI.
 Commands may define `description:` and `agent:` frontmatter and receive user
-input through `$ARGUMENTS` (for example `commands/devils-advocate.md`). See
-the [command reference](development/commands/debug-code.md).
+input through `$ARGUMENTS` (for example `commands/devils-advocate.md`). When
+`agent:` is omitted, the TUI can run it in the current session. See the
+[command reference](development/commands/debug-code.md).
 
 ## Subagent
 
@@ -104,5 +116,5 @@ hermes, and similar (`README.md:3`).
 The output standard required of every agent, skill, and command in this
 repository: plain CommonMark, ASCII-first charset, ATX headings, narrow tables,
 fenced code blocks with language tags, self-contained evidence, no
-TUI-specific directives (`AGENTS.md:100-113`). See the
+TUI-specific directives (`AGENTS.md:118-131`). See the
 [contribution guidelines](development/contribution.md).
