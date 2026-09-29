@@ -1,6 +1,6 @@
 # agents-skills
 
-Reusable **agents**, **skills**, and **commands** for AI coding TUIs. Typeset as plain Markdown with a portable output convention so they render across `opencode`, Claude Code, Gemini CLI (pi), hermes, and other terminal assistants.
+Reusable **agents**, **skills**, and **commands** for AI coding TUIs. Typeset as plain Markdown with a portable output convention so they render across `opencode`, Claude Code, Codex, pi, Gemini CLI, hermes, and other terminal assistants.
 
 ## Install
 
@@ -99,10 +99,10 @@ Notes:
   - Default is --copy per-item (coexistence-safe, no directory symlink conflict).
   - --link creates per-item symlinks: DEST/skills/sax-<name> -> src/skills/<name>.
   - With GitHub specs, --link points to npx's fetched copy/cache, not a local checkout.
-  - Never creates a directory symlink (avoids conflict with other skill packs).
+  - Never symlinks skills/, agents/, or commands/ themselves (avoids conflict
+    with other skill packs); shared spec directories are linked as one unit.
   - Skills are installed with prefix "sax-" to avoid collisions (DEST/skills/sax-<name>).
 ```
-
 
 ## Structure
 
@@ -111,6 +111,7 @@ Notes:
 | `agents/` | Agent definitions (Markdown with YAML frontmatter: role, permissions, state machine, handoff format) |
 | `skills/` | Skills (one subdirectory per skill with a `SKILL.md` entrypoint and optional `refs/`, `references/`, `languages/`, `infrastructure/`) |
 | `commands/` | Slash-command definitions (Markdown prompt bodies with an optional YAML frontmatter: `description:`, `agent:`) |
+| `_shared/` | Shared specs referenced by more than one agent, such as `_shared/sax/state-persistence.md` (the analyst state layout); installed under the same name |
 
 ## Agents
 
@@ -121,7 +122,7 @@ Notes:
 | `coder` | primary | Implements an approved ticket from its requirements and selected direction, then verifies |
 | `sub-code-impact-explorer` | subagent | Read-only codebase discovery for the System Analyst |
 | `sub-ticket-context-reader` | subagent | Read-only ticket and discussion retrieval for the Business Analyst |
-| `sub-docs-glossary-reader` | subagent | Resolves a single unknown term from `docs/`, cached in `.ai-temp/` so terms are not re-searched each session |
+| `sub-docs-glossary-reader` | subagent | Resolves a single unknown term from `docs/`, cached in `.ai-temp/findings/` so terms are not re-searched each session |
 | `sub-docs-topic-reader` | subagent | Returns documented content relevant to one topic |
 | `sub-universal-code-reviewer` | subagent | Reviews code across languages for bugs, security, performance, and maintainability |
 | `documenter` | primary | Generates or updates project documentation for any repository using the docs taxonomy and checks (typically Python/uv) |
@@ -142,6 +143,7 @@ Notes:
 | `django-models/` | Design Django ORM models following silo/replication conventions |
 | `documentation/` | Audit and fix the docs site for completeness and correctness |
 | `find-bugs/` | Find bugs, security vulnerabilities, and quality issues in branch changes |
+| `issue-bookmarks/` | Analyst ticket bookmark rules and the save/load/list operations, loaded by both analysts; replaces the former `issue-*` commands |
 | `pull-request/` | Validate, commit, push, and open a PR with a Conventional description |
 | `push/` | Stage, validate with tox, and push |
 | `release/` | Generate release notes and create a GitHub release |
@@ -164,28 +166,41 @@ Notes:
 | `eli5` | Explain a concept from first principles with one analogy |
 | `humanize` | Rewrite text without corporate or AI markers |
 | `init-project` | Create or update `AGENTS.md` and `.ai/*` files |
-| `new-spec` | Create or refine a feature spec in `.specs/` |
 | `step-by-step` | Deconstruct a task into an idempotent sequential plan |
 | `truthmode` | Strict empirical rigor and epistemic calibration |
 | `git-status` | Explain what the pending git changes are trying to do |
-| `issue-save` | Save the active analyst's current work as a named compact bookmark |
-| `issue-load` | Load a named bookmark for the active analyst |
-| `issue-list` | List bookmarks belonging to the active analyst |
 
-### Analyst bookmarks
+### Analyst state
 
-The `Business Analyst` and `System Analyst` can explicitly save compact resume
-state with `issue-save <name>`, then restore it with `issue-load <name>` or list
-saved names with `issue-list`. These commands run in the active session and do
-nothing unless that session's loaded agent is exactly `business-analyst` or
-`system-analyst`. Bookmarks stay under that analyst's `.ai-temp/` directory;
-there is no autosave or natural-language save/resume trigger.
+The `Business Analyst` and `System Analyst` keep their working model in
+conversation context. Nothing is written unless the user asks for it.
+
+- **Bookmarks.** Ask in plain language, for example "save this work as
+  requirements-review", "load my last bookmark", or "list my bookmarks"; the
+  active analyst loads the `issue-bookmarks` skill and follows the matching
+  operation. Nothing happens unless the session's loaded agent is exactly
+  `business-analyst` or `system-analyst`. Bookmarks are written under that
+  analyst's own directory, `.ai-temp/business-analyst/` or
+  `.ai-temp/system-analyst/`, and there is no autosave.
+- **Shared findings.** `.ai-temp/findings/` is the one directory both analysts
+  may read and write. A fact established for the other analyst is recorded there
+  once, with its evidence, instead of being re-derived or re-asked:
+  `findings/glossary.yaml` holds the product terms resolved from `docs/`, and
+  one `findings/<topic>.md` note per topic holds a documented behavior or a
+  repository fact such as `path/to/file -- symbol`. A finding is an observation
+  with evidence, never a decision the user has not confirmed.
+
+Both behaviours are owned by the shared spec
+`_shared/sax/state-persistence.md`, which both analysts reference; the bookmark
+operations, schema, and validity contract are owned by the `issue-bookmarks`
+skill.
 
 ## Conventions
 
 - Each skill MUST have a `SKILL.md` at its directory root.
 - `SKILL.md` frontmatter uses `name:` and `description:` (required; description carries trigger keywords) plus optional `license:`, `compatibility:`, `metadata:`.
 - Agents and commands use Markdown with YAML frontmatter; `description:` is required, and `agent`/`mode`/`permissions` are optional per-TUI settings.
+- The installer mirrors source paths: `agents/`, `skills/`, and `commands/` install under the same name; any other top-level directory except the reserved `plugins/` does too, so shared specs stay out of the TUI's agent list (`_shared/sax/` -> `DEST/_shared/sax/`). Only skills get the `sax-` prefix.
 - Every agent, skill, and command MUST follow the **TUI-portable output** standard (below) so reports render correctly in any terminal assistant.
 - `.gitignore` excludes all dotfiles and editor backup files (`~*`).
 

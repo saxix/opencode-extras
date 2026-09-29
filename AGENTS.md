@@ -26,6 +26,7 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `agents/` | Agent definitions (Markdown with YAML frontmatter; `description:` required) |
 | `skills/` | Skills (one subdirectory per skill with a `SKILL.md` entrypoint and optional reference docs) |
 | `commands/` | Slash-command definitions (Markdown prompt bodies with an optional YAML frontmatter: `description:`, `agent:`) |
+| `_shared/` | Shared specs that are not agents, skills, or commands; installed under the same name |
 | `plugins/` | Reserved for TUI plugins |
 | `*.jsonc` | Sample opencode global and TUI configs (`opencode.jsonc`, `opencode_cfg.jsonc`, `tui_cfg.jsonc`) |
 
@@ -59,6 +60,7 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `django-models/` | Django ORM model design |
 | `documentation/` | Canonical docs site taxonomy, audit clauses, style, and build checks (loaded by `documenter`; triggered standalone for audits) |
 | `find-bugs/` | Bug and vulnerability finding |
+| `issue-bookmarks/` | Canonical analyst ticket bookmark rules and save/load/list operations shared by Business Analyst and System Analyst |
 | `pull-request/` | Validate, commit, push, and open a PR |
 | `push/` | Stage, validate with tox, and push |
 | `release/` | Generate release notes and a GitHub release |
@@ -81,13 +83,9 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `eli5` | Explain a concept from first principles |
 | `humanize` | Rewrite text without corporate or AI markers |
 | `init-project` | Create or update `AGENTS.md` and `.ai/*` files |
-| `new-spec` | Create or refine a feature spec in `.specs/` |
 | `step-by-step` | Deconstruct a task into an idempotent sequential plan |
 | `truthmode` | Strict empirical rigor and epistemic calibration |
 | `git-status` | Explain what pending changes are trying to do |
-| `issue-save` | Save the active analyst's current work as a named compact bookmark |
-| `issue-load` | Load a named bookmark for the active analyst |
-| `issue-list` | List bookmarks belonging to the active analyst |
 
 ## Git workflow
 
@@ -99,21 +97,23 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 - Each skill MUST have a `SKILL.md` at its directory root.
 - `SKILL.md` frontmatter uses `name:` and `description:` (required; the description carries trigger keywords) plus optional `license:`, `compatibility:`, `metadata:` keys.
 - Agents and commands use Markdown with YAML frontmatter; `description:` is required, and `agent`, `mode`, `color`, `steps`, `permissions` are optional per-TUI settings that other TUIs ignore.
+- The installer mirrors paths: `src/agents/`, `src/skills/`, and `src/commands/` install to `DEST/agents/`, `DEST/skills/`, and `DEST/commands/`. Any other top-level `src/` directory except the reserved `plugins/` is a shared spec namespace and installs under the same name (`src/_shared/sax/` -> `DEST/_shared/sax/`), so an agent references it as `../_shared/sax/<file>`. Only skills get the `sax-` name prefix.
 - Reference materials live alongside `SKILL.md` in named subdirectories (no enforced convention).
 - `.gitignore` excludes all dotfiles and editor backup files (`~*`); only `.gitignore` itself is kept among dotfiles.
 - `.ai-temp/` is git-ignored agent scratch, never a deliverable. The `Business
   Analyst` and `System Analyst` persist compact resume state only when the user
-  explicitly invokes `issue-save`, using `.ai-temp/business-analyst/<name>.md`
-  and `.ai-temp/system-analyst/<name>.md` respectively. The matching `issue-load`
-  and `issue-list` commands operate only in the active analyst role. There is no
-  autosave, fixed analyst snapshot, migration, or natural-language save/resume
-  trigger. The business-analyst separately maintains
-  `.ai-temp/glossary-known-terms.yaml` as an accumulating project glossary of
-  terms resolved from `docs/`, shared across sessions as a fallback when the
-  documentation has no structured glossary.
+  explicitly asks to save one through the `issue-bookmarks` skill, using
+  `.ai-temp/business-analyst/<name>.md` and `.ai-temp/system-analyst/<name>.md`
+  respectively. Loading and listing run only in the active analyst role. There
+  is no autosave or fixed analyst snapshot. The business-analyst separately
+  maintains `.ai-temp/findings/` as the shared scratch both analysts may read and
+  write: `glossary.yaml` accumulates the project terms resolved from `docs/` as a
+  fallback when the documentation has no structured glossary, and one note file
+  per topic records findings the other analyst would otherwise re-ask about.
 - Every agent, skill, and command MUST emit output that follows the TUI-portable standard below.
 - The `documenter` agent generates or updates documentation (operator role: gates, permissions, workflow); the `documentation` skill owns the domain knowledge (four-guide taxonomy, audit clauses, style, build checks, findings template) and is shared by `documenter`, standalone audits, and any future docs agent. Rules live in only one place: the skill.
 - The `ticket-writing` skill owns the canonical ticket content rules (title, prefixes, body, soft-wrap, diagrams, language) shared by the `Business Analyst` and the `System Analyst`. Rules live in only one place: the skill; agents must load it rather than re-implementing its rules.
+- The `issue-bookmarks` skill owns the analyst ticket bookmark contract and the save/load/list operations (guard, name validation, schema, validity, compact projection) shared by the `Business Analyst` and the `System Analyst`. There are no `issue-*` commands. The `src/_shared/sax/state-persistence.md` spec owns the shared analyst state layout (which `.ai-temp/` path belongs to which analyst, the write policy, and the legacy state to ignore) plus the Business Analyst project terms cache; both analysts load it.
 
 ## TUI-portable output
 

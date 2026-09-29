@@ -45,7 +45,7 @@ ls -R ./~work
 ```
 
 `npm test` runs `tests/install.test.mjs:1` (validation for skill, agent, and
-command contracts, including the guarded analyst bookmark commands, plus
+command contracts, including the guarded analyst bookmark skill, plus
 isolated `PREFIX` installs).
 
 ## Tooling expectations

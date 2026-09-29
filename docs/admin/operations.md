@@ -35,18 +35,19 @@ backups (for example `spec.md~`) are git-ignored (`.gitignore:1-2`).
 
 - `.ai-temp/` is git-ignored working scratch, never committed and never treated
   as a deliverable.
-- `issue-save <name>` is the only command that writes analyst resume state. It
-  requires the matching analyst to be active and writes either
+- The [issue-bookmarks skill](../development/skills-reference.md#issue_bookmarks)
+  is the only path that writes analyst resume state, and only when the user asks
+  for it. It requires the matching analyst to be active and writes either
   `.ai-temp/business-analyst/<name>.md` or
   `.ai-temp/system-analyst/<name>.md` after any overwrite confirmation.
-- `issue-list` and `issue-load` are read-only and role-scoped. Each analyst must
-  ignore the other analyst's directory. Neither analyst autosaves state, and
-  natural-language save/resume requests are not persistence triggers.
+- Its list and load operations are read-only and role-scoped. Each analyst must
+  ignore the other analyst's directory. Neither analyst autosaves state.
 - Legacy `.ai-temp/business-analyst.yaml` and
   `.ai-temp/system-analyst.yaml` files are ignored and are not migrated.
-- The Business Analyst separately maintains
-  `.ai-temp/glossary-known-terms.yaml` as an accumulating project glossary of
-  terms resolved from `docs/`.
+- `.ai-temp/findings/` is the shared scratch both analysts may read and write:
+  `glossary.yaml` holds the project terms the Business Analyst resolved from
+  `docs/`, and one note file per topic holds a finding the other analyst would
+  otherwise re-derive. Neither file is a bookmark and neither is a deliverable.
 - `.ai/*` instruction files are loaded as context by opencode
   (`opencode_cfg.jsonc:35-37`) and are created or updated by the
   [init-project command](../development/commands/init-project.md).

@@ -9,6 +9,9 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 const SRC = path.join(REPO_ROOT, 'src');
 const SKILL_PREFIX = 'sax-';
 const LEGACY_PKG = 'saxix-utils';
+// Commands retired in favour of the sax-issue-bookmarks skill. Removed on
+// install and uninstall so a stale entry never shadows the skill.
+const RETIRED_COMMANDS = ['issue-save.md', 'issue-load.md', 'issue-list.md', 'new-spec.md', '~new-spec.md'];
 
 // --- CLI parsing ---
 const args = process.argv.slice(2);
@@ -71,7 +74,8 @@ Notes:
   - Default is --copy per-item (coexistence-safe, no directory symlink conflict).
   - --link creates per-item symlinks: DEST/skills/sax-<name> -> src/skills/<name>.
   - With GitHub specs, --link points to npx's fetched copy/cache, not a local checkout.
-  - Never creates a directory symlink (avoids conflict with other skill packs).
+  - Never symlinks skills/, agents/, or commands/ themselves (avoids conflict
+    with other skill packs); shared spec directories are linked as one unit.
   - Skills are installed with prefix "${SKILL_PREFIX}" to avoid collisions (DEST/skills/sax-<name>).
 `);
 }
@@ -130,20 +134,35 @@ if (scopeProject) {
   dests.push({ label: agent === 'compat' ? 'agents (compat project)' : `${agent} (project)`, base });
 }
 
+// Editor backups (`~name`) and dotfiles are git-ignored scratch, never shipped.
+function isSourceItem(name) {
+  return !name.startsWith('.') && !name.startsWith('~');
+}
 function listSkills() {
   const dir = path.join(SRC, 'skills');
   if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir).filter(n => !n.startsWith('.') && fs.statSync(path.join(dir, n)).isDirectory());
+  return fs.readdirSync(dir).filter(n => isSourceItem(n) && fs.statSync(path.join(dir, n)).isDirectory());
 }
 function listAgents() {
   const dir = path.join(SRC, 'agents');
   if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir).filter(n => n.endsWith('.md'));
+  return fs.readdirSync(dir).filter(n => isSourceItem(n) && n.endsWith('.md'));
 }
 function listCommands() {
   const dir = path.join(SRC, 'commands');
   if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir).filter(n => n.endsWith('.md'));
+  return fs.readdirSync(dir).filter(n => isSourceItem(n) && n.endsWith('.md'));
+}
+// Any other top-level directory under src/ holds shared specs that are neither
+// agents, skills, nor commands (for example _shared/). It is installed under the
+// same top-level name, so src/_shared/sax/ lands at DEST/_shared/sax/. The
+// reserved plugins/ directory is not installed.
+const RESERVED_SRC_DIRS = new Set(['agents', 'skills', 'commands', 'plugins']);
+function listShared() {
+  return fs.readdirSync(SRC, { withFileTypes: true })
+    .filter(e => e.isDirectory() && isSourceItem(e.name) && !RESERVED_SRC_DIRS.has(e.name))
+    .map(e => e.name)
+    .sort();
 }
 
 function ensureDir(p) {
@@ -164,12 +183,25 @@ function copyRecursive(src, dest) {
 }
 
 function removeRecursive(p) {
-  if (!fs.existsSync(p)) return;
+  // force:true makes a missing path a no-op, and unlike an existsSync guard it
+  // still removes a symlink whose target is gone.
   fs.rmSync(p, { recursive: true, force: true });
 }
 
 function isSymlink(p) {
   try { return fs.lstatSync(p).isSymbolicLink(); } catch { return false; }
+}
+
+// Remove each dir in the list that exists and is empty, deepest first.
+function removeEmptyDirs(...dirs) {
+  for (const dir of dirs) {
+    try {
+      if (fs.existsSync(dir) && !isSymlink(dir) && fs.readdirSync(dir).length === 0) {
+        fs.rmdirSync(dir);
+        console.log(`  removed empty ${dir}`);
+      }
+    } catch {}
+  }
 }
 
 function prefixedSkillName(name) {
@@ -183,14 +215,23 @@ function installForDest(dest) {
   const skills = listSkills();
   const agents = listAgents();
   const commands = listCommands();
+  const shared = listShared();
 
   const skillsDest = path.join(base, 'skills');
   const agentsDest = path.join(base, 'agents');
   const commandsDest = path.join(base, 'commands');
-  const sharedSrcFile = path.join(SRC, 'agents', '_shared', 'state-persistence.md');
-  const sharedDestDir = path.join(base, 'sax', 'shared');
-  const sharedDestFile = path.join(sharedDestDir, 'state-persistence.md');
+  // specs that are not agents, skills, or commands: installed as-is under the
+  // same top-level name they have in src/ (for example src/_shared/sax/ ->
+  // DEST/_shared/sax/). The underscore keeps the TUI from discovering them.
+  const legacySaxDir = path.join(base, 'sax');
   const legacySharedDest = path.join(agentsDest, '_shared');
+
+  function removeLegacyShared() {
+    for (const target of [path.join(legacySaxDir, 'shared', 'state-persistence.md'), legacySharedDest]) {
+      if (fs.existsSync(target) || isSymlink(target)) { removeRecursive(target); console.log(`  removed legacy ${path.relative(base, target)}`); }
+    }
+    removeEmptyDirs(path.join(legacySaxDir, 'shared'), legacySaxDir);
+  }
 
   if (uninstall) {
     for (const name of skills) {
@@ -216,22 +257,21 @@ function installForDest(dest) {
     }
     for (const name of commands) {
       const target = path.join(commandsDest, name);
-      if (dryRun) console.log(`  would remove commands/${name}`);
-      else if (fs.existsSync(target) || isSymlink(target)) { fs.rmSync(target, { force: true }); console.log(`  removed commands/${name}`); }
+      if (dryRun) { console.log(`  would remove commands/${name}`); continue; }
+      if (fs.existsSync(target) || isSymlink(target)) { fs.rmSync(target, { force: true }); console.log(`  removed commands/${name}`); }
     }
-    // also handle shared state-persistence (now at sax/shared)
-    if (fs.existsSync(sharedSrcFile)) {
-      if (dryRun) console.log(`  would remove sax/shared/state-persistence.md`);
-      else {
-        if (fs.existsSync(sharedDestFile) || isSymlink(sharedDestFile)) { fs.rmSync(sharedDestFile, { force: true }); console.log(`  removed sax/shared/state-persistence.md`); }
-        try {
-          if (fs.existsSync(sharedDestDir) && fs.readdirSync(sharedDestDir).length === 0) { fs.rmdirSync(sharedDestDir); console.log(`  removed empty ${sharedDestDir}`); }
-          const saxDir = path.join(base, 'sax');
-          if (fs.existsSync(saxDir) && fs.readdirSync(saxDir).length === 0) { fs.rmdirSync(saxDir); console.log(`  removed empty ${saxDir}`); }
-        } catch {}
-        if (fs.existsSync(legacySharedDest) || isSymlink(legacySharedDest)) { removeRecursive(legacySharedDest); console.log(`  removed legacy agents/_shared`); }
-      }
+    for (const name of RETIRED_COMMANDS) {
+      const target = path.join(commandsDest, name);
+      if (dryRun) { console.log(`  would remove retired commands/${name}`); continue; }
+      if (fs.existsSync(target) || isSymlink(target)) { fs.rmSync(target, { force: true }); console.log(`  removed retired commands/${name}`); }
     }
+    for (const name of shared) {
+      const target = path.join(base, name);
+      if (dryRun) { console.log(`  would remove ${name}/`); continue; }
+      if (fs.existsSync(target) || isSymlink(target)) { removeRecursive(target); console.log(`  removed ${name}/`); }
+    }
+    if (dryRun) console.log(`  would remove legacy ${path.join('sax', 'shared', 'state-persistence.md')}`);
+    else removeLegacyShared();
     // also remove legacy directory symlinks if present
     for (const legacy of [skillsDest, agentsDest, commandsDest]) {
       if (isSymlink(legacy)) {
@@ -324,23 +364,23 @@ function installForDest(dest) {
       console.log(`  copied agents/${name}`);
     }
   }
-  // install shared state-persistence to DEST/sax/shared (not under agents, to avoid being seen as agent)
-  if (fs.existsSync(sharedSrcFile)) {
-    if (dryRun) console.log(`  would ${useLink ? 'link' : 'copy'} sax/shared/state-persistence.md`);
-    else {
-      if (fs.existsSync(legacySharedDest) || isSymlink(legacySharedDest)) { removeRecursive(legacySharedDest); }
-      ensureDir(sharedDestDir);
-      if (fs.existsSync(sharedDestFile) || isSymlink(sharedDestFile)) fs.rmSync(sharedDestFile, { force: true });
-      if (useLink) {
-        fs.symlinkSync(sharedSrcFile, sharedDestFile, 'file');
-        console.log(`  linked sax/shared/state-persistence.md`);
-      } else {
-        ensureDir(path.dirname(sharedDestFile));
-        fs.copyFileSync(sharedSrcFile, sharedDestFile);
-        console.log(`  copied sax/shared/state-persistence.md`);
-      }
+  // shared specs: same top-level name in src/ and DEST/, never under agents/
+  for (const name of shared) {
+    const srcPath = path.join(SRC, name);
+    const destPath = path.join(base, name);
+    if (dryRun) { console.log(`  would ${useLink ? 'link' : 'copy'} ${name}/`); continue; }
+    removeRecursive(destPath);
+    if (useLink) {
+      const type = process.platform === 'win32' ? 'junction' : 'dir';
+      fs.symlinkSync(srcPath, destPath, type);
+      console.log(`  linked ${name}/`);
+    } else {
+      copyRecursive(srcPath, destPath);
+      console.log(`  copied ${name}/`);
     }
   }
+  if (dryRun) console.log(`  would remove legacy ${path.join('sax', 'shared', 'state-persistence.md')}`);
+  else removeLegacyShared();
   for (const name of commands) {
     const srcPath = path.join(SRC, 'commands', name);
     const destPath = path.join(commandsDest, name);
@@ -354,6 +394,12 @@ function installForDest(dest) {
       fs.copyFileSync(srcPath, destPath);
       console.log(`  copied commands/${name}`);
     }
+  }
+  // drop commands retired in favour of the sax-issue-bookmarks skill
+  for (const name of RETIRED_COMMANDS) {
+    const target = path.join(commandsDest, name);
+    if (dryRun) { console.log(`  would remove retired commands/${name}`); continue; }
+    if (fs.existsSync(target) || isSymlink(target)) { fs.rmSync(target, { force: true }); console.log(`  removed retired commands/${name}`); }
   }
 }
 

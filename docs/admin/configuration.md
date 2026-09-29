@@ -145,9 +145,9 @@ The repository convention is deny-by-default: a broad `*` deny rule comes
 first, then narrow allow rules. Read and glob are broadly allowed only where an
 agent needs repository access. Editing is restricted to explicit paths: the
 Business Analyst may write its own bookmark directory and glossary cache, the
-System Analyst may write only its own bookmark directory, and shell access is
-denied for both analysts (`agents/business-analyst.md:7-48`,
-`agents/system-analyst.md:7-27`). Per-TUI handling of this list varies; other
+System Analyst may write only its own bookmark directory, both may write the
+shared `.ai-temp/findings/` directory, and shell access is denied for both
+analysts (`agents/business-analyst.md:7-48`, `agents/system-analyst.md:7-27`). Per-TUI handling of this list varies; other
 TUIs ignore it.
 
 ## Keeping this page in sync

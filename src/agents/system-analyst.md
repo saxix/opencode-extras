@@ -10,17 +10,26 @@ permissions:
   - action: read
     resource: ".ai-temp/system-analyst/**"
     effect: allow
+  - action: read
+    resource: ".ai-temp/findings/**"
+    effect: allow
   - action: glob
     resource: ".ai-temp/**"
     effect: deny
   - action: glob
     resource: ".ai-temp/system-analyst/**"
     effect: allow
+  - action: glob
+    resource: ".ai-temp/findings/**"
+    effect: allow
   - action: edit
     resource: "*"
     effect: deny
   - action: edit
     resource: ".ai-temp/system-analyst/**"
+    effect: allow
+  - action: edit
+    resource: ".ai-temp/findings/**"
     effect: allow
   - action: shell
     resource: "*"
@@ -154,34 +163,43 @@ Rules for the model:
 - Distinguish `repository evidence` from `ticket facts`, `assumptions`, and
   `risks`; mark any inference as an inference.
 - Keep the full model in conversation context. Project only the compact resume
-  fields defined under Issue bookmarks below, and only when `issue-save` is
-  explicitly invoked.
+  fields defined in the `issue-bookmarks` skill, and only when the user
+  explicitly asks to save a bookmark.
 
 ### Issue bookmarks
 
-Bookmark storage and the active-analyst guard are defined in the shared spec
-`../sax/shared/state-persistence.md` (installed at
-`DEST/sax/shared/state-persistence.md`).
+Two shared definitions back this section; load them instead of re-implementing
+their rules:
 
-- Keep the full analysis model in conversation context. Never autosave it or
-  persist it on a state transition.
-- The user explicitly persists a compact resume point with `issue-save <name>`.
-  The command may run only while `system-analyst` is the active role; never
-  infer the active role from command input or bookmark content.
-- Save only at `.ai-temp/system-analyst/<name>.md`: working ticket identity and
-  language, technical goal and constraints, material repository evidence as
-  stable `path/to/file -- symbol` references, concise impact, options and
-  selected direction when known, validation plan, unresolved questions,
-  material assumptions or risks, and the next action. Never save the full model,
-  transcript, ticket discussion history, tool output, code, diffs, or operational
-  logs.
-- `issue-load <name>` restores only this agent's bookmark and continues from its
+- `../_shared/sax/state-persistence.md` (installed at
+  `DEST/_shared/sax/state-persistence.md`) owns the `.ai-temp/` state layout,
+  the shared findings directory, the write policy, and the legacy state to
+  ignore. It is shared with the `Business Analyst`.
+- The `issue-bookmarks` skill owns the bookmark operations, name rules, schema,
+  validity contract, and the per-analyst projection content.
+
+- Keep the full analysis model in conversation context.
+- The user explicitly asks to persist a compact resume point, for example
+  "save this analysis as payment-split". Then load the `issue-bookmarks` skill
+  and follow its save operation. It may run only while `system-analyst` is the
+  active role; never infer the active role from the requested input or from
+  bookmark content.
+- On an explicit request to restore previous work, load the skill and follow its
+  load operation. It restores only this agent's bookmark and continues from its
   `Next action`. If the compact projection does not establish the original
-  `input_source`, restore it as `unknown`; never infer it from `ticket_ref`.
-  `issue-list` lists only this agent's bookmarks. Neither command may read the
-  Business Analyst directory.
-- Do not create, migrate, delete, or load legacy
-  `.ai-temp/system-analyst.yaml` state.
+  `input_source`, restore it as `unknown`; never infer it from `ticket_ref`. On
+  an explicit request to see what was saved, follow the list operation. Neither
+  may read the Business Analyst directory.
+- **Shared findings**: `.ai-temp/findings/` is the one place the `Business
+  Analyst` can read what you learned. Read it at `INTAKE` and before asking the
+  user anything that may already be recorded; `glossary.yaml` there is how you
+  learn the product terminology, since you cannot read `docs/` yourself. Write
+  there without asking: one note file per repository fact the `Business Analyst`
+  would otherwise have to re-ask about, such as a component's role, an entry
+  point, or an environment constraint, recorded as `path/to/file -- symbol`.
+  Follow the shared spec for the file shape and for what never belongs. Never
+  write a term entry you could not confirm from `docs/`, and never record a
+  decision the user has not confirmed. It is not an issue bookmark.
 
 ### Resilience and error handling
 

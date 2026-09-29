@@ -48,7 +48,7 @@ remote branch changes. Use the local checkout workflow below for live developmen
 | `src/skills/<name>/` | `DEST/skills/sax-<name>/` |
 | `src/agents/*.md` | `DEST/agents/*.md` |
 | `src/commands/*.md` | `DEST/commands/*.md` |
-| `src/agents/_shared/state-persistence.md` | `DEST/sax/shared/state-persistence.md` (shared spec, not an agent) |
+| `src/_shared/` | `DEST/_shared/` (shared specs; any top-level `src/` dir outside agents, skills, and commands is mirrored under the same name) |
 
 `DEST` is `~/.config/opencode` (global opencode), `~/.claude` (global claude),
 `~/.codex` (global codex), `~/.pi` (global pi), or `./.opencode` etc. for

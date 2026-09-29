@@ -6,7 +6,7 @@ validated.
 ## Test suite
 
 The repository ships a minimal test suite for the installer, definition
-contracts, and analyst bookmark commands (`tests/install.test.mjs:1`,
+contracts, and the analyst bookmark skill (`tests/install.test.mjs:1`,
 `package.json: scripts.test`):
 
 ```sh
@@ -14,14 +14,19 @@ npm test          # node --test: definition contracts + installer per-item tests
 ```
 
 `npm test` covers:
-- all 23 skills have valid `name`/`description`, a root `SKILL.md`, and quoted
+- all 24 skills have valid `name`/`description`, a root `SKILL.md`, and quoted
   descriptions when they contain `:`;
 - all 10 agents and every command that declares frontmatter have valid
-  frontmatter; all 12 command files are non-empty;
-- the three bookmark commands omit `agent:`, enforce the two analyst roles,
-  require validated names where applicable, and document the shared compact
-  persistence contract;
-- each analyst forbids autosave and names only its own bookmark directory;
+  frontmatter; all 8 command files are non-empty;
+- the retired `issue-save`, `issue-load`, and `issue-list` commands are gone and the
+  `issue-bookmarks` skill enforces the two analyst roles, validated names, the
+  shared compact persistence contract, and one validity rule set;
+- each analyst loads both that skill and the shared state layout spec, and
+  names only its own bookmark directory;
+- both analysts are granted read, glob, and edit on `.ai-temp/findings/**` and
+  nothing broader under `.ai-temp/`;
+- the installer removes retired command files on install and uninstall, and
+  never installs editor backups or dotfiles from `src/`;
 - installer `scripts/install.mjs:1` behavior: per-item copy/link, coexistence
   (`other-pack` preserved), `PREFIX` isolation, `--dry-run`, `--uninstall`, target
   selection, `pi`, `compat`, and rejection of removed selector flags.

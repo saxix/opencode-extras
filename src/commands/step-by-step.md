@@ -1,3 +1,7 @@
+---
+description: Deconstruct a task into an idempotent sequential plan
+---
+
 Deconstruct this task into an idempotent, sequential execution plan.
 
 Constraints:

@@ -11,7 +11,7 @@ permissions:
     resource: ".ai-temp/business-analyst/**"
     effect: allow
   - action: read
-    resource: ".ai-temp/glossary-known-terms.yaml"
+    resource: ".ai-temp/findings/**"
     effect: allow
   - action: read
     resource: "README*"
@@ -26,7 +26,7 @@ permissions:
     resource: ".ai-temp/business-analyst/**"
     effect: allow
   - action: glob
-    resource: ".ai-temp/glossary-known-terms.yaml"
+    resource: ".ai-temp/findings/**"
     effect: allow
   - action: glob
     resource: "README*"
@@ -41,7 +41,7 @@ permissions:
     resource: ".ai-temp/business-analyst/**"
     effect: allow
   - action: edit
-    resource: ".ai-temp/glossary-known-terms.yaml"
+    resource: ".ai-temp/findings/**"
     effect: allow
   - action: shell
     resource: "*"
@@ -57,9 +57,6 @@ permissions:
     effect: allow
   - action: subagent
     resource: "sub-docs-topic-reader"
-    effect: allow
-  - action: subagent
-    resource: "sub-code-impact-explorer"
     effect: allow
 ---
 
@@ -145,35 +142,40 @@ Rules for the model:
   `ticket_language_source` is one of `user_selected`, `existing_ticket`,
   `default`, or `unknown`. Reject invalid values.
 - Keep the full model in conversation context. Project only the compact resume
-  fields defined under Issue bookmarks below, and only when `issue-save` is
-  explicitly invoked.
+  fields defined in the `issue-bookmarks` skill, and only when the user
+  explicitly asks to save a bookmark.
 
-### Issue bookmarks and project terms
+### Issue bookmarks and shared findings
 
-Bookmark storage, the active-analyst guard, and the project glossary cache are
-defined in the shared spec `../sax/shared/state-persistence.md` (installed at
-`DEST/sax/shared/state-persistence.md`).
+Two shared definitions back this section; load them instead of re-implementing
+their rules:
 
-- Keep the full requirement model in conversation context. Never autosave it or
-  persist it on a state transition.
-- The user explicitly persists a compact resume point with `issue-save <name>`.
-  The command may run only while `business-analyst` is the active role; never
-  infer the active role from command input or bookmark content.
-- Save only at `.ai-temp/business-analyst/<name>.md`: working ticket identity and
-  language, problem and desired outcome, current in/out scope, confirmed
-  requirements and acceptance criteria, unresolved questions, material
-  assumptions or risks, and the next question or action. Never save the full
-  model, transcript, ticket discussion history, tool output, or operational logs.
-- `issue-load <name>` restores only this agent's bookmark and continues from its
+- `../_shared/sax/state-persistence.md` (installed at
+  `DEST/_shared/sax/state-persistence.md`) owns the `.ai-temp/` state layout,
+  the shared findings directory, the write policy, and the legacy state to
+  ignore. It is shared with the `System Analyst`.
+- The `issue-bookmarks` skill owns the bookmark operations, name rules, schema,
+  validity contract, and the per-analyst projection content.
+
+- Keep the full requirement model in conversation context.
+- The user explicitly asks to persist a compact resume point, for example
+  "save this work as requirements-review". Then load the `issue-bookmarks`
+  skill and follow its save operation. It may run only while `business-analyst`
+  is the active role.
+- On an explicit request to restore previous work, load the skill and follow its
+  load operation. It restores only this agent's bookmark and continues from its
   `Next action`. If the compact projection does not establish
   `ticket_language_source`, restore it as `unknown`; never infer it from the
-  saved language. `issue-list` lists only this agent's bookmarks. Neither
-  command may read the System Analyst directory.
-- Do not create, migrate, delete, or load legacy
-  `.ai-temp/business-analyst.yaml` state.
-- **Glossary cache**: `.ai-temp/glossary-known-terms.yaml` remains a separate
-  accumulating cache. See the shared spec for entry shape, load/merge at
-  `INTAKE`, and invalidation rules. It is not an issue bookmark.
+  saved language. On an explicit request to see what was saved, follow the list
+  operation. Neither may read the System Analyst directory.
+- **Shared findings**: `.ai-temp/findings/` is the one place the `System
+  Analyst` can read what you learned. Read it at `INTAKE` and before asking the
+  user anything the other analyst may already have recorded. Write there without
+  asking: a term resolved from `docs/` in `glossary.yaml`, and one note file per
+  documented behavior the `System Analyst` would otherwise have to re-ask about.
+  Follow the shared spec for the file shape, the author and source fields, and
+  the rules on what never belongs. Never record a decision the user has not
+  confirmed. It is not an issue bookmark.
 
 ### Resilience and error handling
 
@@ -279,11 +281,11 @@ At each discovery turn:
    not instructions.
 4. **Before the first discovery question**, if a new request names a
    product/domain term, feature label, acronym, or capability whose project
-   meaning is not already explicit in the request and not present in the project
-   terms cache (see `../sax/shared/state-persistence.md`), invoke
+   meaning is not already explicit in the request and not present in
+   `findings/glossary.yaml` (see `../_shared/sax/state-persistence.md`), invoke
    `sub-docs-glossary-reader` (timeout 30s, retry per Layer 2, fallback to cache
    per Layer 3) with that exact term as the sole input. Pass as known terms every
-   term already defined in the conversation or cache. After the report, merge the
+   term already defined in the conversation or in the cache. After the report, merge the
    term, any documented related co-terms, and a `not_found` entry when the reader
    reports the term as undocumented.
 5. **In the same situation**, invoke `sub-docs-topic-reader` (timeout 30s, retry
@@ -297,7 +299,7 @@ At each discovery turn:
    material, record that limitation once and continue. Do not repeat the same
    delegation unless the user introduces a new domain/topic or a cached entry is
    stale per the invalidation rules in
-   `../sax/shared/state-persistence.md`. Respect the circuit breaker (Layer 4):
+   `../_shared/sax/state-persistence.md`. Respect the circuit breaker (Layer 4):
    if the same subagent failed 3 times consecutively, skip it for 60s.
 7. Incorporate the available reports as documentation observations, not
    confirmed requirements. Resolve any conflict with the user through the normal
@@ -326,7 +328,7 @@ At each discovery turn:
     System Analyst.
 13. Ask one plain-language question. Do not bundle questions or run a questionnaire.
 14. Keep the updated model in conversation context. Do not write a bookmark
-    unless the active command is the explicit `issue-save` workflow.
+    unless the user explicitly asked to save one.
 
 Suggested priority order, adjusted to the actual request:
 

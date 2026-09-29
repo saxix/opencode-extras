@@ -37,10 +37,11 @@ declares this repository's structure, conventions, and output standard
 ## Bookmark
 
 A compact, named Markdown resume point for Business Analyst or System Analyst
-ticket work. It is created only by `issue-save <name>` under the active
-analyst's `.ai-temp/` directory, then discovered or restored with `issue-list`
-and `issue-load`. A bookmark is explicit scratch state, not an autosave,
-transcript, or session backup. See
+ticket work. It is written only when the user explicitly asks, under the active
+analyst's `.ai-temp/` directory, by the
+[issue-bookmarks skill](development/skills-reference.md#issue_bookmarks); the same
+skill lists and restores it. A bookmark is explicit scratch state, not an
+autosave, transcript, or session backup. See
 [Analyst bookmarks](development/agents-reference.md#analyst-bookmarks).
 
 ## Command

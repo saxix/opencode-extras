@@ -1,7 +1,7 @@
 # Skill reference
 
 Who is this for? This page catalogs every skill in `src/skills/`, with its purpose
-and trigger keywords. Source of truth: `src/skills/*/SKILL.md` (23 skills).
+and trigger keywords. Source of truth: `src/skills/*/SKILL.md` (24 skills).
 
 ## Summary
 
@@ -18,6 +18,7 @@ and trigger keywords. Source of truth: `src/skills/*/SKILL.md` (23 skills).
 | [django-models](#django-models) | Django ORM model design |
 | [documentation](#documentation) | Canonical docs site taxonomy, audit, style, and build checks |
 | [find-bugs](#find-bugs) | Bug and vulnerability finding |
+| [issue-bookmarks](#issue_bookmarks) | Analyst ticket bookmark rules and the save/load/list operations |
 | [pull-request](#pull-request) | Validate, commit, push, and open a PR |
 | [push](#push) | Stage, validate with tox, and push |
 | [release](#release) | Generate release notes and a GitHub release |
@@ -98,6 +99,32 @@ documentation (`.src/skills/documentation/SKILL.md:3`).
 Finds bugs, security vulnerabilities, and code quality issues in local branch
 changes. Use when asked to review changes, find bugs, security review, or
 audit code on the current branch (`.src/skills/find-bugs/SKILL.md:2-3`).
+
+## issue_bookmarks
+
+Canonical rules and procedures for explicit analyst ticket bookmarks, loaded by
+the `Business Analyst` and the `System Analyst`. Trigger on "save this work",
+"bookmark this", "load my last bookmark", "list my bookmarks"
+(`.src/skills/issue-bookmarks/SKILL.md:2-3`). Replaces the retired `issue-save`,
+`issue-load`, and `issue-list` commands; the installer removes those command
+files on the next run.
+
+| Aspect | Value |
+|---|---|
+| Operations | save, load, list, selected by the user's request |
+| Guard | Active session agent must be exactly `business-analyst` or `system-analyst` |
+| Storage | `.ai-temp/business-analyst/<name>.md` or `.ai-temp/system-analyst/<name>.md` |
+| Name | `^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$`, validated before any file tool |
+| Schema | `bookmark`, `agent`, `schema_version`, `ticket_ref`, `ticket_title`, `ticket_language`, `status`, `saved_at` |
+
+Saves are explicit only: there is no autosave and no persistence on a state
+transition, per the write policy in the shared layout spec
+(`src/_shared/sax/state-persistence.md`), which both analysts also load. Load
+restores the compact projection and continues from
+`Next action`. List is read-only and shows the analyst's own bookmarks newest
+first, marking an invalid file as `invalid` instead of repairing it. The project
+shared findings directory at `.ai-temp/findings/` is separate and is never
+touched by this skill.
 
 ## pull-request
 

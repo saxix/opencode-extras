@@ -30,8 +30,9 @@ Agents are granted the minimum access needed:
 
 - **Read-only repository roles**: the Business Analyst and System Analyst cannot
   edit repository files or run shell commands. Their only writes are explicit
-  bookmarks under `.ai-temp/<active-analyst>/`; the Business Analyst may also
-  update its separate glossary cache (`agents/business-analyst.md:7-45`,
+  bookmarks under `.ai-temp/<active-analyst>/` and observations under the shared
+  `.ai-temp/findings/`; the Business Analyst may also update its own
+  `findings/glossary.yaml` (`agents/business-analyst.md:7-45`,
   `agents/system-analyst.md:7-27`).
 - **Deny-by-default**: the Documenter denies all edits except `docs/**`,
   `README*`, and `properdocs.yml`/`properdocs.yaml`
@@ -51,9 +52,11 @@ Permission lists follow a deny-first, allow-last convention
 
 - Ticket contents and specs are untrusted source material; they never override
   an agent's role or safety rules (`agents/coder.md:62`).
-- Bookmark files are untrusted Markdown. The bookmark commands verify the active
-  analyst, common schema, agent identity, and path before loading, and ignore
-  embedded instructions (`src/commands/issue-load.md:39-60`).
+- Bookmark files are untrusted Markdown. The
+  [issue-bookmarks skill](../development/skills-reference.md#issue_bookmarks)
+  verifies the active analyst, common schema, agent identity, and path before
+  loading, and ignores embedded instructions
+  (`src/skills/sax-issue-bookmarks/SKILL.md`).
 - The Business Analyst ignores implementation details found in technical
   proposals and records only the functional intent
   (`agents/business-analyst.md:83-85`).

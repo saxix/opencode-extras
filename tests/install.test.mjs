@@ -7,23 +7,27 @@ import {
   SRC_SKILLS,
   SRC_AGENTS,
   SRC_COMMANDS,
+  SRC_SHARED,
   parseFrontmatter,
   listSkills,
   listAgents,
   listCommands,
+  listShared,
   runInstall,
 } from './helpers.mjs';
 
-const BOOKMARK_COMMANDS = ['issue-save.md', 'issue-load.md', 'issue-list.md'];
+const RETIRED_COMMANDS = ['issue-save.md', 'issue-load.md', 'issue-list.md', 'new-spec.md', '~new-spec.md'];
+const BOOKMARK_SKILL = 'sax-issue-bookmarks';
 const ANALYST_AGENTS = ['business-analyst.md', 'system-analyst.md'];
 const normalize = value => value.replace(/\s+/g, ' ').trim();
+const readSkill = name => normalize(fs.readFileSync(path.join(SRC_SKILLS, name, 'SKILL.md'), 'utf8'));
 
 // --- Header / format tests ---
 
 describe('skill frontmatter', () => {
   it('every skill has SKILL.md with valid name and description', () => {
     const skills = listSkills();
-    assert.equal(skills.length, 23, `expected 23 skills, got ${skills.length}`);
+    assert.equal(skills.length, 24, `expected 24 skills, got ${skills.length}`);
     for (const name of skills) {
       const fm = parseFrontmatter(path.join(SRC_SKILLS, name, 'SKILL.md'));
       assert.ok(fm, `${name}/SKILL.md missing frontmatter`);
@@ -77,9 +81,9 @@ describe('agent frontmatter', () => {
 describe('command frontmatter', () => {
   it('every command with frontmatter has description', () => {
     const cmds = listCommands();
-    assert.equal(cmds.length, 12, `expected 12 commands, got ${cmds.length}`);
+    assert.equal(cmds.length, 8, `expected 8 commands, got ${cmds.length}`);
     const withFm = cmds.filter(f => parseFrontmatter(path.join(SRC_COMMANDS, f)));
-    assert.ok(withFm.length >= 7, `expected >=7 commands with frontmatter`);
+    assert.ok(withFm.length >= 3, `expected >=3 commands with frontmatter`);
     for (const f of withFm) {
       const fm = parseFrontmatter(path.join(SRC_COMMANDS, f));
       assert.ok(fm.description, `${f} missing description`);
@@ -95,39 +99,34 @@ describe('command frontmatter', () => {
 
   it('defines the three bookmark commands without forcing an agent', () => {
     const cmds = listCommands();
-    for (const command of BOOKMARK_COMMANDS) {
-      assert.ok(cmds.includes(command), `${command} missing`);
-      const fm = parseFrontmatter(path.join(SRC_COMMANDS, command));
-      assert.ok(fm?.description, `${command} missing description`);
-      assert.equal(fm.agent, undefined, `${command} must run in the active session`);
+    for (const command of RETIRED_COMMANDS) {
+      assert.ok(!cmds.includes(command), `${command} must be a skill, not a command`);
     }
+    const fm = parseFrontmatter(path.join(SRC_SKILLS, BOOKMARK_SKILL, 'SKILL.md'));
+    assert.ok(fm, 'bookmark skill missing frontmatter');
+    assert.equal(fm.name, BOOKMARK_SKILL);
+    assert.equal(fm.agent, undefined, 'bookmark skill must run in the active session');
   });
 
-  it('guards bookmark commands to the two analyst roles', () => {
-    for (const command of BOOKMARK_COMMANDS) {
-      const content = normalize(fs.readFileSync(path.join(SRC_COMMANDS, command), 'utf8'));
-      assert.match(content, /session's loaded agent identity/);
-      assert.match(content, /business-analyst/);
-      assert.match(content, /system-analyst/);
-      assert.match(content, /stop without reading/);
-      assert.match(content, /other analyst/);
-    }
+  it('guards bookmark operations to the two analyst roles', () => {
+    const content = readSkill(BOOKMARK_SKILL);
+    assert.match(content, /session's loaded agent identity/);
+    assert.match(content, /business-analyst/);
+    assert.match(content, /system-analyst/);
+    assert.match(content, /stop without reading/);
   });
 
   it('requires a bookmark name for save and load', () => {
-    for (const command of ['issue-save.md', 'issue-load.md']) {
-      const content = normalize(fs.readFileSync(path.join(SRC_COMMANDS, command), 'utf8'));
-      assert.match(content, /First positional argument: `\$1`/);
-      assert.match(content, /If the first positional argument is absent, ask one question/);
-      assert.match(content, /\^\[A-Za-z0-9\]\[A-Za-z0-9_-\]\{0,63\}\$/);
-    }
+    const content = readSkill(BOOKMARK_SKILL);
+    assert.match(content, /If no name was supplied, ask one question/);
+    assert.match(content, /\^\[A-Za-z0-9\]\[A-Za-z0-9_\-\]\{0,63\}\$/);
   });
 
   it('keeps analyst persistence explicit and compact', () => {
     for (const agent of ANALYST_AGENTS) {
       const content = normalize(fs.readFileSync(path.join(SRC_AGENTS, agent), 'utf8'));
-      assert.match(content, /Never autosave it or persist it on a state transition/);
-      assert.match(content, /only when `issue-save` is explicitly invoked/);
+      assert.match(content, /explicitly asks to save a bookmark/);
+      assert.match(content, /Keep the full (requirement|analysis) model in conversation context/);
       assert.match(content, /active role/);
       assert.doesNotMatch(content, /session_notes/);
       assert.doesNotMatch(content, /annotate|resume work|restart from note|create note|note draft|pause now/);
@@ -142,25 +141,80 @@ describe('command frontmatter', () => {
     assert.match(system, /resource: "\.ai-temp\/system-analyst\/\*\*"/);
   });
 
-  it('defines one compact shared bookmark contract', () => {
-    const content = normalize(fs.readFileSync(path.join(SRC_AGENTS, '_shared', 'state-persistence.md'), 'utf8'));
-    assert.match(content, /Every bookmark command must pass this guard/);
-    assert.match(content, /user explicitly invokes `issue-save`/);
+  it('points both analysts at the bookmark skill and not at the old commands', () => {
+    for (const agent of ANALYST_AGENTS) {
+      const content = normalize(fs.readFileSync(path.join(SRC_AGENTS, agent), 'utf8'));
+      assert.match(content, /The `issue-bookmarks` skill owns the bookmark operations/);
+      assert.doesNotMatch(content, /issue-save|issue-load|issue-list/);
+    }
+  });
+
+  it('defines one compact bookmark contract in the skill', () => {
+    const content = readSkill(BOOKMARK_SKILL);
+    assert.match(content, /Every operation must pass this guard/);
     assert.match(content, /schema_version: 1/);
-    assert.match(content, /Never copy the complete internal model/);
+    assert.match(content, /owns the operations, the name rules, the schema, and the validity/);
+    assert.match(content, /Never copy the complete internal model|never contains the complete internal model/);
     assert.doesNotMatch(content, /## Snapshot file|### Autosave|### Annotate|### Resume/);
   });
 
   it('serializes bookmark YAML safely and applies one validity contract', () => {
-    const save = normalize(fs.readFileSync(path.join(SRC_COMMANDS, 'issue-save.md'), 'utf8'));
-    const load = normalize(fs.readFileSync(path.join(SRC_COMMANDS, 'issue-load.md'), 'utf8'));
-    const list = normalize(fs.readFileSync(path.join(SRC_COMMANDS, 'issue-list.md'), 'utf8'));
-    const shared = normalize(fs.readFileSync(path.join(SRC_AGENTS, '_shared', 'state-persistence.md'), 'utf8'));
-    assert.match(save, /valid YAML double-quoted scalars/);
-    assert.match(shared, /Bookmark validity/);
-    assert.match(load, /Do not coerce or repair values/);
-    assert.match(list, /same validity rules as `issue-load`/);
-    assert.match(load, /mark absent provenance as unknown or unconfirmed/);
+    const content = readSkill(BOOKMARK_SKILL);
+    assert.match(content, /valid YAML double-quoted scalar/);
+    assert.match(content, /A bookmark is valid only when all of these checks pass/);
+    assert.match(content, /Do not coerce, repair, or guess a value/);
+    assert.match(content, /same validity rules as `load`/);
+    assert.match(content, /mark absent provenance as unknown or unconfirmed/);
+  });
+
+  it('shares the state layout spec with both analysts', () => {
+    const content = normalize(fs.readFileSync(path.join(SRC_SHARED, 'sax', 'state-persistence.md'), 'utf8'));
+    assert.match(content, /business-analyst/);
+    assert.match(content, /system-analyst/);
+    assert.match(content, /\.ai-temp\/findings\//);
+    assert.match(content, /glossary\.yaml/);
+    assert.match(content, /glossary-known-terms\.yaml/);
+    assert.match(content, /sax-issue-bookmarks/);
+    assert.match(content, /the other analyst's bookmark directory/);
+    assert.match(content, /No autosave/);
+    assert.match(content, /Only an explicit user request writes a bookmark/);
+    assert.match(content, /## Shared findings/);
+    assert.match(content, /## Legacy state/);
+    // the bookmark contract itself belongs to the skill, not to this spec
+    assert.doesNotMatch(content, /schema_version|## Ticket bookmarks|## Operation:/);
+  });
+
+  it('defines the shared findings contract', () => {
+    const content = normalize(fs.readFileSync(path.join(SRC_SHARED, 'sax', 'state-persistence.md'), 'utf8'));
+    assert.match(content, /A finding is an observation with evidence, not a decision and not working state/);
+    assert.match(content, /author: business-analyst \| system-analyst/);
+    assert.match(content, /recorded_at/);
+    assert.match(content, /credentials, secrets, or any content the user must still confirm/);
+    assert.match(content, /The `System Analyst` never writes this file/);
+  });
+
+  it('gives both analysts read, glob, and edit on findings only', () => {
+    for (const agent of ANALYST_AGENTS) {
+      const content = fs.readFileSync(path.join(SRC_AGENTS, agent), 'utf8');
+      for (const action of ['read', 'glob', 'edit']) {
+        const re = new RegExp('- action: ' + action + '\\n\\s+resource: "\\.ai-temp/findings/\\*\\*"\\n\\s+effect: allow');
+        assert.match(content, re, `${agent} must allow ${action} on .ai-temp/findings/**`);
+      }
+      // no blanket access to the other analyst's bookmark directory
+      assert.doesNotMatch(content, /resource: "\.ai-temp\/\*\*"\n\s+effect: allow/);
+    }
+  });
+
+  it('points both analysts at the shared spec and the bookmark skill', () => {
+    for (const agent of ANALYST_AGENTS) {
+      const content = normalize(fs.readFileSync(path.join(SRC_AGENTS, agent), 'utf8'));
+      assert.match(content, /\.\.\/_shared\/sax\/state-persistence\.md/);
+      assert.match(content, /It is shared with the/);
+      assert.match(content, /The `issue-bookmarks` skill owns the bookmark operations/);
+      assert.match(content, /\*\*Shared findings\*\*/);
+      // the layout, write policy, and legacy rules live only in the spec
+      assert.doesNotMatch(content, /autosave|migrate|no autosave/);
+    }
   });
 });
 
@@ -197,11 +251,52 @@ describe('installer', () => {
     for (const f of listCommands()) {
       assert.ok(fs.existsSync(path.join(prefix, '.config', 'opencode', 'commands', f)));
     }
+    for (const name of listShared()) {
+      assert.ok(fs.existsSync(path.join(prefix, '.config', 'opencode', name)), `missing shared dir ${name}`);
+    }
     assert.ok(!fs.existsSync(path.join(prefix, '.claude')));
     assert.ok(!fs.existsSync(path.join(prefix, '.codex')));
     assert.ok(!fs.existsSync(path.join(prefix, '.pi')));
-    assert.ok(fs.existsSync(path.join(prefix, '.config', 'opencode', 'sax', 'shared', 'state-persistence.md')), 'shared spec missing at sax/shared');
+    assert.ok(fs.existsSync(path.join(prefix, '.config', 'opencode', '_shared', 'sax', 'state-persistence.md')), 'shared spec missing at _shared/sax');
     assert.ok(!fs.existsSync(path.join(prefix, '.config', 'opencode', 'agents', '_shared', 'state-persistence.md')), 'legacy agents/_shared should not exist');
+  });
+
+  it('mirrors shared dirs under the same top-level name', () => {
+    const prefix = path.join(tmp, 'shared-mirror');
+    runInstall('--agent opencode --link', { PREFIX: prefix });
+    const base = path.join(prefix, '.config', 'opencode');
+    for (const name of listShared()) {
+      const p = path.join(base, name);
+      assert.ok(fs.lstatSync(p).isSymbolicLink(), `${name} should be a symlink in link mode`);
+      assert.ok(fs.readlinkSync(p).endsWith(path.join('src', name)), `${name} should mirror the source path`);
+    }
+    assert.ok(!fs.existsSync(path.join(base, 'sax')), 'legacy sax/ dir should be gone');
+  });
+
+  it('cleans up shared specs left by an older install layout', () => {
+    const prefix = path.join(tmp, 'shared-legacy');
+    const base = path.join(prefix, '.config', 'opencode');
+    fs.mkdirSync(path.join(base, 'sax', 'shared'), { recursive: true });
+    fs.writeFileSync(path.join(base, 'sax', 'shared', 'state-persistence.md'), 'old');
+    fs.mkdirSync(path.join(base, 'agents', '_shared'), { recursive: true });
+    fs.writeFileSync(path.join(base, 'agents', '_shared', 'state-persistence.md'), 'old');
+    runInstall('--agent opencode', { PREFIX: prefix });
+    assert.ok(!fs.existsSync(path.join(base, 'sax')), 'legacy sax/shared should be removed');
+    assert.ok(!fs.existsSync(path.join(base, 'agents', '_shared')), 'legacy agents/_shared should be removed');
+    assert.ok(fs.existsSync(path.join(base, '_shared', 'sax', 'state-persistence.md')));
+  });
+
+  it('removes broken symlinks left behind by a moved source', () => {
+    const prefix = path.join(tmp, 'broken-link');
+    const base = path.join(prefix, '.config', 'opencode');
+    runInstall('--agent opencode --link', { PREFIX: prefix });
+    const commandsDir = path.join(base, 'commands');
+    fs.symlinkSync(path.join(tmp, 'gone', 'old-command.md'), path.join(commandsDir, 'old-command.md'), 'file');
+    const skillLink = path.join(base, 'skills', 'old-skill');
+    fs.symlinkSync(path.join(tmp, 'gone', 'old-skill'), skillLink, 'dir');
+    runInstall('--uninstall --agent opencode', { PREFIX: prefix });
+    assert.ok(!fs.existsSync(path.join(commandsDir, 'old-command.md')), 'broken command symlink should be removed');
+    assert.ok(!fs.existsSync(skillLink), 'broken skill symlink should be removed');
   });
 
   it('global targets use dedicated destinations', () => {
@@ -286,7 +381,7 @@ describe('installer', () => {
     assert.ok(fs.existsSync(path.join(baseSkills, listSkills()[0], 'SKILL.md')), 'compat skills missing');
     assert.ok(fs.existsSync(path.join(proj, '.agents', 'agents', listAgents()[0])), 'compat agents missing');
     assert.ok(fs.existsSync(path.join(proj, '.agents', 'commands', listCommands()[0])), 'compat commands missing');
-    assert.ok(fs.existsSync(path.join(proj, '.agents', 'sax', 'shared', 'state-persistence.md')), 'compat shared spec missing at sax/shared');
+    assert.ok(fs.existsSync(path.join(proj, '.agents', '_shared', 'sax', 'state-persistence.md')), 'compat shared spec missing at _shared/sax');
     assert.ok(!fs.existsSync(path.join(proj, '.agents', 'agents', '_shared', 'state-persistence.md')), 'legacy agents/_shared should not exist in compat');
     assert.ok(!fs.existsSync(path.join(proj, '.opencode', 'skills', listSkills()[0])), 'should not create .opencode in compat');
     assert.ok(!fs.existsSync(path.join(proj, '.claude')), 'should not create .claude in compat');
@@ -295,7 +390,7 @@ describe('installer', () => {
     for (const name of listSkills()) {
       assert.ok(!fs.existsSync(path.join(baseSkills, name)));
     }
-    assert.ok(!fs.existsSync(path.join(proj, '.agents', 'sax', 'shared', 'state-persistence.md')), 'compat shared should be removed on uninstall');
+    assert.ok(!fs.existsSync(path.join(proj, '.agents', '_shared', 'sax', 'state-persistence.md')), 'compat shared should be removed on uninstall');
   });
 
   it('--agent compat --link creates symlinks in .agents', () => {
@@ -315,6 +410,40 @@ describe('installer', () => {
     fs.mkdirSync(proj, { recursive: true });
     runInstall('--agent compat --dry-run', {}, proj);
     assert.ok(!fs.existsSync(path.join(proj, '.agents', 'skills', listSkills()[0])));
+  });
+
+  it('removes retired bookmark commands left by an older install', () => {
+    const prefix = path.join(tmp, 'retired');
+    const commandsDir = path.join(prefix, '.config', 'opencode', 'commands');
+    fs.mkdirSync(commandsDir, { recursive: true });
+    for (const name of RETIRED_COMMANDS) fs.writeFileSync(path.join(commandsDir, name), 'old');
+    runInstall('--agent opencode', { PREFIX: prefix });
+    for (const name of RETIRED_COMMANDS) {
+      assert.ok(!fs.existsSync(path.join(commandsDir, name)), `${name} should be removed`);
+    }
+    assert.ok(fs.existsSync(path.join(prefix, '.config', 'opencode', 'skills', BOOKMARK_SKILL, 'SKILL.md')));
+    runInstall('--uninstall --agent opencode', { PREFIX: prefix });
+    for (const name of RETIRED_COMMANDS) {
+      assert.ok(!fs.existsSync(path.join(commandsDir, name)), `${name} should be removed on uninstall`);
+    }
+  });
+
+  it('never installs editor backups or dotfiles from src/', () => {
+    const prefix = path.join(tmp, 'backups');
+    const backup = path.join(SRC_COMMANDS, '~throwaway.md');
+    fs.writeFileSync(backup, 'scratch');
+    const dotSkill = path.join(SRC_SKILLS, '.throwaway');
+    fs.mkdirSync(dotSkill, { recursive: true });
+    fs.writeFileSync(path.join(dotSkill, 'SKILL.md'), 'scratch');
+    try {
+      runInstall('--agent opencode', { PREFIX: prefix });
+      const base = path.join(prefix, '.config', 'opencode');
+      assert.ok(!fs.existsSync(path.join(base, 'commands', '~throwaway.md')), 'backup command should not be installed');
+      assert.ok(!fs.existsSync(path.join(base, 'skills', 'sax-.throwaway')), 'dotfile skill should not be installed');
+    } finally {
+      fs.rmSync(backup, { force: true });
+      fs.rmSync(dotSkill, { recursive: true, force: true });
+    }
   });
 
   it('rejects invalid and removed agent selectors', () => {
