@@ -65,20 +65,22 @@ A running session keeps using the configuration it loaded at startup.
 
 ## Save and resume analyst work
 
-Start a session with the Business Analyst or System Analyst, then invoke the
-bookmark commands explicitly:
+Start a session with the Business Analyst or System Analyst, then ask in plain
+language:
 
 ```text
-issue-save requirements-review
-issue-list
-issue-load requirements-review
+save this work as requirements-review
+list my bookmarks
+load requirements-review
 ```
 
-`issue-save` stores compact current work under the active analyst's `.ai-temp/`
-directory. `issue-list` shows that analyst's bookmarks, newest first, and
-`issue-load` restores one. The commands do nothing if the loaded agent is not
-exactly `business-analyst` or `system-analyst`. They do not autosave and do not
-respond to natural-language save or resume requests.
+The active analyst loads the
+[issue-bookmarks skill](../development/skills-reference.md#issue_bookmarks) and
+follows the matching operation. Saving stores compact current work under that
+analyst's `.ai-temp/` directory. Listing shows that analyst's bookmarks, newest
+first, and loading restores one. Nothing happens if the loaded agent is not
+exactly `business-analyst` or `system-analyst`. There is no autosave: only an
+explicit request writes a file.
 
 ## Verify the install
 

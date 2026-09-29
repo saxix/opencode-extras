@@ -35,9 +35,9 @@ assistants (`README.md:3`). The repository ships a Node installer
 - **Explicit approval gates.** The Business Analyst and System Analyst do not
   mutate tickets or choose technical directions without user approval
   (`agents/business-analyst.md:85`, `agents/system-analyst.md:69`).
-- **Explicit analyst bookmarks.** `issue-save`, `issue-list`, and `issue-load`
-  persist and restore compact analyst state only when explicitly invoked in an
-  active analyst session; there is no autosave.
+- **Explicit analyst bookmarks.** The `issue-bookmarks` skill persists and
+  restores compact analyst state only when the user asks for it in an active
+  analyst session; there is no autosave.
 - **Deny-by-default permissions.** Agents explicitly allow a narrow write
   surface (for example the Documenter may only write `docs/**`, `README*`, and
   `properdocs.yml` / `properdocs.yaml`, `agents/documenter.md:14-28`).

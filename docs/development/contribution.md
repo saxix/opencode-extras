@@ -44,7 +44,7 @@ commands in this repository.
 
 1. Create `commands/<name>.md`.
 2. Optionally set `description:` and `agent:` (for example
-   `commands/new-spec.md:3`). Without frontmatter the command runs on the TUI
+   `commands/debug-code.md:3`). Without frontmatter the command runs on the TUI
    default agent.
 3. The body is the prompt executed with `$ARGUMENTS` as the user input.
    Constrain it with numbered requirements (pattern:

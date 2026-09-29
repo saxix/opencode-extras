@@ -1,3 +1,7 @@
+---
+description: Adversarial review of a proposal
+---
+
 Perform an adversarial review of this proposal as a skeptical principal engineer.
 
 Constraints:

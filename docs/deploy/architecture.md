@@ -17,7 +17,13 @@ coexistence-safe across skill packs.
 src/agents/*          ->  DEST/agents/*.md        (per-item copy/link)
 src/skills/<name>/    ->  DEST/skills/<name>/     (per-item copy/link)
 src/commands/*.md     ->  DEST/commands/*.md      (per-item copy/link)
+src/_shared/<name>/   ->  DEST/_shared/<name>/    (per-dir copy/link)
 ```
+
+The last rule covers any top-level `src/` directory other than `agents`,
+`skills`, `commands`, and the reserved `plugins/`: shared specs are mirrored
+under the same name so the TUI never discovers them as agents. Only `skills/`
+gets the `sax-` name prefix; `agents/` and `commands/` do not.
 
 `DEST` is `~/.config/opencode` (opencode), `~/.claude` (Claude Code),
 `~/.codex` (Codex), `~/.pi` (pi), or `./.opencode` etc. for `--project`.

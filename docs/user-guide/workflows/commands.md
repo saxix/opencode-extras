@@ -14,18 +14,18 @@ by name; user input is passed through `$ARGUMENTS`
 | [eli5](../../development/commands/eli5.md) | Explain a concept from first principles | default |
 | [humanize](../../development/commands/humanize.md) | Rewrite text without corporate or AI markers | default |
 | [init-project](../../development/commands/init-project.md) | Create or update `AGENTS.md` and `.ai/*` files | build |
-| [new-spec](../../development/commands/new-spec.md) | Create or refine a feature spec in `.specs/` | spec |
 | [step-by-step](../../development/commands/step-by-step.md) | Deconstruct a task into an idempotent sequential plan | default |
 | [truthmode](../../development/commands/truthmode.md) | Strict empirical rigor and epistemic calibration | default |
 | [git-status](../../development/commands/git-status.md) | Explain what the pending git changes are trying to do | default |
-| [issue-save](../../development/commands/issue-save.md) | Save active analyst work as a named bookmark | active analyst |
-| [issue-load](../../development/commands/issue-load.md) | Load a named analyst bookmark | active analyst |
-| [issue-list](../../development/commands/issue-list.md) | List bookmarks for the active analyst | active analyst |
 
 The table reflects the frontmatter in `commands/*.md`. Commands without an
-`agent:` key run in the TUI's current session. The bookmark commands rely on
-that behavior and first verify that the loaded agent is exactly
-`business-analyst` or `system-analyst`.
+`agent:` key run in the TUI's current session.
+
+Analyst bookmarks are not commands. They live in the
+[issue-bookmarks skill](../../development/skills-reference.md#issue_bookmarks),
+which the Business Analyst and System Analyst load on an explicit request. The
+older `issue-save`, `issue-load`, and `issue-list` commands are retired and are
+removed by the installer.
 
 ## How to use them
 
@@ -33,11 +33,8 @@ that behavior and first verify that the loaded agent is exactly
    text to rewrite, a task, an idea).
 2. The command body applies a set of constraints to your input
    (`$ARGUMENTS`).
-3. Most commands are stateless: they take the input, apply the format or
-   reasoning constraints, and return the result.
-4. The three analyst bookmark commands are the exception. They use the active
-   session, require an analyst role, and operate only on that analyst's named
-   `.ai-temp/` bookmarks.
+3. Commands are stateless: they take the input, apply the format or reasoning
+   constraints, and return the result.
 
 ## Example flows
 
@@ -59,13 +56,13 @@ that behavior and first verify that the loaded agent is exactly
   (`commands/truthmode.md:3-9`).
 - **Start or reshape project instructions.** Run `init-project` to create or
   update `AGENTS.md` and `.ai/*` files (`commands/init-project.md:2-3`).
-- **Manage a feature spec.** Pass a TICKET-ID and an idea to `new-spec` to
-  create or refine a feature spec in `.specs/` (`commands/new-spec.md`).
 - **Debug a failure.** Run `debug-code` to trigger a root-cause fix loop
   (`commands/debug-code.md`).
 - **Save analyst work.** While the Business Analyst or System Analyst is active,
-  run `issue-save ticket-refinement`. Use `issue-list` to find the name and
-  `issue-load ticket-refinement` to resume it in a later session.
+  ask "save this work as ticket-refinement". Use "list my bookmarks" to find the
+  name and "load ticket-refinement" to resume it in a later session. The analyst
+  loads the [issue-bookmarks skill](../../development/skills-reference.md#issue_bookmarks)
+  to do it.
 
 ## Next steps
 

@@ -71,18 +71,26 @@ for the Ticket Implementer.
 
 The Business Analyst and System Analyst keep the full working model in the
 current conversation. They do not autosave it. To move work across sessions,
-run one of the bookmark commands while the relevant analyst is the active agent:
+ask the active analyst in plain language, for example "save this work as
+requirements-review". The analyst loads the
+[issue-bookmarks skill](../../development/skills-reference.md#issue_bookmarks)
+and follows the matching operation:
 
-- [`issue-save <name>`](../../development/commands/issue-save.md) writes a compact
-  resume state under that analyst's `.ai-temp/` directory;
-- [`issue-list`](../../development/commands/issue-list.md) lists only that
-  analyst's bookmarks, newest first;
-- [`issue-load <name>`](../../development/commands/issue-load.md) restores the selected
-  bookmark and continues from its next action.
+- **save** writes a compact resume state under that analyst's `.ai-temp/`
+  directory;
+- **list** shows only that analyst's bookmarks, newest first;
+- **load** restores the selected bookmark and continues from its next action.
 
-The commands stop without reading or changing files if the active agent is not
-exactly `business-analyst` or `system-analyst`. Natural-language requests do
-not trigger persistence, and the analysts cannot inspect each other's bookmarks.
+The operations stop without reading or changing files if the active agent is not
+exactly `business-analyst` or `system-analyst`. Only an explicit request writes a
+bookmark, and the analysts cannot inspect each other's bookmarks.
+
+The two agents also share `.ai-temp/findings/`: a fact one establishes for the
+other is recorded there once, with its evidence, instead of being re-derived or
+re-asked. The Business Analyst contributes the product terminology it resolves
+from `docs/`; the System Analyst contributes repository facts such as a
+component's role or an entry point. Neither writes the other's working model
+there.
 
 ### 3. Coder -- implement and verify
 

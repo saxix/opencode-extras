@@ -64,7 +64,7 @@ describe('uninstall', () => {
     for (const [, directories] of targets) {
       assert.ok(fs.existsSync(path.join(prefix, ...directories, 'skills', listSkills()[0], 'SKILL.md')));
     }
-    assert.ok(fs.existsSync(path.join(prefix, '.config', 'opencode', 'sax', 'shared', 'state-persistence.md')), 'shared spec missing at sax/shared');
+    assert.ok(fs.existsSync(path.join(prefix, '.config', 'opencode', '_shared', 'sax', 'state-persistence.md')), 'shared spec missing at _shared/sax');
     assert.ok(!fs.existsSync(path.join(prefix, '.config', 'opencode', 'agents', '_shared', 'state-persistence.md')), 'legacy agents/_shared should not exist');
 
     const keep = path.join(opencodeSkills, 'keep-me');
@@ -85,7 +85,7 @@ describe('uninstall', () => {
       assert.ok(!fs.existsSync(path.join(opencodeCommands, f)), `command should be removed ${f}`);
     }
     assert.ok(fs.existsSync(path.join(keep, 'SKILL.md')), 'unrelated keep-me preserved after uninstall');
-    assert.ok(!fs.existsSync(path.join(prefix, '.config', 'opencode', 'sax', 'shared', 'state-persistence.md')), 'shared spec should be removed on uninstall');
+    assert.ok(!fs.existsSync(path.join(prefix, '.config', 'opencode', '_shared', 'sax', 'state-persistence.md')), 'shared spec should be removed on uninstall');
     for (const [, directories] of targets) {
       for (const name of listSkills()) {
         assert.ok(!fs.existsSync(path.join(prefix, ...directories, 'skills', name)));
@@ -198,7 +198,7 @@ describe('uninstall', () => {
     }
     assert.ok(fs.existsSync(path.join(agentsDir, listAgents()[0])), 'compat agents missing');
     assert.ok(fs.existsSync(path.join(commandsDir, listCommands()[0])), 'compat commands missing');
-    assert.ok(fs.existsSync(path.join(proj, '.agents', 'sax', 'shared', 'state-persistence.md')), 'compat shared spec missing at sax/shared');
+    assert.ok(fs.existsSync(path.join(proj, '.agents', '_shared', 'sax', 'state-persistence.md')), 'compat shared spec missing at _shared/sax');
     assert.ok(!fs.existsSync(path.join(proj, '.agents', 'agents', '_shared', 'state-persistence.md')), 'legacy agents/_shared should not exist in compat');
     assert.ok(!fs.existsSync(path.join(proj, '.opencode', 'skills', listSkills()[0])), 'should not create .opencode in compat');
     const keep = path.join(baseSkills, 'keep-compat');
@@ -209,7 +209,7 @@ describe('uninstall', () => {
       assert.ok(!fs.existsSync(path.join(baseSkills, name)), `compat skill should be removed ${name}`);
     }
     assert.ok(fs.existsSync(path.join(keep, 'SKILL.md')), 'compat keep preserved');
-    assert.ok(!fs.existsSync(path.join(proj, '.agents', 'sax', 'shared', 'state-persistence.md')), 'compat shared should be removed');
+    assert.ok(!fs.existsSync(path.join(proj, '.agents', '_shared', 'sax', 'state-persistence.md')), 'compat shared should be removed');
   });
 
   it('compat --dry-run preserves .agents files', () => {

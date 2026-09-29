@@ -28,10 +28,11 @@ approval gate (`src/agents/business-analyst.md:76-85`). May read `README*` and
 `docs/`, and delegates retrieval to `sub-ticket-context-reader` and the docs
 readers. Cannot edit the repo, run shell, or spawn arbitrary subagents; the
 only write locations are its explicit bookmark directory
-`.ai-temp/business-analyst/**` and the separate glossary cache
-`.ai-temp/glossary-known-terms.yaml`. It never autosaves work: persistence occurs
-only through `issue-save`, followed by the role-scoped `issue-load` and
-`issue-list` commands (`src/agents/business-analyst.md:151-177`). Applies the
+`.ai-temp/business-analyst/**` and the shared findings directory
+`.ai-temp/findings/**`. It never autosaves work: persistence occurs
+only when the user explicitly asks to save a bookmark, through the
+`issue-bookmarks` skill and the shared state layout spec
+(`src/agents/business-analyst.md:151-172`). Applies the
 `ticket-writing` skill for ticket content.
 
 ## system-analyst
@@ -43,7 +44,7 @@ silently chooses between viable alternatives (`src/agents/system-analyst.md:61-7
 Delegates to `sub-code-impact-explorer`, `sub-ticket-context-reader`, and
 `sub-researcher`; denies shell and other subagents. Its only write permission is
 the explicit bookmark directory `.ai-temp/system-analyst/**`
-(`src/agents/system-analyst.md:160-185`). Output must stay
+(`src/agents/system-analyst.md:158-182`). Output must stay
 at architectural and design analysis level: no production code, diffs, or
 implementation-ready patches (`src/agents/system-analyst.md:42-74`). Asks the user
 for explicit permission before delegating web research to the `sub-researcher`
@@ -55,19 +56,42 @@ with a draft-mode question before creation (`src/agents/system-analyst.md:388-39
 
 ## Analyst bookmarks
 
-The two analysts share one persistence contract but never share a bookmark
-directory. `issue-save <name>` writes only when the user explicitly invokes it
-while that analyst is active. `issue-list` reads only the same analyst's regular
-`*.md` files, and `issue-load <name>` restores the compact projection and its
-`Next action`. A missing, unknown, or non-analyst active role stops all file
-access.
+The two analysts share one bookmark contract but never share a bookmark
+directory. The contract lives in the `issue-bookmarks` skill, which both agents
+load: there are no `issue-*` commands. The user asks in plain language and the
+active analyst follows the matching operation -- save, load, or list -- only
+while it is the active role. A missing, unknown, or non-analyst active role
+stops all file access.
 
 Bookmark names are 1-64 characters and accept only letters, digits, `_`, and `-`
 after an initial letter or digit. Overwrite requires confirmation. Legacy
 `.ai-temp/business-analyst.yaml` and `.ai-temp/system-analyst.yaml` files are
-ignored and are not migrated. The project glossary cache remains independent.
-Source: `src/agents/_shared/state-persistence.md:7-141` and
-`src/commands/issue-save.md`.
+ignored and are not migrated.
+
+The rules are split so each one has a single owner, and both analysts load both:
+the shared spec `src/_shared/sax/state-persistence.md` owns the `.ai-temp/` state
+layout, the write policy (no autosave, explicit writes only, git-ignored scratch),
+and the legacy state; the
+[issue-bookmarks skill](skills-reference.md#issue_bookmarks) owns the operations,
+name rules, schema, validity contract, and the per-analyst projection.
+
+## Shared findings
+
+`.ai-temp/findings/` is the one location both analysts may read and write, so a
+fact established by one is available to the other instead of being re-derived or
+re-asked. It holds observations with evidence, never a decision and never
+working state, and both agents may write there without asking.
+
+| File | Written by | Content |
+|---|---|---|
+| `findings/glossary.yaml` | Business Analyst | Project terms resolved from `docs/`, with definition and source |
+| `findings/<topic>.md` | either analyst | One finding per topic, with `author`, `recorded_at`, and `sources` |
+
+Each analyst reads the directory at `INTAKE` and before asking the user anything
+that may already be recorded. The Business Analyst cannot read the repository
+and the System Analyst cannot read `docs/`, which is exactly why the directory
+is shared: it is the documented hand-off between the two. Source:
+`src/_shared/sax/state-persistence.md`.
 
 ## coder
 

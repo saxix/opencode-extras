@@ -1,3 +1,7 @@
+---
+description: Explain a concept from first principles
+---
+
 Explain the following concept using first principles and one cohesive analogy.
 
 Constraints:

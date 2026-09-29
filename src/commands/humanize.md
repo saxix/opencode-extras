@@ -1,3 +1,7 @@
+---
+description: Rewrite text without corporate or AI markers
+---
+
 Rewrite the following text to sound like an experienced practitioner writing directly to a peer.
 
 Constraints:

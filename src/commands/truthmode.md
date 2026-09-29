@@ -1,3 +1,7 @@
+---
+description: Strict empirical rigor and epistemic calibration
+---
+
 Analyze the query with strict empirical rigor and epistemic calibration.
 
 Constraints:
