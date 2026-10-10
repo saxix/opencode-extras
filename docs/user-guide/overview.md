@@ -45,7 +45,7 @@ assistants (`README.md:3`). The repository ships a Node installer
   and optional reference material (see the
   [skill reference](../development/skills-reference.md)).
 - **Plug-and-play install.** One `npx` command copies per-item into the default
-  OpenCode config (`npx opencode-utils`), with `--agent` for other targets
+  OpenCode config (`npx opencode-extras`), with `--agent` for other targets
   (see [getting started](getting-started.md) and
   [installation](../deploy/installation.md)).
 

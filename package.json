@@ -1,10 +1,10 @@
 {
-  "name": "@saxix/opencode-utils",
+  "name": "@saxix/opencode-extras",
   "version": "1.0.0",
   "description": "Reusable agents, skills and commands for opencode, Claude Code, Codex and pi",
   "type": "module",
   "bin": {
-    "opencode-utils": "./scripts/install.mjs"
+    "opencode-extras": "./scripts/install.mjs"
   },
   "files": [
     "src/",
@@ -22,7 +22,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/saxix/opencode-utils.git"
+    "url": "git+https://github.com/saxix/opencode-extras.git"
   },
   "engines": {
     "node": ">=18"

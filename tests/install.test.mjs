@@ -225,7 +225,7 @@ describe('installer', () => {
   before(() => {
     const workDir = path.join(REPO_ROOT, '~work');
     fs.mkdirSync(workDir, { recursive: true });
-    tmp = fs.mkdtempSync(path.join(workDir, 'opencode-utils-test-'));
+    tmp = fs.mkdtempSync(path.join(workDir, 'opencode-extras-test-'));
   });
   after(() => {
     if (process.env.KEEP_WORK) {

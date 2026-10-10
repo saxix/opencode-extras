@@ -39,12 +39,12 @@ const agentValues = ['opencode', 'compat', 'claude', 'codex', 'pi'];
 
 function help() {
   console.log(`
-opencode-utils installer
+opencode-extras installer
 
 Usage:
-  npx opencode-utils [options]
-  npx github:saxix/opencode-utils [options]
-  opencode-utils [options]          (via npm bin)
+  npx opencode-extras [options]
+  npx github:saxix/opencode-extras [options]
+  opencode-extras [options]          (via npm bin)
 
 Options:
   --agent <target>  Select one target: opencode (default), compat, claude, codex, pi
@@ -58,15 +58,15 @@ Options:
   --help, -h        Show this help
 
 Examples:
-  npx opencode-utils                              # opencode global (default)
-  npx opencode-utils --project                    # opencode project
-  npx opencode-utils --agent claude --global      # claude global
-  npx opencode-utils --agent codex --project      # codex project
-  npx opencode-utils --agent pi --global          # pi global
-  npx opencode-utils --agent compat --link        # project .agents layout
-  npx --yes github:saxix/opencode-utils --project --agent opencode
-  npx opencode-utils --uninstall --agent opencode --global
-  npx opencode-utils --dry-run --agent claude --global
+  npx opencode-extras                              # opencode global (default)
+  npx opencode-extras --project                    # opencode project
+  npx opencode-extras --agent claude --global      # claude global
+  npx opencode-extras --agent codex --project      # codex project
+  npx opencode-extras --agent pi --global          # pi global
+  npx opencode-extras --agent compat --link        # project .agents layout
+  npx --yes github:saxix/opencode-extras --project --agent opencode
+  npx opencode-extras --uninstall --agent opencode --global
+  npx opencode-extras --dry-run --agent claude --global
 
 Notes:
   - --agent accepts one target per invocation and defaults to opencode.
@@ -157,7 +157,7 @@ function listCommands() {
 // agents, skills, nor commands (for example _shared/). It is installed under the
 // same top-level name, so src/_shared/sax/ lands at DEST/_shared/sax/. The
 // reserved plugins/ directory is not installed.
-const RESERVED_SRC_DIRS = new Set(['agents', 'skills', 'commands', 'plugins']);
+const RESERVED_SRC_DIRS = new Set(['agents', 'skills', 'commands']);
 function listShared() {
   return fs.readdirSync(SRC, { withFileTypes: true })
     .filter(e => e.isDirectory() && isSourceItem(e.name) && !RESERVED_SRC_DIRS.has(e.name))
@@ -403,7 +403,7 @@ function installForDest(dest) {
   }
 }
 
-console.log(`opencode-utils installer (${useLink ? 'link' : 'copy'} mode)`);
+console.log(`opencode-extras installer (${useLink ? 'link' : 'copy'} mode)`);
 console.log(`src: ${SRC}`);
 console.log(`prefix: ${prefix}${dryRun ? ' (dry-run)' : ''}${uninstall ? ' (uninstall)' : ''}`);
 
@@ -414,6 +414,6 @@ for (const d of dests) {
 console.log('\nDone.');
 if (!uninstall && !dryRun) {
   console.log(`Installed skills with prefix "${SKILL_PREFIX}" per-item (coexistence-safe, no directory symlink).`);
-  console.log('Tip: npx opencode-utils --project  for project-local opencode install');
-  console.log('     npx opencode-utils --agent compat --link  for project .agents links');
+  console.log('Tip: npx opencode-extras --project  for project-local opencode install');
+  console.log('     npx opencode-extras --agent compat --link  for project .agents links');
 }

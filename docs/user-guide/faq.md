@@ -7,7 +7,7 @@ toolkit. Operators should also read the
 ## My new agent does not appear
 
 Configurations are loaded once when the TUI starts. Quit and restart the
-assistant. Copy installations must be refreshed with `npx opencode-utils`; linked
+assistant. Copy installations must be refreshed with `npx opencode-extras`; linked
 installations update from the checkout automatically.
 
 ## A skill never triggers
@@ -34,10 +34,10 @@ command.
 Re-run the install command for the selected target:
 
 ```sh
-npx opencode-utils
-npx opencode-utils --agent claude
-npx opencode-utils --agent codex
-npx opencode-utils --agent pi
+npx opencode-extras
+npx opencode-extras --agent claude
+npx opencode-extras --agent codex
+npx opencode-extras --agent pi
 ```
 
 Use `--agent compat` for the project `.agents` layout, or pass `--link` when

@@ -5,7 +5,7 @@ commands available in their terminal-based AI coding assistant.
 
 ## Prerequisites
 
-- Node.js 18+ and `npx` (for `npx opencode-utils`).
+- Node.js 18+ and `npx` (for `npx opencode-extras`).
 - At least one supported TUI: opencode, Claude Code, Codex, or pi.
 - No Python, `uv`, or other build toolchain is required to install or run the
   definitions. `uv` is used only by the optional ticketing MCP servers
@@ -16,13 +16,13 @@ commands available in their terminal-based AI coding assistant.
 The default target is `opencode`, installed globally:
 
 ```sh
-npx opencode-utils
-npx opencode-utils --project
-npx opencode-utils --agent claude --global
-npx opencode-utils --agent codex --project
-npx opencode-utils --agent pi --global
-npx opencode-utils --agent compat
-npx opencode-utils --agent opencode --link
+npx opencode-extras
+npx opencode-extras --project
+npx opencode-extras --agent claude --global
+npx opencode-extras --agent codex --project
+npx opencode-extras --agent pi --global
+npx opencode-extras --agent compat
+npx opencode-extras --agent opencode --link
 ```
 
 `--agent compat` selects the project `.agents` layout and implies `--project`.
@@ -37,7 +37,7 @@ installs the published package.
 Install from a local clone (dev):
 
 ```sh
-git clone https://github.com/saxix/opencode-utils.git
+git clone https://github.com/saxix/opencode-extras.git
 node ./scripts/install.mjs --project --link --agent opencode
 node ./scripts/install.mjs --agent compat --link
 ```

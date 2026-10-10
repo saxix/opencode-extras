@@ -1,9 +1,9 @@
 site_name: agents-skills
 site_description: Reusable agents, skills and commands for AI coding TUIs
 site_author: saxix
-site_url: https://saxix.github.io/opencode-utils/
-repo_url: https://github.com/saxix/opencode-utils/
-repo_name: saxix/opencode-utils
+site_url: https://saxix.github.io/opencode-extras/
+repo_url: https://github.com/saxix/opencode-extras/
+repo_name: saxix/opencode-extras
 edit_uri: blob/main/docs/
 docs_dir: docs
 site_dir: site

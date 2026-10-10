@@ -53,7 +53,7 @@ reports a conflict at the destination, remove the stale real directory or
 symlink, then rerun the command with `--link`. For example:
 
 ```sh
-npx opencode-utils --agent opencode --global
+npx opencode-extras --agent opencode --global
 ```
 
 The same applies to project installs; use `--agent compat --project` for the

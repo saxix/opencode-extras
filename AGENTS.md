@@ -7,14 +7,14 @@ Reusable agents, skills, and commands for AI coding TUIs. All definitions are pl
 Via `npx` (copy per-item, coexistence-safe):
 
 ```sh
-npx opencode-utils                              # global opencode (default)
-npx opencode-utils --project                    # project opencode
-npx opencode-utils --agent claude --global      # global claude
-npx opencode-utils --agent codex --project      # project codex
-npx opencode-utils --agent pi --global          # global pi
-npx opencode-utils --agent compat               # project .agents layout
-npx opencode-utils --agent opencode --link      # global live symlinks
-npx opencode-utils --help
+npx opencode-extras                              # global opencode (default)
+npx opencode-extras --project                    # project opencode
+npx opencode-extras --agent claude --global      # global claude
+npx opencode-extras --agent codex --project      # project codex
+npx opencode-extras --agent pi --global          # global pi
+npx opencode-extras --agent compat               # project .agents layout
+npx opencode-extras --agent opencode --link      # global live symlinks
+npx opencode-extras --help
 ```
 
 Default is `--copy` per-item (safe with other skill packs). Use `--link` for live dev. Use `--agent compat` for the project `.agents` layout.

@@ -15,7 +15,7 @@ describe('uninstall', () => {
   before(() => {
     const workDir = path.join(REPO_ROOT, '~work');
     fs.mkdirSync(workDir, { recursive: true });
-    tmp = fs.mkdtempSync(path.join(workDir, 'opencode-utils-uninstall-'));
+    tmp = fs.mkdtempSync(path.join(workDir, 'opencode-extras-uninstall-'));
   });
   after(() => {
     if (process.env.KEEP_WORK) {
