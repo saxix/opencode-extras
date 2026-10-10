@@ -1,75 +1,64 @@
-# agents-skills
+# opencode-extras
 
 Reusable **agents**, **skills**, and **commands** for AI coding TUIs. Typeset as plain Markdown with a portable output convention so they render across `opencode`, Claude Code, Codex, pi, Gemini CLI, hermes, and other terminal assistants.
+
+Detailed documentation lives in [docs/](docs/).
 
 ## Install
 
 The default target is `opencode`, installed globally:
 
 ```sh
-npx opencode-utils
-npx opencode-utils --project
-```
-
-You can also run the default branch directly from GitHub:
-
-```sh
-npx --yes github:saxix/opencode-utils --project --agent opencode
-```
-
-**Warning:** `npx github:... --link` links the package copy/cache managed by
-`npx`, not a local Git checkout. Existing links do not update when the remote
-branch changes. Use the local checkout workflow below for live development.
-
-Select another target with `--agent`:
-
-```sh
-npx opencode-utils --agent claude --global
-npx opencode-utils --agent codex --project
-npx opencode-utils --agent pi --global
-npx opencode-utils --agent compat
-npx opencode-utils --agent opencode --link
+npx opencode-extras
+npx opencode-extras --project
+npx opencode-extras --agent claude --global
+npx opencode-extras --agent codex --project
+npx opencode-extras --agent pi --global
+npx opencode-extras --agent compat
 ```
 
 `--agent compat` selects the project `.agents` layout and implies `--project`.
-Use `--copy` (the default) for coexistence-safe copies or `--link` for symlink
-installs. For live updates, use the local checkout workflow below.
+Default is `--copy` per-item (coexistence-safe). Use `--agent` with one target per invocation.
 
-### Local checkout
+## Install Development Mode
 
-For a local checkout, use `node` to install directly from this working tree:
+For live updates from a local checkout:
 
 ```sh
-git clone https://github.com/saxix/opencode-utils.git
-cd opencode-utils
+git clone https://github.com/saxix/opencode-extras.git
+cd opencode-extras
 node ./scripts/install.mjs --global --link --agent opencode
 ```
 
-To remove the development installation
+Use `--link` to create per-item symlinks that track your working tree.
+Run the same command with different `--agent` or `--project` flags to install for other targets.
+
+## Uninstall
+
+Remove installed items by appending `--uninstall`:
+
+```sh
+npx opencode-extras --uninstall
+npx opencode-extras --uninstall --agent opencode --global
+npx opencode-extras --uninstall --project --agent opencode
+npx opencode-extras --uninstall --agent compat
+```
+
+For a local checkout development install:
 
 ```sh
 node ./scripts/install.mjs --uninstall --global --link --agent opencode
 ```
 
-Skills use the `sax-` prefix and are installed per item for coexistence.
-
-## CLI help
-
-Run the installer help with:
-
-```sh
-npx opencode-utils --help
-```
-
-The current output is:
+## CLI Help
 
 ```text
-opencode-utils installer
+opencode-extras installer
 
 Usage:
-  npx opencode-utils [options]
-  npx github:saxix/opencode-utils [options]
-  opencode-utils [options]          (via npm bin)
+  npx opencode-extras [options]
+  npx github:saxix/opencode-extras [options]
+  opencode-extras [options]          (via npm bin)
 
 Options:
   --agent <target>  Select one target: opencode (default), compat, claude, codex, pi
@@ -83,15 +72,16 @@ Options:
   --help, -h        Show this help
 
 Examples:
-  npx opencode-utils                              # opencode global (default)
-  npx opencode-utils --project                    # opencode project
-  npx opencode-utils --agent claude --global      # claude global
-  npx opencode-utils --agent codex --project      # codex project
-  npx opencode-utils --agent pi --global          # pi global
-  npx opencode-utils --agent compat --link        # project .agents layout
-  npx --yes github:saxix/opencode-utils --project --agent opencode
-  npx opencode-utils --uninstall --agent opencode --global
-  npx opencode-utils --dry-run --agent claude --global
+  npx opencode-extras                              # opencode global (default)
+  npx opencode-extras --project                    # opencode project
+  npx opencode-extras --agent claude --global      # claude global
+  npx opencode-extras --agent codex --project      # codex project
+  npx opencode-extras --agent pi --global          # pi global
+  npx opencode-extras --agent compat               # project .agents layout
+  npx opencode-extras --agent opencode --link      # global live symlinks
+  npx --yes github:saxix/opencode-extras --project --agent opencode
+  npx opencode-extras --uninstall --agent opencode --global
+  npx opencode-extras --dry-run --agent claude --global
 
 Notes:
   - --agent accepts one target per invocation and defaults to opencode.
@@ -103,119 +93,3 @@ Notes:
     with other skill packs); shared spec directories are linked as one unit.
   - Skills are installed with prefix "sax-" to avoid collisions (DEST/skills/sax-<name>).
 ```
-
-## Structure
-
-| Directory | Description |
-|---|---|
-| `agents/` | Agent definitions (Markdown with YAML frontmatter: role, permissions, state machine, handoff format) |
-| `skills/` | Skills (one subdirectory per skill with a `SKILL.md` entrypoint and optional `refs/`, `references/`, `languages/`, `infrastructure/`) |
-| `commands/` | Slash-command definitions (Markdown prompt bodies with an optional YAML frontmatter: `description:`, `agent:`) |
-| `_shared/` | Shared specs referenced by more than one agent, such as `_shared/sax/state-persistence.md` (the analyst state layout); installed under the same name |
-
-## Agents
-
-| Agent | Mode | Description |
-|---|---|---|
-| `business-analyst` | primary | Refines software requests into approved, ready-to-create tickets |
-| `system-analyst` | primary | Analyzes tickets against the codebase and presents implementation options for a decision |
-| `coder` | primary | Implements an approved ticket from its requirements and selected direction, then verifies |
-| `sub-code-impact-explorer` | subagent | Read-only codebase discovery for the System Analyst |
-| `sub-ticket-context-reader` | subagent | Read-only ticket and discussion retrieval for the Business Analyst |
-| `sub-docs-glossary-reader` | subagent | Resolves a single unknown term from `docs/`, cached in `.ai-temp/findings/` so terms are not re-searched each session |
-| `sub-docs-topic-reader` | subagent | Returns documented content relevant to one topic |
-| `sub-universal-code-reviewer` | subagent | Reviews code across languages for bugs, security, performance, and maintainability |
-| `documenter` | primary | Generates or updates project documentation for any repository using the docs taxonomy and checks (typically Python/uv) |
-| `sub-researcher` | subagent | Searches the web for libraries, frameworks, tools, patterns, and technical solutions |
-
-## Skills
-
-| Directory | Description |
-|---|---|
-| `architecture-review/` | Staff-level codebase health review (monoliths, silent failures, type safety, test coverage, LLM friendliness) |
-| `code-review-django/` | Review following personal engineering practices (security, performance, testing, design) |
-| `code-review-python/` | Python idioms, PEP 8, type hints and modern Python review |
-| `commit/` | Safely stage and commit changes |
-| `commit-message/` | Draft a structured commit message from uncommitted changes |
-| `create_github_issue/` | Open a GitHub issue via `gh` |
-| `debug/` | Investigate test failures and regressions, implement minimal fixes |
-| `django-migration/` | Generate Django database migrations |
-| `django-models/` | Design Django ORM models following silo/replication conventions |
-| `documentation/` | Audit and fix the docs site for completeness and correctness |
-| `find-bugs/` | Find bugs, security vulnerabilities, and quality issues in branch changes |
-| `issue-bookmarks/` | Analyst ticket bookmark rules and the save/load/list operations, loaded by both analysts; replaces the former `issue-*` commands |
-| `pull-request/` | Validate, commit, push, and open a PR with a Conventional description |
-| `push/` | Stage, validate with tox, and push |
-| `release/` | Generate release notes and create a GitHub release |
-| `security/` | Orchestrated audit via security-audit + security-owasp |
-| `security-audit/` | Threat-modeling audit (attack surfaces, secrets, SSRF, auth flaws) |
-| `security-owasp/` | OWASP-based review, high-confidence findings only |
-| `spec-inspect/` | Audit `.specs/` against existing codebase behavior |
-| `spec-write/` | Interactive specification analysis and refinement loop |
-| `testing-guidelines/` | Test writing guidance (integration tests, real fixtures, regression coverage) |
-| `ticket-writing/` | Canonical ticket content rules shared by the analysts (title, prefixes, soft-wrap, diagrams, language) |
-| `tox-fix/` | Run tox, fix failures, re-run until green |
-| `upgrade/` | Audit and upgrade Python dependencies with uv/tox |
-
-## Commands
-
-| File | Description |
-|---|---|
-| `debug-code` | Debug failures/bugs with a root-cause fix loop |
-| `devils-advocate` | Adversarial review of a proposal as a skeptical principal engineer |
-| `eli5` | Explain a concept from first principles with one analogy |
-| `humanize` | Rewrite text without corporate or AI markers |
-| `init-project` | Create or update `AGENTS.md` and `.ai/*` files |
-| `step-by-step` | Deconstruct a task into an idempotent sequential plan |
-| `truthmode` | Strict empirical rigor and epistemic calibration |
-| `git-status` | Explain what the pending git changes are trying to do |
-
-### Analyst state
-
-The `Business Analyst` and `System Analyst` keep their working model in
-conversation context. Nothing is written unless the user asks for it.
-
-- **Bookmarks.** Ask in plain language, for example "save this work as
-  requirements-review", "load my last bookmark", or "list my bookmarks"; the
-  active analyst loads the `issue-bookmarks` skill and follows the matching
-  operation. Nothing happens unless the session's loaded agent is exactly
-  `business-analyst` or `system-analyst`. Bookmarks are written under that
-  analyst's own directory, `.ai-temp/business-analyst/` or
-  `.ai-temp/system-analyst/`, and there is no autosave.
-- **Shared findings.** `.ai-temp/findings/` is the one directory both analysts
-  may read and write. A fact established for the other analyst is recorded there
-  once, with its evidence, instead of being re-derived or re-asked:
-  `findings/glossary.yaml` holds the product terms resolved from `docs/`, and
-  one `findings/<topic>.md` note per topic holds a documented behavior or a
-  repository fact such as `path/to/file -- symbol`. A finding is an observation
-  with evidence, never a decision the user has not confirmed.
-
-Both behaviours are owned by the shared spec
-`_shared/sax/state-persistence.md`, which both analysts reference; the bookmark
-operations, schema, and validity contract are owned by the `issue-bookmarks`
-skill.
-
-## Conventions
-
-- Each skill MUST have a `SKILL.md` at its directory root.
-- `SKILL.md` frontmatter uses `name:` and `description:` (required; description carries trigger keywords) plus optional `license:`, `compatibility:`, `metadata:`.
-- Agents and commands use Markdown with YAML frontmatter; `description:` is required, and `agent`/`mode`/`permissions` are optional per-TUI settings.
-- The installer mirrors source paths: `agents/`, `skills/`, and `commands/` install under the same name; any other top-level directory except the reserved `plugins/` does too, so shared specs stay out of the TUI's agent list (`_shared/sax/` -> `DEST/_shared/sax/`). Only skills get the `sax-` prefix.
-- Every agent, skill, and command MUST follow the **TUI-portable output** standard (below) so reports render correctly in any terminal assistant.
-- `.gitignore` excludes all dotfiles and editor backup files (`~*`).
-
-## TUI-portable output
-
-All generated output (handoffs, reviews, reports, commit messages, PR descriptions) must render across terminal-based AI TUIs (`opencode`, Claude Code, Gemini CLI, hermes, ...). Required:
-
-- **Plain CommonMark only.** No raw HTML, no custom containers/admonitions. Use Mermaid fenced code blocks (`` ```mermaid ``) only when the user asks for a diagram or chart. When a Mermaid diagram appears inside a ticket body, use the same language as the ticket.
-- **ASCII-first charset.** No emoji, no box-drawing/arrow/dingbat glyphs. Prefer `--` over the em-dash character and `->` over the arrow character; use `*` / `-` bullets and `[x]` / `[ ]` checkboxes instead of Unicode list markers.
-- **Headings** use ATX style (`## Title`); avoid setext (underlined) headings and a single `#` for section bodies.
-- **Structure over layout.** Prefer headings, short bullets, and small tables. Keep lines under ~100 characters and tables narrow so they do not wrap in split panes.
-- **Fenced code blocks** carry a language tag (e.g. `` ```python ``); avoid indented code blocks.
-- **Self-contained output.** No relative links to repo files the reader may not have; inline the evidence (path:line) instead.
-- **Literal special characters** must be escaped or placed in code spans so no TUI mis-parses them.
-
-## Scope
-
-This repository contains a small Node installer and tests, but no application runtime, lint, typecheck, or CI. Its primary content is instruction definitions for coding agents.
