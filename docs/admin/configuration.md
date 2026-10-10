@@ -28,7 +28,7 @@ glossary repository, not installed by the target installer.
 ### `opencode_cfg.jsonc` (global opencode config)
 
 Installed as `~/.config/opencode/opencode.jsonc` by
-`npx opencode-utils --agent opencode --global`. Declared settings
+`npx opencode-extras --agent opencode --global`. Declared settings
 (`opencode_cfg.jsonc`):
 
 | Setting | Value | Effect |
@@ -85,7 +85,7 @@ override those loaded by `uv run` from the server's `.envrc`.
 ### `tui_cfg.jsonc` (TUI interface config)
 
 Installed as `~/.config/opencode/tui.jsonc` by
-`npx opencode-utils --agent opencode --global`. Declared settings
+`npx opencode-extras --agent opencode --global`. Declared settings
 (`tui_cfg.jsonc:1-22`):
 
 | Setting | Value | Effect |

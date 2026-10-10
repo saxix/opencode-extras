@@ -17,7 +17,7 @@ definitions in this repository.
 ## Clone and verify
 
 ```sh
-git clone https://github.com/saxix/opencode-utils.git agents-skills
+git clone https://github.com/saxix/opencode-extras.git agents-skills
 cd agents-skills
 npm test
 ```
@@ -31,11 +31,11 @@ ls -l .opencode/skills/sax-security
 
 # install this clone into another project
 cd /path/to/your/project
-node /path/to/opencode-utils/scripts/install.mjs --project --link --agent opencode
+node /path/to/opencode-extras/scripts/install.mjs --project --link --agent opencode
 ls -l .opencode/skills/sax-security
 
 # compat layout
-node /path/to/opencode-utils/scripts/install.mjs --agent compat --link
+node /path/to/opencode-extras/scripts/install.mjs --agent compat --link
 ls -l .agents/skills/sax-security
 readlink .agents/skills/sax-security
 
@@ -68,7 +68,7 @@ isolated `PREFIX` installs).
 
 You can exercise agents and commands directly in an opencode session opened in
 this repository: opencode reads project-scope `opencode.jsonc` and the
-installed global definitions. For a full sandbox, run `npx opencode-utils` (see
+installed global definitions. For a full sandbox, run `npx opencode-extras` (see
 [Installation](../deploy/installation.md)).
 
 ## Next steps

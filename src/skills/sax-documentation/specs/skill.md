@@ -14,7 +14,7 @@ Document a skill that extends an AI coding agent. Optimize for installation via 
 
 ## Mandatory Sections
 
-1. **Installation** — methods via `npx` (e.g., `npx opencode-utils`, `npx opencode-utils --project`, `npx opencode-utils --agent <target>`, `--copy`/`--link`), verification (skill appears under `~/.config/opencode/skills/` or `.opencode/skills/`), upgrade/uninstall, troubleshooting. Every command executable.
+1. **Installation** — methods via `npx` (e.g., `npx opencode-extras`, `npx opencode-extras --project`, `npx opencode-extras --agent <target>`, `--copy`/`--link`), verification (skill appears under `~/.config/opencode/skills/` or `.opencode/skills/`), upgrade/uninstall, troubleshooting. Every command executable.
 2. **Skill Structure** — directory layout (`agents/`, `skills/<name>/SKILL.md`, `commands/`, `plugins/`), frontmatter rules (`name`, `description` required, `license`/`compatibility`/`metadata` optional), coexistence-safe per-item install.
 3. **Available Skills / Skill Detail** — for a pack: table of skills with `name` and description; for a single skill: frontmatter, trigger keywords, body, and `refs/` if present.
 4. **Development (Contributing)** — local setup, how to add a new skill (one subdirectory per skill with `SKILL.md`), style (TUI-portable output), testing (`node --test`), release.
@@ -24,7 +24,7 @@ Flag any missing Installation, Skill Structure, or Available Skills page as High
 ## Evidence Sources
 
 - `src/skills/<name>/SKILL.md` frontmatter (`name`, `description`).
-- `src/agents/*.md`, `src/commands/*.md`, `package.json` `bin` (`opencode-utils`), `scripts/install.mjs`.
+- `src/agents/*.md`, `src/commands/*.md`, `package.json` `bin` (`opencode-extras`), `scripts/install.mjs`.
 - `README.md`, `AGENTS.md`, `.pages` under `docs/`.
 
 ## Verification Checklist

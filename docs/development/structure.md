@@ -10,10 +10,10 @@ Who is this for? This page maps the repository layout for contributors.
 | `src/skills/` | Skills: one subdirectory per skill with a `SKILL.md` entrypoint and optional reference docs (24) |
 | `src/commands/` | Slash-command definitions: Markdown prompt bodies with optional frontmatter (`description:`, `agent:`) (8) |
 | `src/_shared/` | Shared specs that are not agents, skills, or commands |
-| `src/plugins/` | Reserved for TUI plugins; empty and not installed |
-| `scripts/install.mjs` | Node installer for `npx opencode-utils` (per-item copy/link, `PREFIX` support) |
+| `src/plugins/` | TypeScript plugins for OpenCode v2 (sessions plugin); see [Plugin reference](plugins-reference.md) |
+| `scripts/install.mjs` | Node installer for `npx opencode-extras` (per-item copy/link, `PREFIX` support) |
 | `tests/install.test.mjs` | Minimal test suite (`node --test`, definition contracts + installer) |
-| `package.json` | NPM package `@saxix/opencode-utils` with `bin` and `test` script |
+| `package.json` | NPM package `@saxix/opencode-extras` with `bin` and `test` script |
 | `AGENTS.md` | Project instructions loaded by coding agents |
 | `README.md` | Project readme |
 | `.envrc` | Local credentials, git-ignored |
@@ -71,7 +71,6 @@ verifies the active role itself and operates in the current session.
 - Every skill MUST have a `SKILL.md` at its directory root (`README.md:180`).
 - `.gitignore` excludes all dotfiles and editor backups (`~*`); only
   `.gitignore` itself is kept among dotfiles (`AGENTS.md:103`).
-- `plugins/` is reserved but currently empty.
 - Analyst state is explicit and compact: only the `issue-bookmarks` skill writes
   `.ai-temp/<analyst>/<name>.md`; neither analyst may inspect the other analyst's
   directory.

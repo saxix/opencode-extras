@@ -25,6 +25,7 @@ instruction definitions for coding agents.
 - [Agent workflows](user-guide/workflows/agents.md) -- ticket pipeline
 - [Agent reference](development/agents-reference.md) -- every agent
 - [Skill reference](development/skills-reference.md) -- every skill
+- [Plugin reference](development/plugins-reference.md) -- TypeScript plugins
 - [Command reference](development/commands/debug-code.md) -- one page per command
 - [Configuration reference](admin/configuration.md) -- settings and frontmatter
 - [Environment variables](deploy/environment.md) -- variable names, never values

@@ -22,8 +22,8 @@ The installer is idempotent. Re-run the command for each target when a copy is
 stale or a linked destination is broken:
 
 ```sh
-npx opencode-utils --agent opencode --global
-npx opencode-utils --agent claude --global
+npx opencode-extras --agent opencode --global
+npx opencode-extras --agent claude --global
 ```
 
 Use `--copy` (the default) for coexistence-safe copies or `--link` for live

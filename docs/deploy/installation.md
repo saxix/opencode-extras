@@ -9,14 +9,14 @@ toolkit into a TUI. End users should start with
 The default target is `opencode`, installed globally:
 
 ```sh
-npx opencode-utils
-npx opencode-utils --project
-npx opencode-utils --agent claude --global
-npx opencode-utils --agent codex --project
-npx opencode-utils --agent pi --global
-npx opencode-utils --agent compat
-npx opencode-utils --agent opencode --link
-npx opencode-utils --dry-run --agent opencode --global
+npx opencode-extras
+npx opencode-extras --project
+npx opencode-extras --agent claude --global
+npx opencode-extras --agent codex --project
+npx opencode-extras --agent pi --global
+npx opencode-extras --agent compat
+npx opencode-extras --agent opencode --link
+npx opencode-extras --dry-run --agent opencode --global
 ```
 
 `--agent compat` selects the project `.agents` layout and implies `--project`.
@@ -34,7 +34,7 @@ for the project `.agents` layout.
 Run the default branch directly from GitHub without a published npm release:
 
 ```sh
-npx --yes github:saxix/opencode-utils --project --agent opencode
+npx --yes github:saxix/opencode-extras --project --agent opencode
 ```
 
 **Warning:** `npx github:... --link` points the symlinks to the package copy/cache
@@ -60,12 +60,12 @@ implies `--project`.
 For a local checkout, use `node` to install directly from this working tree:
 
 ```sh
-git clone https://github.com/saxix/opencode-utils.git
-cd opencode-utils
+git clone https://github.com/saxix/opencode-extras.git
+cd opencode-extras
 node ./scripts/install.mjs --project --link --agent opencode
 cd /path/to/your/project
-node /path/to/opencode-utils/scripts/install.mjs --project --link --agent opencode
-node /path/to/opencode-utils/scripts/install.mjs --agent compat --link
+node /path/to/opencode-extras/scripts/install.mjs --project --link --agent opencode
+node /path/to/opencode-extras/scripts/install.mjs --agent compat --link
 ls -l .opencode/skills/sax-security
 ls -l .agents/skills/sax-security
 readlink .opencode/skills/sax-security
@@ -76,7 +76,7 @@ readlink .opencode/skills/sax-security
 All targets support overriding the destination home with `PREFIX`:
 
 ```sh
-PREFIX=/some/other/home npx opencode-utils --agent opencode --global
+PREFIX=/some/other/home npx opencode-extras --agent opencode --global
 ```
 
 The same mechanism powers the installer tests. The Node test suite uses an isolated
@@ -93,9 +93,9 @@ The same mechanism powers the installer tests. The Node test suite uses an isola
 ## Uninstall
 
 ```sh
-npx opencode-utils --uninstall --agent opencode --global
-npx opencode-utils --uninstall --project --agent opencode
-npx opencode-utils --uninstall --agent compat
+npx opencode-extras --uninstall --agent opencode --global
+npx opencode-extras --uninstall --project --agent opencode
+npx opencode-extras --uninstall --agent compat
 ```
 
 ## Next steps

@@ -1,0 +1,58 @@
+# Sessions plugin
+
+Purpose: Provide tools to list, prune, and archive AI sessions through the
+OpenCode v2 plugin API so an agent can delegate session hygiene without the
+user leaving the terminal.
+
+## Registered tools
+
+| Tool | Description | Signature |
+|---|---|---|
+| `list-sessions` | List all active AI sessions with status and age | no arguments |
+| `prune-sessions` | Delete sessions older than a given number of days | `days: number` |
+| `archive-session` | Mark a session as archived instead of deleting it | `sessionId: string` |
+
+## Argument schemas
+
+### `list-sessions`
+
+No arguments. Returns a bulleted list with `id`, `status`, age in minutes,
+and `title`. Returns `"No active sessions found."` on an empty result set.
+
+### `prune-sessions`
+
+| Field | Type | Constraint |
+|---|---|---|
+| `days` | number | Days threshold; sessions created more than N days ago are deleted |
+
+Implementation iterates stale sessions sequentially (`src/plugins/sessions/index.ts:57-64`).
+A failed deletion is skipped and logged per-id. If all deletions succeed the
+tool returns only the success count. If any fail, their IDs appear on a second
+line.
+
+### `archive-session`
+
+| Field | Type | Constraint |
+|---|---|---|
+| `sessionId` | string | The exact session ID returned by `client.session.list()` |
+
+Implementation calls `client.session.update()` with `{ status: "archived" }`
+(`src/plugins/sessions/index.ts:83-86`). On error the tool returns the SDK error
+message.
+
+## Execution behavior
+
+The plugin is exported as `SessionManagerPlugin: Plugin` and uses the
+`@opencode-ai/plugin` `tool()` helper to register each tool under a single
+`tool` map (`src/plugins/sessions/index.ts:4-95`). Tools share the same SDK
+client instance from the plugin context.
+
+Age calculation converts `Date.now()` against `session.time.created` and rounds
+to whole minutes (`src/plugins/sessions/index.ts:20-22`). The pruner uses a
+strict `>` comparison, so a session created exactly N days ago is excluded.
+
+## Integration notes
+
+Drop the compiled module into the OpenCode plugins directory or declare it in
+the plugin array of your `opencode.json`/`opencode.jsonc`. No server-side or
+filesystem side-effects occur outside the SDK session endpoints the tools call.

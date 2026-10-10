@@ -6,7 +6,7 @@ installation.
 ## Single source of truth
 
 The repository is the single source of truth for every definition. The
-installer copies per-item by default (`npx opencode-utils`,
+installer copies per-item by default (`npx opencode-extras`,
 `scripts/install.mjs`), or symlinks per-item with `--link` for live dev. The
 selected `--agent` target determines the destination; default copy is
 coexistence-safe across skill packs.
