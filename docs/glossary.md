@@ -61,7 +61,8 @@ lines. Skills require `name:` and `description:`; agents and commands require
 Model Context Protocol. The ticketing integrations are declared as local MCP
 servers in `opencode_cfg.jsonc` (`opencode_cfg.jsonc:21-34`), running
 `uv run mcp-ticketing` against a project root given by `MCP_TICKETING_HOME`.
-The Azure DevOps server is disabled by default; the GitHub server is enabled.
+The Azure DevOps server is disabled by default; the GitHub and Redmine servers
+are enabled.
 
 ## Primary agent
 

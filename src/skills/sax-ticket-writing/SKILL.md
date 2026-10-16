@@ -28,6 +28,7 @@ This is the stateless domain manual for anything that writes or updates ticket c
 - The rendering depends on the configured ticketing provider (see `mcp-ticketing`):
   - **GitHub**: embed a Mermaid fenced code block (`` ```mermaid ``) directly in the ticket body. GitHub renders Mermaid natively.
   - **Azure DevOps**: Mermaid fenced blocks are not rendered natively. Render the Mermaid source to a PNG (mcp-ticketing provides `add_mermaid`, which rasterizes locally and attaches the image), add it as an attachment, and reference it in the body instead of leaving raw Mermaid source.
+  - **Redmine**: Mermaid fenced blocks are not rendered natively. Use `add_mermaid` from the Redmine MCP server, which renders the source to a PNG locally, attaches it to the issue, and embeds an `<img>` reference in the description instead of leaving raw Mermaid source.
 - When a diagram appears in a ticket, write its labels and notes in the same language as the ticket.
 
 ## Language rules

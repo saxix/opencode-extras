@@ -55,6 +55,8 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `commit/` | Safely stage and commit changes |
 | `commit-message/` | Draft a structured commit message |
 | `create_github_issue/` | Open a GitHub issue via `gh` |
+| `create-gitlab-issue/` | Open a GitLab issue via the REST API (no glab required) |
+| `create-redmine-issue/` | Open a Redmine issue via the Redmine MCP server |
 | `debug/` | Investigate failures, implement minimal fixes |
 | `django-migration/` | Django migration generation |
 | `django-models/` | Django ORM model design |

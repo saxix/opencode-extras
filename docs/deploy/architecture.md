@@ -40,9 +40,10 @@ only external connections are the optional ticketing MCP servers declared in
 `src/~opencode_cfg.jsonc:21-34`, which opencode starts on demand:
 
 - `github` -- enabled by default;
+- `redmine` -- enabled by default;
 - `azure-devops` -- disabled by default.
 
-Both run the `mcp-ticketing` binary from the project root given by
+All run the `mcp-ticketing` binary from the project root given by
 `MCP_TICKETING_HOME` (see [Environment variables](environment.md)).
 
 ## Trust boundaries

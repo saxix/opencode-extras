@@ -22,13 +22,17 @@ exporting them manually. Never commit this file.
 | `MCP_GITHUB_OWNER` | github server | GitHub owner for the ticketing repository |
 | `MCP_GITHUB_REPO` | github server | GitHub repository for the ticketing integration |
 | `MCP_GITHUB_TOKEN` | github server | GitHub personal access token (secret) |
+| `MCP_REDMINE_URL` | redmine server | Redmine instance base URL |
+| `MCP_REDMINE_PROJECT` | redmine server | Redmine project identifier or ID (default scope) |
+| `MCP_REDMINE_API_KEY` | redmine server | Redmine API key (secret) |
 
 Evidence: `.envrc` export lines; server wiring in `opencode_cfg.jsonc:21-34`.
 
 ## Per-project configuration
 
 Each project must define `MCP_GITHUB_OWNER`, `MCP_GITHUB_REPO`, and
-`MCP_GITHUB_TOKEN` in its own `.envrc` file. The MCP server configuration
+`MCP_GITHUB_TOKEN` (and, for Redmine, `MCP_REDMINE_URL`, `MCP_REDMINE_PROJECT`,
+`MCP_REDMINE_API_KEY`) in its own `.envrc` file. The MCP server configuration
 uses the `environment` field to pass these values to the server process,
 overriding the defaults from `MCP_TICKETING_HOME/.envrc`.
 
@@ -37,6 +41,10 @@ overriding the defaults from `MCP_TICKETING_HOME/.envrc`.
 export MCP_GITHUB_OWNER=my-org
 export MCP_GITHUB_REPO=my-repo
 export MCP_GITHUB_TOKEN=ghp_xxxxxxxxxxxx
+
+export MCP_REDMINE_URL=https://redmine.example.com
+export MCP_REDMINE_PROJECT=myproject
+export MCP_REDMINE_API_KEY=xxxxxxxxxxxxxxxx
 ```
 
 The MCP configuration reads these via `{env:VAR}` syntax:
@@ -54,9 +62,9 @@ for the full MCP configuration format.
 
 ## Server status
 
-Only the `github` server is enabled by default; `azure-devops` is disabled
-(`opencode_cfg.jsonc:22-33`). To use Azure DevOps, enable the server block and
-provide its three variables. The server command form is
+The `github` and `redmine` servers are enabled by default; `azure-devops` is
+disabled (`opencode_cfg.jsonc:22-33`). To use Azure DevOps, enable the server
+block and provide its three variables. The server command form is
 `uv run mcp-ticketing <provider>` run from `MCP_TICKETING_HOME`
 (`opencode_cfg.jsonc:24-25`).
 

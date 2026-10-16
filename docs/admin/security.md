@@ -77,7 +77,8 @@ Permission lists follow a deny-first, allow-last convention
 
 - No telemetry, network calls, or data collection inside the definitions.
 - Optional MCP servers connect to ticketing systems only when configured
-  (`opencode_cfg.jsonc:21-34`); the Azure DevOps server is disabled by default.
+  (`opencode_cfg.jsonc:21-34`); the Azure DevOps server is disabled by
+  default, while the GitHub and Redmine servers are enabled.
 
 ## Next steps
 
