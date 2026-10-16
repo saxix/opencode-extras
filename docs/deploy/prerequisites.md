@@ -25,8 +25,8 @@ Who is this for? This page lists what you need before installing the toolkit.
 - No server, database, or network service is required for the definitions
   themselves; the toolkit is configuration-only
   ([Architecture](architecture.md)).
-- The Azure DevOps MCP server is disabled by default; the GitHub one is
-  enabled (`opencode_cfg.jsonc:22-33`).
+- The GitHub and Redmine MCP servers are enabled by default; the Azure DevOps
+  one is disabled (`opencode_cfg.jsonc:22-33`).
 - Credentials live in the local, git-ignored `.envrc` file and are loaded into
   the environment by your shell setup (for example direnv). Values must never
   be committed or documented.

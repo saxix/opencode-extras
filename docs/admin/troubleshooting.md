@@ -35,15 +35,18 @@ options. Then verify the file still follows the TUI-portable output standard
 
 ## MCP ticketing server fails to start
 
-The GitHub MCP server is enabled, Azure DevOps disabled by default
-(`opencode_cfg.jsonc:21-34`). The server command runs `uv run mcp-ticketing`
-with `cwd` set from `{env:MCP_TICKETING_HOME}`. If it fails:
+The GitHub and Redmine MCP servers are enabled by default, Azure DevOps is
+disabled (`opencode_cfg.jsonc:21-34`). The server command runs
+`uv run mcp-ticketing` with `cwd` set from `{env:MCP_TICKETING_HOME}`. If it
+fails:
 
 1. Confirm `MCP_TICKETING_HOME` points at the mcp-ticketing project
    (`.envrc`).
 2. Confirm the provider credentials are exported (names and roles in
    [Environment variables](../deploy/environment.md)); the Azure DevOps server
-   additionally needs `MCP_AZURE_DEVOPS_ORG` and `MCP_AZURE_DEVOPS_PROJECT`.
+   needs `MCP_AZURE_DEVOPS_ORG` and `MCP_AZURE_DEVOPS_PROJECT`, the Redmine
+   server needs `MCP_REDMINE_URL`, `MCP_REDMINE_PROJECT`, and
+   `MCP_REDMINE_API_KEY`.
 3. Check the repo has a `uv` virtualenv with `mcp-ticketing` installed.
 
 ## An install target complains about an existing path

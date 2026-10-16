@@ -50,6 +50,7 @@ Installed as `~/.config/opencode/opencode.jsonc` by
 |---|---|---|---|---|
 | `azure-devops` | Azure DevOps | false | `uv run mcp-ticketing azure` | `{env:MCP_TICKETING_HOME}` |
 | `github` | GitHub | true | `uv run mcp-ticketing github` | `{env:MCP_TICKETING_HOME}` |
+| `redmine` | Redmine | true | `uv run mcp-ticketing redmine` | `{env:MCP_TICKETING_HOME}` |
 
 Evidence: `opencode_cfg.jsonc:21-34`. The commented-out `permission` block is
 a maintained example, not active configuration (`opencode_cfg.jsonc:48-71`).
@@ -77,10 +78,15 @@ the current project instead.
 }
 ```
 
+The same pattern applies to the Redmine server, which forwards
+`MCP_REDMINE_URL`, `MCP_REDMINE_PROJECT`, and `MCP_REDMINE_API_KEY`.
+
 The `{env:VAR}` syntax reads values from the shell environment at runtime.
-Each project must define `MCP_GITHUB_OWNER`, `MCP_GITHUB_REPO`, and
-`MCP_GITHUB_TOKEN` in its own `.envrc` file. The `environment` field values
-override those loaded by `uv run` from the server's `.envrc`.
+Each project must define `MCP_GITHUB_OWNER`, `MCP_GITHUB_REPO`,
+`MCP_GITHUB_TOKEN` (and, for Redmine, `MCP_REDMINE_URL`,
+`MCP_REDMINE_PROJECT`, `MCP_REDMINE_API_KEY`) in its own `.envrc` file.
+The `environment` field values override those loaded by `uv run` from the
+server's `.envrc`.
 
 ### `tui_cfg.jsonc` (TUI interface config)
 
