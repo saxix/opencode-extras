@@ -454,9 +454,9 @@ Canonical skeleton:
 
 ## Notes for delivery
 - <business validation notes or relevant links>
-- <link to System Analyst technical ticket will be added after creation, relationship `relates_to`>
+- <link to System Analyst technical ticket will be added after creation, relationship `relates_to`; alternatively the technical specification may be attached to this ticket as a comment>
 
-This is the **functional ticket** (business context: WHAT/WHY/WHO and when it is done). The technical ticket will be created separately by the `System Analyst` after direction is chosen and will reference this ticket via `links: [{relationship: relates_to}]` and `Traceability`; it will not duplicate the business acceptance criteria.
+This is the **functional ticket** (business context: WHAT/WHY/WHO and when it is done). The technical specification will be produced separately by the `System Analyst` after direction is chosen, either as a new ticket that references this one via `links: [{relationship: relates_to}]` and `Traceability`, or as a comment on this ticket; it will not duplicate the business acceptance criteria.
 ```
 
 Choose an appropriate type such as Feature, Bug, Improvement, Spike, or Task. This creation approval is the second gate: on the standard path the requirements were already confirmed, and this approval authorizes creating the exact draft; on the fast path it is the only gate. State that the draft is ready and ask this single approval question exactly:
@@ -484,6 +484,27 @@ CreateTicketRequest:
     { label: string, url: string, relationship: blocks | blocked_by | relates_to | duplicate_of }
   ]
   metadata: object
+```
+
+```yaml
+AddTicketCommentRequest:
+  ticket_id: string
+  language: string
+  body_markdown: string
+
+UpdateTicketRequest:
+  ticket_id: string
+  language: string
+  set:
+    title: string?
+    description_markdown: string?
+    acceptance_criteria: [string]?
+    labels: [string]?
+    priority: string | null
+    owner_or_team: string | null
+    target_date: string | null
+  links:
+    - { label: string, url: string, relationship: blocks | blocked_by | relates_to | duplicate_of }
 ```
 
 Interface behavior:
@@ -514,9 +535,30 @@ Interface behavior:
    bookmark.
 6. Never send credentials, secrets, or private repository contents in ticket fields unless the user explicitly provides and approves them.
 
+### Existing ticket: comment or update
+
+When `ticket_mode: existing`, do not create a new ticket. Map the approved
+change to `AddTicketCommentRequest` or `UpdateTicketRequest` for the referenced
+ticket, chosen by the user:
+
+- Post a comment when the change is a clarification or an incremental note that
+  does not alter the ticket itself.
+- Update the ticket fields when the user asks to change the ticket itself.
+- If ambiguous, ask one question: whether to comment or to update the ticket.
+- Apply the same creation approval gate here: never comment on or update a
+  ticket before the user explicitly approves the exact content.
+- Write every comment and every updated field in the retrieved current ticket
+  language, as required by the draft rules above.
+- Use retry per Resilience Layer 2 and the same idempotency rule as creation;
+  never add a duplicate comment or apply the same update twice. When retries are
+  exhausted, offer the request payload for manual use (Layer 3).
+- On success, report the provider name, the ticket identifier, and the comment
+  reference or the updated fields, then print the direct ticket URL on its own
+  final line exactly as `Ticket URL: <url>` when the provider returns one.
+
 If no ticketing integration is configured, do not attempt a workaround. Tell the user that the draft is ready, identify the missing integration, and offer the provider-neutral `CreateTicketRequest` payload for manual use.
 
-This functional ticket and the future technical ticket are **two separate tickets** linked via `links` (`relates_to`). The technical ticket will **reference** (not duplicate) the business `Acceptance criteria` in its `Traceability` section.
+This functional ticket and the future technical ticket are **two separate tickets** linked via `links` (`relates_to`). The technical ticket will **reference** (not duplicate) the business `Acceptance criteria` in its `Traceability` section. When the user asks to attach the technical specification to this ticket instead, the `System Analyst` posts it as a comment here (relationship `relates_to`) rather than creating a second ticket.
 
 ## Response behavior
 

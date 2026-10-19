@@ -33,7 +33,10 @@ only write locations are its explicit bookmark directory
 only when the user explicitly asks to save a bookmark, through the
 `issue-bookmarks` skill and the shared state layout spec
 (`src/agents/business-analyst.md:151-172`). Applies the
-`ticket-writing` skill for ticket content.
+`ticket-writing` skill for ticket content. For an existing ticket it proposes a
+comment or an update against the referenced ticket through the same
+provider-neutral interface, still behind the approval gate
+(`src/agents/business-analyst.md`, `## Abstract ticketing-system interface`).
 
 ## system-analyst
 
@@ -51,8 +54,11 @@ for explicit permission before delegating web research to the `sub-researcher`
 subagent (`src/agents/system-analyst.md:74`). Resolves the output language from the
 project context (existing ticket, `README*`, recent tickets, `docs/`) via the
 `ticket-writing` skill and asks only when it cannot be determined
-(`src/agents/system-analyst.md:72`). Can create technical tickets on request,
-with a draft-mode question before creation (`src/agents/system-analyst.md:388-398`).
+(`src/agents/system-analyst.md:72`). Works from either an approved ticket or a
+clear dialogue. Can publish the specification on request to exactly one
+destination -- a new linked technical ticket or a comment on an existing ticket
+-- with a draft-mode question before a new ticket is created
+(`src/agents/system-analyst.md`, `## Delivery destination and ticket creation`).
 
 ## Analyst bookmarks
 

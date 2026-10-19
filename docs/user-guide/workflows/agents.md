@@ -11,7 +11,7 @@ change:
 | Stage | Agent | Produces |
 |---|---|---|
 | 1. Discovery | [Business Analyst](../../development/agents-reference.md#business-analyst) | Approved, ready-to-create functional ticket |
-| 2. Design | [System Analyst](../../development/agents-reference.md#system-analyst) | Implementation options and a chosen direction |
+| 2. Design | [System Analyst](../../development/agents-reference.md#system-analyst) | Implementation options, a chosen direction, and a published specification (new ticket or comment) |
 | 3. Implementation | [Coder](../../development/agents-reference.md#coder) | Verified code change |
 
 ### 1. Business Analyst -- refine the request
@@ -29,6 +29,9 @@ Operating rules that shape the interaction:
   items are recorded instead (`agents/business-analyst.md:81`).
 - It does not mutate tickets until the approval gate has passed
   (`agents/business-analyst.md:85`).
+- Can target a new ticket or an existing one; for an existing ticket it proposes
+  a comment or an update against the referenced ticket, behind the same approval
+  gate (`agents/business-analyst.md`, `## Abstract ticketing-system interface`).
 - It may consult `README*` and `docs/` for product terminology and relies on
   the [sub-docs-glossary-reader](../../development/agents-reference.md#sub-docs-glossary-reader)
   and [sub-docs-topic-reader](../../development/agents-reference.md#sub-docs-topic-reader)
@@ -63,9 +66,16 @@ Operating rules:
 - Output must stay at architectural and design analysis level: no production
   code, diffs, or implementation-ready patches
   (`agents/system-analyst.md:42-74`).
+- It works from either an approved ticket or a clear dialogue, so a technical
+  analysis does not require a functional ticket first
+  (`agents/system-analyst.md:115-119`).
+- On request it publishes the specification to exactly one destination: a new
+  linked technical ticket, or a comment on an existing ticket
+  (`agents/system-analyst.md`, `## Delivery destination and ticket creation`).
 
 Choose a direction; the System Analyst then prepares the implementation handoff
-for the Ticket Implementer.
+and, on request, publishes it as a new technical ticket or as a comment on an
+existing ticket.
 
 ### Pause and resume analyst work
 

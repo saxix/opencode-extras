@@ -1,6 +1,6 @@
 ---
 name: sax-ticket-writing
-description: 'Canonical rules for ticket content shared by the Business Analyst and System Analyst: title, project-prefix ban, draft prefix, body structure, soft-wrap formatting, diagrams, and language resolution. Trigger on "write a ticket", "open a ticket", "ticket title", "ticket body", "draft mode", "create the ticket". Loaded by the Business Analyst and System Analyst.'
+description: 'Canonical rules for ticket content shared by the Business Analyst and System Analyst: title, project-prefix ban, draft prefix, body structure, comment formatting, soft-wrap formatting, diagrams, and language resolution. Trigger on "write a ticket", "open a ticket", "ticket title", "ticket body", "ticket comment", "draft mode", "create the ticket". Loaded by the Business Analyst and System Analyst.'
 ---
 
 ## Purpose
@@ -21,6 +21,13 @@ This is the stateless domain manual for anything that writes or updates ticket c
 - Never force new-lines at a fixed column width. Ticket text renders on the web, so write normal flowing paragraphs and lists and leave wrapping to the renderer (soft-wrap).
 - Do not force any line-length despite any information you can fine the `AGENTS.md` except if this skill (`ticket-writing`) is explicitly mentioned.
 - Use plain ASCII list markers and characters; no emoji, box-drawing glyphs, arrows, or dingbats in ticket content.
+
+## Comment rules
+
+A comment posted on an existing ticket follows the same formatting rules as a
+ticket body (ATX headings, soft-wrap, ASCII only, and the ticket language). It
+differs in two ways: it does not need to start with `## Summary`, and it must not
+repeat the ticket title.
 
 ## Diagram rules
 

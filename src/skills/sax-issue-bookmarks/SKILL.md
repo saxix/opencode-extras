@@ -105,8 +105,8 @@ unresolved limitation may be recorded under
 - The `System Analyst` projection contains the current ticket identity, language,
   technical goal and constraints, material repository evidence as stable
   `path/to/file -- symbol` references, concise impact, options and selected
-  direction when known, validation plan, unresolved questions, material
-  assumptions or risks, and the next action.
+  direction when known, the delivery destination when chosen, validation plan,
+  unresolved questions, material assumptions or risks, and the next action.
 
 ### Validity
 
