@@ -45,9 +45,9 @@ Use chain-of-thought: restate the ticket objective, trace the change history ste
 
 Apply the 5 fortification layers. Every ticketing retrieval will fail eventually.
 
-**Layer 1 – Input validation:** as in Input contract; return `VALIDATION_ERROR` with field/limit.
+**Layer 1 -- Input validation:** as in Input contract; return `VALIDATION_ERROR` with field/limit.
 
-**Layer 2 – Retry with backoff:**
+**Layer 2 -- Retry with backoff:**
 ```yaml
 Retry strategy for ticketing retrieval:
   max_retries: 2
@@ -58,11 +58,11 @@ Retry strategy for ticketing retrieval:
   non_retryable_errors: [VALIDATION_ERROR, 400, 401, 403, 404, NOT_FOUND]
 ```
 
-**Layer 3 – Fallback:** when retries exhausted, return `Ticket context unavailable – using ticket identifier only` with `Retrieval limitations: <code> <details>`.
+**Layer 3 -- Fallback:** when retries exhausted, return `Ticket context unavailable -- using ticket identifier only` with `Retrieval limitations: <code> <details>`.
 
-**Layer 4 – Circuit breaker:** 3 consecutive ticketing failures → OPEN 60s, skip retrieval and return fallback.
+**Layer 4 -- Circuit breaker:** 3 consecutive ticketing failures -> OPEN 60s, skip retrieval and return fallback.
 
-**Layer 5 – Timeout controls:** ticketing retrieval: 15s. On timeout treat as retryable.
+**Layer 5 -- Timeout controls:** ticketing retrieval: 15s. On timeout treat as retryable.
 
 **Logging:** log every ticketing error with context `(operation, ticket id, code)` under `Retrieval limitations`; never expose stack traces or secrets.
 

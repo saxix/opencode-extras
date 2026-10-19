@@ -52,9 +52,9 @@ Use chain-of-thought: restate the problem, trace constraints step by step, and r
 
 Apply the 5 fortification layers. Every web search/fetch will fail eventually.
 
-**Layer 1 – Input validation:** as in Input contract; return `VALIDATION_ERROR` with field/limit.
+**Layer 1 -- Input validation:** as in Input contract; return `VALIDATION_ERROR` with field/limit.
 
-**Layer 2 – Retry with backoff:**
+**Layer 2 -- Retry with backoff:**
 ```yaml
 Retry strategy for websearch/webfetch:
   max_retries: 2
@@ -65,11 +65,11 @@ Retry strategy for websearch/webfetch:
   non_retryable_errors: [VALIDATION_ERROR, 400, 401, 403, 404]
 ```
 
-**Layer 3 – Fallback:** when retries exhausted, return `Research incomplete – web search unavailable` with partial findings and `Gaps: <category> unavailable`.
+**Layer 3 -- Fallback:** when retries exhausted, return `Research incomplete -- web search unavailable` with partial findings and `Gaps: <category> unavailable`.
 
-**Layer 4 – Circuit breaker:** 3 consecutive web failures → OPEN 60s, skip web search and note `Web search skipped due to repeated failures`.
+**Layer 4 -- Circuit breaker:** 3 consecutive web failures -> OPEN 60s, skip web search and note `Web search skipped due to repeated failures`.
 
-**Layer 5 – Timeout controls:** `websearch`/`webfetch`: 60s each. On timeout treat as retryable.
+**Layer 5 -- Timeout controls:** `websearch`/`webfetch`: 60s each. On timeout treat as retryable.
 
 **Logging:** log every web error with context `(operation, query, code)` under `Gaps and follow-ups`; never expose stack traces or secrets.
 

@@ -44,6 +44,9 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `sub-universal-code-reviewer` | subagent | Reviews code across languages for bugs, security, performance, and maintainability |
 | `documenter` | primary | Generates or updates documentation for any repository using the docs taxonomy and checks (typically Python/uv) |
 | `sub-researcher` | subagent | Searches the web for libraries, frameworks, tools, patterns, and technical solutions |
+| `reviewer` | primary | Reviews a branch or pull request against description, ticket, standards, security, tests, docs, and CI |
+| `sub-pr-context-collector` | subagent | Read-only collection of pull request facts for the Reviewer |
+| `sub-pr-test-doc-auditor` | subagent | Read-only audit of tests and documentation for a change set |
 
 ## Skills
 
@@ -61,6 +64,7 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `documentation/` | Canonical docs site taxonomy, audit clauses, style, and build checks (loaded by `documenter`; triggered standalone for audits) |
 | `find-bugs/` | Bug and vulnerability finding |
 | `issue-bookmarks/` | Canonical analyst ticket bookmark rules and save/load/list operations shared by Business Analyst and System Analyst |
+| `pr-review/` | Canonical rubric for reviewing a branch or pull request |
 | `pull-request/` | Validate, commit, push, and open a PR |
 | `push/` | Stage, validate with tox, and push |
 | `release/` | Generate release notes and a GitHub release |

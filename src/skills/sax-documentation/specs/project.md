@@ -8,10 +8,10 @@ Document a deployable application or service where end users, operators, contrib
 
 ## Required Guides
 
-- **User Guide** — Overview & Key Features, Getting Started & Onboarding, Feature Workflows, Interface Navigation, FAQs & Troubleshooting.
-- **Administrative Guide** — Configuration Reference, Monitoring & Observability, Maintenance & Operations, Security & Compliance, Troubleshooting.
-- **Development Guide** — Local Environment Setup, Codebase Structure, Git Workflow & Branching, Testing Strategy, CI/CD & Build Pipelines, Contribution Guidelines.
-- **Deploy Guide** — Architecture & Topology, Prerequisites & Infrastructure, Installation, Provisioning & Deployment, Environment Variables, Release & Rollback.
+- **User Guide** -- Overview & Key Features, Getting Started & Onboarding, Feature Workflows, Interface Navigation, FAQs & Troubleshooting.
+- **Administrative Guide** -- Configuration Reference, Monitoring & Observability, Maintenance & Operations, Security & Compliance, Troubleshooting.
+- **Development Guide** -- Local Environment Setup, Codebase Structure, Git Workflow & Branching, Testing Strategy, CI/CD & Build Pipelines, Contribution Guidelines.
+- **Deploy Guide** -- Architecture & Topology, Prerequisites & Infrastructure, Installation, Provisioning & Deployment, Environment Variables, Release & Rollback.
 - **Shared sections:** landing page/index, glossary, API reference (if the project exposes one).
 
 ## Mandatory Sections

@@ -70,7 +70,7 @@ Use chain-of-thought: restate the scope, trace required evidence for each select
 Do not assume the full four-guide set. Before `DISCOVERY` completes, ask which guides to include:
 
 - Present the four guides as a checklist: **User Guide**, **Administrative Guide**, **Development Guide**, **Deploy Guide** (plus shared sections: index, glossary, API reference as needed).
-- For presets and guide mapping, see the `documentation` skill specs `specs/index.md` (Library → `library.md`, CLI → `cli.md`, Skill → `skill.md`, MCP Server → `mcp-server.md`, Project → `project.md`) – after install at `skills/documentation/specs/index.md`, in the source repo at `src/skills/documentation/specs/index.md`. Propose presets and let the user pick or customize; record the confirmed scope as the baseline for taxonomy coverage, gap list, `PLAN`/`APPROVAL`, writing, and verification. Do not generate excluded guides without explicit confirmation. If the user does not answer, stay in `INTAKE`/`SCOPE` and re-ask. A vague "everything"/"full set" means all four guides.
+- For presets and guide mapping, see the `documentation` skill specs `specs/index.md` (Library -> `library.md`, CLI -> `cli.md`, Skill -> `skill.md`, MCP Server -> `mcp-server.md`, Project -> `project.md`) -- after install at `skills/documentation/specs/index.md`, in the source repo at `src/skills/documentation/specs/index.md`. Propose presets and let the user pick or customize; record the confirmed scope as the baseline for taxonomy coverage, gap list, `PLAN`/`APPROVAL`, writing, and verification. Do not generate excluded guides without explicit confirmation. If the user does not answer, stay in `INTAKE`/`SCOPE` and re-ask. A vague "everything"/"full set" means all four guides.
 - Example (adapt to project language): "What type of project is this? For a library, User Guide and Development Guide are usually enough, without Deploy/Administrative. Which guides do you want to include? [ ] User [ ] Administrative [ ] Development [ ] Deploy"
 - For profile details, see the `documentation` skill specs: `specs/library.md`, `cli.md`, `skill.md`, `mcp-server.md`, `project.md` within `skills/documentation/specs/` (source repo `src/skills/documentation/specs/`); all profiles inherit `common.md`.
 
@@ -90,9 +90,9 @@ When the project type is confirmed, load the corresponding profile via the `docu
 
 Apply the 5 fortification layers. Every shell/edit/build call will fail eventually.
 
-**Layer 1 – Input validation:** validate repo root path max 500 chars, scope is one of `User, Administrative, Development, Deploy` or `Custom`, tool is `properdocs` or user-confirmed alternative; return `VALIDATION_ERROR` with field and limit.
+**Layer 1 -- Input validation:** validate repo root path max 500 chars, scope is one of `User, Administrative, Development, Deploy` or `Custom`, tool is `properdocs` or user-confirmed alternative; return `VALIDATION_ERROR` with field and limit.
 
-**Layer 2 – Retry with backoff:**
+**Layer 2 -- Retry with backoff:**
 ```yaml
 Retry strategy for shell/build calls:
   max_retries: 2
@@ -103,11 +103,11 @@ Retry strategy for shell/build calls:
   non_retryable_errors: [VALIDATION_ERROR, 400, 401, 403, 404]
 ```
 
-**Layer 3 – Fallback:** when retries exhausted for `properdocs build`, fall back to static Markdown checklist checks and report `Build unavailable – static checks only`; retain the last good docs.
+**Layer 3 -- Fallback:** when retries exhausted for `properdocs build`, fall back to static Markdown checklist checks and report `Build unavailable -- static checks only`; retain the last good docs.
 
-**Layer 4 – Circuit breaker:** 3 consecutive failures for `properdocs --version` or `build` → OPEN 60s, skip build and use static checks.
+**Layer 4 -- Circuit breaker:** 3 consecutive failures for `properdocs --version` or `build` -> OPEN 60s, skip build and use static checks.
 
-**Layer 5 – Timeout controls:** `properdocs --version`: 30s; `properdocs build`: 60s; edit `docs/**`: 30s. On timeout treat as retryable.
+**Layer 5 -- Timeout controls:** `properdocs --version`: 30s; `properdocs build`: 60s; edit `docs/**`: 30s. On timeout treat as retryable.
 
 **Logging:** log every shell/edit error with context `(agent, state, operation, path, code)` to the report; never expose secrets or stack traces.
 
@@ -184,7 +184,7 @@ Report checks run, checks not run and why, and remaining gaps explicitly. Always
 
 When finished, return the validated schema below. Do not add extra top-level sections.
 
-**Few-shot example (ambiguous task – use as pattern, not content to copy):**
+**Few-shot example (ambiguous task -- use as pattern, not content to copy):**
 ```markdown
 ## Documentation report
 CLI tool documentation generated for `mytool` (User + Development guides)

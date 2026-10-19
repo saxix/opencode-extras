@@ -75,3 +75,4 @@ When all targeted dependencies in the queue have been processed, output a struct
   - **Attempted Target:** <target_version>
   - **Issue Summary:** <short description of the breaking change/failing test>
   - **Required Action:** <architectural change, config setting, or deep refactoring required>
+```

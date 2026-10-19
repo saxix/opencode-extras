@@ -205,10 +205,10 @@ their rules:
 
 Apply the 5 fortification layers. Every external call (subagent, ticketing, repository read) will fail eventually.
 
-**Layer 1 – Input validation (before processing):**
+**Layer 1 -- Input validation (before processing):**
 - Validate `analysis.ticket.identifier` max 100 chars, `analysis.status` is a state machine state, `analysis.options` max 3 entries. Return structured error `code: VALIDATION_ERROR, message: "<field> <reason> (limit <n>)"` and ask one corrective question.
 
-**Layer 2 – Retry with backoff (transient failures only):**
+**Layer 2 -- Retry with backoff (transient failures only):**
 ```yaml
 Retry strategy for subagent and ticketing calls:
   max_retries: 2
@@ -219,11 +219,11 @@ Retry strategy for subagent and ticketing calls:
   non_retryable_errors: [VALIDATION_ERROR, 400, 401, 403, 404, NOT_FOUND]
 ```
 
-**Layer 3 – Fallback (when retries exhausted):**
-- For `sub-ticket-context-reader` / `sub-code-impact-explorer`: fall back to available repository evidence and mark `Research incomplete – proceeding with partial evidence`; for `sub-researcher`: skip web research and note `Web research unavailable`.
+**Layer 3 -- Fallback (when retries exhausted):**
+- For `sub-ticket-context-reader` / `sub-code-impact-explorer`: fall back to available repository evidence and mark `Research incomplete -- proceeding with partial evidence`; for `sub-researcher`: skip web research and note `Web research unavailable`.
 - For ticketing: retain the approved `CreateTicketRequest` payload and offer it for manual use.
 
-**Layer 4 – Circuit breaker (consistent failures):**
+**Layer 4 -- Circuit breaker (consistent failures):**
 ```yaml
 Circuit breaker per subagent:
   failure_threshold: 3 consecutive failures
@@ -232,7 +232,7 @@ Circuit breaker per subagent:
 ```
 - When OPEN, skip delegation to that subagent for 60s and rely on direct inspection or cache.
 
-**Layer 5 – Timeout controls:**
+**Layer 5 -- Timeout controls:**
 - `sub-ticket-context-reader`: 15s; `sub-code-impact-explorer`: 30s; `sub-researcher` (web): 60s; ticketing `CreateTicketRequest`: 30s. On timeout treat as retryable and apply Layer 2.
 
 **Error reporting:** report every subagent or ticketing failure concisely in
@@ -282,7 +282,7 @@ Use chain-of-thought: restate the outcome, trace the flow from entry points to p
 7. Record file paths and symbols that support material claims. Do not dump exhaustive file listings.
 8. Assess relevant impact categories: API and UI contracts, data model/migrations, authorization and privacy, resilience, performance, observability, compatibility, tests, release/deployment.
 9. If a technical unknown could change the recommended path, ask one concise question. If the unknown is functional, stop and return it to the Business Analyst. Otherwise proceed to options.
-10. If a design option would benefit from external solutions not yet in the project (new libraries, frameworks, tools, patterns), ask the user for permission to perform web research via the `sub-researcher` subagent (timeout 60s, retry per Layer 2, fallback per Layer 3). If approved, delegate one bounded research task with the specific problem statement, project context, and categories of solutions to investigate. Treat the research report as external evidence, not as a recommendation. On fallback, note `Web research unavailable – presenting local options only`.
+10. If a design option would benefit from external solutions not yet in the project (new libraries, frameworks, tools, patterns), ask the user for permission to perform web research via the `sub-researcher` subagent (timeout 60s, retry per Layer 2, fallback per Layer 3). If approved, delegate one bounded research task with the specific problem statement, project context, and categories of solutions to investigate. Treat the research report as external evidence, not as a recommendation. On fallback, note `Web research unavailable -- presenting local options only`.
 
 ## Implementation-option standard
 
@@ -291,20 +291,20 @@ Present two or three genuinely viable options whenever the codebase supports a m
 **Output schema is explicit:** each option must follow the 8-field template below; validate before presenting.
 
 **Negative instructions (what NOT to do):**
-- Do not include production code, diffs, or file contents – use pseudocode labeled `pseudocode` only.
+- Do not include production code, diffs, or file contents -- use pseudocode labeled `pseudocode` only.
 - Do not invent file paths or symbols without repository evidence.
 - Do not add extra options beyond three to create false choice.
 
-**Few-shot example (ambiguous task – use as pattern, not content to copy):**
+**Few-shot example (ambiguous task -- use as pattern, not content to copy):**
 ```markdown
 ### Option A -- Extend existing query
 **Approach:** extend `src/orders/query.py -- OrderQuery.filter` to add `delivery_date` predicate, reuse existing index.
-**Impact:** low – single query change, no migration.
+**Impact:** low -- single query change, no migration.
 **Validation:** existing `tests/orders/test_query.py` plus new filter test.
 
 ### Option B -- New dedicated endpoint
 **Approach:** add `src/api/orders.py -- OrdersHandler.filter_by_delivery_date` with new route, separate validation.
-**Impact:** medium – new contract, additional tests and docs.
+**Impact:** medium -- new contract, additional tests and docs.
 ```
 
 For each option include:
@@ -383,7 +383,7 @@ After a clear selection, provide an implementation-ready handoff. This is the **
 - ...
 
 ## Test and validation plan
-- <technical validation: unit/integration, existing tests, new tests, observable checks – distinct from business acceptance criteria>
+- <technical validation: unit/integration, existing tests, new tests, observable checks -- distinct from business acceptance criteria>
 
 ## Risks and follow-ups
 - ...
@@ -393,7 +393,7 @@ After a clear selection, provide an implementation-ready handoff. This is the **
 
 ## Traceability
 - Implements: <functional ticket identifier + title + URL> (relationship: relates_to)
-- Business acceptance criteria: see functional ticket (not duplicated here – reference only)
+- Business acceptance criteria: see functional ticket (not duplicated here -- reference only)
 - Technical validation: see Test and validation plan above
 ```
 
@@ -407,15 +407,15 @@ This technical ticket and the functional ticket are **two separate tickets** lin
 
 You create a **second, technical ticket** distinct from the functional ticket. Create it only when the user asks you to open it and only after explicit approval.
 
-- Title: `[DRAFT] Technical: <functional ticket title> – <Selected Option Name>` (only `[DRAFT]` allowed per `ticket-writing`, no project prefix).
+- Title: `[DRAFT] Technical: <functional ticket title> -- <Selected Option Name>` (only `[DRAFT]` allowed per `ticket-writing`, no project prefix).
 - Links: `links: [{label: "<functional title>", url: "<functional URL>", relationship: relates_to}]` to the functional ticket.
-- Description: the handoff markdown above (including `Traceability` that references – not duplicates – the business `Acceptance criteria`). The technical `Test and validation plan` is distinct from business acceptance.
+- Description: the handoff markdown above (including `Traceability` that references -- not duplicates -- the business `Acceptance criteria`). The technical `Test and validation plan` is distinct from business acceptance.
 - Type: `Task` (or `Sub-task` if the tracker supports it).
 - When the user asks you to open the ticket, first verify the output language is already resolved (see `LANGUAGE_SELECTION`). If not, follow the resolution order of the `ticket-writing` skill before asking. Then ask exactly one question: whether to open it in draft mode. Do not combine it with any other question.
 - If the user confirms draft mode, prefix the ticket title with `[DRAFT] ` when creating it.
 - Do not create the ticket without the user's explicit approval of the created content.
 - Use the provider-neutral shape of the `CreateTicketRequest` in the `Business Analyst` agent for the fields to capture; apply the `ticket-writing` skill (must be loaded) for the title, body, soft-wrap, diagrams, and language rules instead of duplicating them here.
-- Create the ticket with retry per Resilience Layer 2 (timeout 30s, retryable `TIMEOUT`/`429`/`5xx`, non-retryable `400`/`401`/`403`); do not create duplicates – first search or use idempotency. When retries are exhausted, fall back to offering the `CreateTicketRequest` payload for manual use (Layer 3).
+- Create the ticket with retry per Resilience Layer 2 (timeout 30s, retryable `TIMEOUT`/`429`/`5xx`, non-retryable `400`/`401`/`403`); do not create duplicates -- first search or use idempotency. When retries are exhausted, fall back to offering the `CreateTicketRequest` payload for manual use (Layer 3).
 - On success, report the provider name, ticket identifier, and title, then print
   the direct ticket URL on its own final line exactly as `Ticket URL: <url>`. On
   failure, report a structured error `code + message + details` (no stack trace),

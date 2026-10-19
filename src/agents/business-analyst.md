@@ -181,11 +181,11 @@ their rules:
 
 Apply the 5 fortification layers. Every external call (subagent, ticketing tool) will fail eventually.
 
-**Layer 1 – Input validation (before processing):**
+**Layer 1 -- Input validation (before processing):**
 - Validate `requirement.title` is a non-empty string with max 200 chars; `acceptance_criteria` entries max 500 chars each; `ticket` identifier max 100 chars.
 - Return a structured error `code: VALIDATION_ERROR, message: "<field> <reason> (limit <n>)"` and ask one corrective question. Never swallow invalid input.
 
-**Layer 2 – Retry with backoff (transient failures only):**
+**Layer 2 -- Retry with backoff (transient failures only):**
 ```yaml
 Retry strategy for subagent and ticketing calls:
   max_retries: 2
@@ -197,12 +197,12 @@ Retry strategy for subagent and ticketing calls:
 ```
 - Do not retry non-retryable errors. Apply backoff between retries.
 
-**Layer 3 – Fallback (when retries exhausted):**
-- For docs readers: fall back to the glossary cache entry if fresh; otherwise record `Documentation unavailable – proceeding with user-confirmed scope` and continue.
-- For `sub-code-impact-explorer`: fall back to `Research incomplete – proceeding with partial evidence` and note `Gaps: <term> code check unavailable`.
+**Layer 3 -- Fallback (when retries exhausted):**
+- For docs readers: fall back to the glossary cache entry if fresh; otherwise record `Documentation unavailable -- proceeding with user-confirmed scope` and continue.
+- For `sub-code-impact-explorer`: fall back to `Research incomplete -- proceeding with partial evidence` and note `Gaps: <term> code check unavailable`.
 - For ticketing: retain the approved `CreateTicketRequest` payload and offer it for manual use.
 
-**Layer 4 – Circuit breaker (consistent failures):**
+**Layer 4 -- Circuit breaker (consistent failures):**
 ```yaml
 Circuit breaker per subagent:
   failure_threshold: 3 consecutive failures
@@ -211,7 +211,7 @@ Circuit breaker per subagent:
 ```
 - When OPEN, skip delegation to that subagent for 60s, inform the user with a brief note, and rely on cache or proceed without docs evidence.
 
-**Layer 5 – Timeout controls:**
+**Layer 5 -- Timeout controls:**
 - `sub-ticket-context-reader`: 15s; `sub-docs-glossary-reader` / `sub-docs-topic-reader`: 30s; `sub-code-impact-explorer`: 30s; ticketing `CreateTicketRequest`: 30s. On timeout treat as retryable and apply Layer 2.
 
 **Error reporting:** report every subagent or ticketing failure concisely in
@@ -294,7 +294,7 @@ At each discovery turn:
    or the request asks about one precise documented behavior. Use that behavior
    as its topic. Otherwise skip the topic reader and treat the glossary result as
    the documentation observation. On fallback, record
-   `Documentation unavailable – proceeding with user-confirmed scope`.
+   `Documentation unavailable -- proceeding with user-confirmed scope`.
 6. If there is no `docs/` directory or either reader reports no relevant
    material, record that limitation once and continue. Do not repeat the same
    delegation unless the user introduces a new domain/topic or a cached entry is
@@ -405,7 +405,7 @@ Apply the `ticket-writing` skill (must be loaded): it owns all ticket content ru
 - Do not add implementation details, file paths, or code blocks beyond business language.
 - Do not invent labels, priority, or owner without user confirmation.
 
-**Few-shot example (ambiguous task – use as pattern, not content to copy):**
+**Few-shot example (ambiguous task -- use as pattern, not content to copy):**
 ```markdown
 ## Summary
 **Current state / behavior:** Users cannot filter the order list by delivery date; they scroll manually.

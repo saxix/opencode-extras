@@ -53,9 +53,9 @@ If no term is provided, return structured error `code: VALIDATION_ERROR, message
 
 Apply the 5 fortification layers. Every `docs/` read will fail eventually.
 
-**Layer 1 – Input validation:** as in Input contract; return `VALIDATION_ERROR` with field/limit.
+**Layer 1 -- Input validation:** as in Input contract; return `VALIDATION_ERROR` with field/limit.
 
-**Layer 2 – Retry with backoff:**
+**Layer 2 -- Retry with backoff:**
 ```yaml
 Retry strategy for read/glob:
   max_retries: 2
@@ -66,11 +66,11 @@ Retry strategy for read/glob:
   non_retryable_errors: [VALIDATION_ERROR, 404, NOT_FOUND]
 ```
 
-**Layer 3 – Fallback:** when retries exhausted, return `## Glossary -- <term>` with `Not documented in docs.` and `Term not found within the exploration boundary` – the parent records `not_found`.
+**Layer 3 -- Fallback:** when retries exhausted, return `## Glossary -- <term>` with `Not documented in docs.` and `Term not found within the exploration boundary` -- the parent records `not_found`.
 
-**Layer 4 – Circuit breaker:** 3 consecutive read failures → OPEN 60s, skip `docs/` read and return fallback.
+**Layer 4 -- Circuit breaker:** 3 consecutive read failures -> OPEN 60s, skip `docs/` read and return fallback.
 
-**Layer 5 – Timeout controls:** `read`/`glob`: 10s each. On timeout treat as retryable.
+**Layer 5 -- Timeout controls:** `read`/`glob`: 10s each. On timeout treat as retryable.
 
 **Logging:** log every read error with context `(operation, term, code)` under `Ambiguities or gaps`; never expose stack traces.
 

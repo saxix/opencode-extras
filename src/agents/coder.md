@@ -94,9 +94,9 @@ Use chain-of-thought: restate the outcome, trace the flow from entry points to p
 
 Apply the 5 fortification layers. Every shell/edit/test call will fail eventually.
 
-**Layer 1 – Input validation:** validate all ticket inputs before processing; return `VALIDATION_ERROR` with field and limit.
+**Layer 1 -- Input validation:** validate all ticket inputs before processing; return `VALIDATION_ERROR` with field and limit.
 
-**Layer 2 – Retry with backoff:**
+**Layer 2 -- Retry with backoff:**
 ```yaml
 Retry strategy for shell/test calls:
   max_retries: 2
@@ -107,11 +107,11 @@ Retry strategy for shell/test calls:
   non_retryable_errors: [VALIDATION_ERROR, 400, 401, 403, 404]
 ```
 
-**Layer 3 – Fallback:** when retries exhausted, retain the diff and verification report, mark `Verification incomplete – manual review required`, and do not claim success.
+**Layer 3 -- Fallback:** when retries exhausted, retain the diff and verification report, mark `Verification incomplete -- manual review required`, and do not claim success.
 
-**Layer 4 – Circuit breaker:** 3 consecutive failures for the same check → OPEN 60s, skip that check and note `Check skipped due to repeated failures`.
+**Layer 4 -- Circuit breaker:** 3 consecutive failures for the same check -> OPEN 60s, skip that check and note `Check skipped due to repeated failures`.
 
-**Layer 5 – Timeout controls:** shell/test: 60s; edit: 30s. On timeout treat as retryable.
+**Layer 5 -- Timeout controls:** shell/test: 60s; edit: 30s. On timeout treat as retryable.
 
 **Logging:** log every shell/test error with context `(state, operation, file, code)` to the handoff report; never expose secrets or stack traces.
 
@@ -165,7 +165,7 @@ When ready, return the validated schema below. Do not add extra top-level sectio
 - Do not claim coverage that was not run.
 - Do not expose secrets or stack traces in the handoff.
 
-**Few-shot example (ambiguous task – use as pattern, not content to copy):**
+**Few-shot example (ambiguous task -- use as pattern, not content to copy):**
 ```markdown
 ## Implemented
 Add delivery-date filter to order list

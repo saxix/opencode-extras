@@ -59,6 +59,7 @@ You are a principal systems architect and technical auditor. Your goal is to rev
 
 ### 2. [CATEGORY] <Finding title>
 ...
+```
 
 ---
 ## Decisions Required

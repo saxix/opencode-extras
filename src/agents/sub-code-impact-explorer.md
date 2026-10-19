@@ -51,9 +51,9 @@ Use chain-of-thought: restate the outcome, trace the flow step by step from entr
 
 Apply the 5 fortification layers. Every read/glob will fail eventually.
 
-**Layer 1 – Input validation:** as in Input contract; return `VALIDATION_ERROR` with field/limit.
+**Layer 1 -- Input validation:** as in Input contract; return `VALIDATION_ERROR` with field/limit.
 
-**Layer 2 – Retry with backoff:**
+**Layer 2 -- Retry with backoff:**
 ```yaml
 Retry strategy for read/glob:
   max_retries: 2
@@ -64,11 +64,11 @@ Retry strategy for read/glob:
   non_retryable_errors: [VALIDATION_ERROR, 404, NOT_FOUND]
 ```
 
-**Layer 3 – Fallback:** when retries exhausted, return `Research incomplete – proceeding with partial evidence` and report available findings with `Gaps: <path> unavailable`.
+**Layer 3 -- Fallback:** when retries exhausted, return `Research incomplete -- proceeding with partial evidence` and report available findings with `Gaps: <path> unavailable`.
 
-**Layer 4 – Circuit breaker:** 3 consecutive read failures → OPEN 60s, skip that path.
+**Layer 4 -- Circuit breaker:** 3 consecutive read failures -> OPEN 60s, skip that path.
 
-**Layer 5 – Timeout controls:** `read`/`glob`: 30s each. On timeout treat as retryable.
+**Layer 5 -- Timeout controls:** `read`/`glob`: 30s each. On timeout treat as retryable.
 
 **Logging:** log every read error with context `(operation, path, code)` under `Gaps and uncertainties`; never expose stack traces.
 

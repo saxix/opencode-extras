@@ -32,6 +32,6 @@ Shared rules for all documenter profiles. Every type-specific profile inherits t
 
 - Input validation: `repo root` max 500 chars, `scope` is one of the preset guides; return `VALIDATION_ERROR` with field and limit.
 - Retry with backoff for shell/build calls (`max_retries: 2, initial_delay: 1s, backoff_multiplier: 2, max_delay: 10s`); retryable `TIMEOUT`/`5xx`/`CONNECTION_ERROR`, non-retryable `VALIDATION_ERROR`/`404`.
-- Fallback: when `properdocs build` retries are exhausted, fall back to static Markdown checklist checks and report `Build unavailable – static checks only`.
-- Circuit breaker: 3 consecutive failures for `properdocs --version` or `build` → OPEN 60s, skip build and use static checks.
+- Fallback: when `properdocs build` retries are exhausted, fall back to static Markdown checklist checks and report `Build unavailable -- static checks only`.
+- Circuit breaker: 3 consecutive failures for `properdocs --version` or `build` -> OPEN 60s, skip build and use static checks.
 - Timeout: `properdocs --version`: 30s; `properdocs build`: 60s; edit `docs/**`: 30s.

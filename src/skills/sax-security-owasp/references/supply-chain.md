@@ -133,7 +133,7 @@ python-nmap         # Could be confused with nmap
 - Character omission: `requests` -> `reqests`
 - Character swap: `django` -> `djagno`
 - Character doubling: `numpy` -> `numppy`
-- Homoglyphs: `requests` -> `rеquests` (Cyrillic е)
+- Homoglyphs: `requests` -> `rеquests` (Cyrillic "e" in the code sample)
 - Adding suffixes: `requests-dev`, `requests-py`
 
 ---

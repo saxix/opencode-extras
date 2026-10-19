@@ -8,15 +8,15 @@ Document a library consumed as a dependency. Optimize for installation, import, 
 
 ## Required Guides
 
-- **User Guide** — Overview & Key Features, Getting Started & Onboarding, Feature Workflows, Interface Navigation, FAQs & Troubleshooting.
-- **Development Guide** — Local Environment Setup, Codebase Structure, Git Workflow & Branching, Testing Strategy, CI/CD & Build Pipelines, Contribution Guidelines, API Reference (one page per public module), CLI Reference (if the library exposes a CLI).
+- **User Guide** -- Overview & Key Features, Getting Started & Onboarding, Feature Workflows, Interface Navigation, FAQs & Troubleshooting.
+- **Development Guide** -- Local Environment Setup, Codebase Structure, Git Workflow & Branching, Testing Strategy, CI/CD & Build Pipelines, Contribution Guidelines, API Reference (one page per public module), CLI Reference (if the library exposes a CLI).
 - **Excluded by default:** Administrative Guide, Deploy Guide (add only if the library has runtime config or a deployment story). Shared sections: index, glossary.
 
 ## Mandatory Sections
 
-- **Installation** — prerequisites (OS, Python/Node version), methods (`pip`/`pipx`/`uv tool`/`poetry` only if configured in `pyproject.toml`/`package.json`), verification (`python -c "import <pkg>" --version`), upgrade/uninstall, troubleshooting. Every command executable.
-- **API Reference** — one page per public module with purpose, key symbols, and usage snippet. Source of truth: docstrings, type hints, `__all__`.
-- **Development** — local setup, test strategy, how to add a new public API, release process.
+- **Installation** -- prerequisites (OS, Python/Node version), methods (`pip`/`pipx`/`uv tool`/`poetry` only if configured in `pyproject.toml`/`package.json`), verification (`python -c "import <pkg>" --version`), upgrade/uninstall, troubleshooting. Every command executable.
+- **API Reference** -- one page per public module with purpose, key symbols, and usage snippet. Source of truth: docstrings, type hints, `__all__`.
+- **Development** -- local setup, test strategy, how to add a new public API, release process.
 
 Flag any missing Installation or API Reference page as High gap.
 

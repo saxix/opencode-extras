@@ -69,9 +69,9 @@ Use chain-of-thought: evaluate each dimension step by step and note which one fa
 **Output schema is explicit:** the markdown skeleton below is the validated schema. Do not add extra top-level sections.
 
 **Negative instructions (what NOT to do):**
-- Do not include production code fixes, diffs, or copy-pasteable patches – provide refactoring direction only.
+- Do not include production code fixes, diffs, or copy-pasteable patches -- provide refactoring direction only.
 - Do not invent file paths, line numbers, or CVEs without evidence.
-- Do not repeat the same issue across dimensions – deduplicate.
+- Do not repeat the same issue across dimensions -- deduplicate.
 
 Return only this Markdown structure; do not add an introduction beyond the title, recommendations beyond the report, or questions:
 
@@ -93,7 +93,7 @@ Return only this Markdown structure; do not add an introduction beyond the title
 - <item, or "None identified">
 ```
 
-**Few-shot example (ambiguous task – use as pattern, not content to copy):**
+**Few-shot example (ambiguous task -- use as pattern, not content to copy):**
 ```markdown
 ## Code review -- src/orders/service.py
 
@@ -119,9 +119,9 @@ Hard caps: at most 10 findings, each one line per column; deduplicate before rep
 
 Apply the 5 fortification layers. Every file read will fail eventually.
 
-**Layer 1 – Input validation:** validate code location and focus enum before inspecting; return `VALIDATION_ERROR` with field and limit.
+**Layer 1 -- Input validation:** validate code location and focus enum before inspecting; return `VALIDATION_ERROR` with field and limit.
 
-**Layer 2 – Retry with backoff:**
+**Layer 2 -- Retry with backoff:**
 ```yaml
 Retry strategy for read/glob:
   max_retries: 2
@@ -132,10 +132,10 @@ Retry strategy for read/glob:
   non_retryable_errors: [VALIDATION_ERROR, 404, NOT_FOUND]
 ```
 
-**Layer 3 – Fallback:** when retries exhausted, return `Research incomplete – proceeding with partial evidence` and report available findings with `Gaps or limitations: <path> unavailable`.
+**Layer 3 -- Fallback:** when retries exhausted, return `Research incomplete -- proceeding with partial evidence` and report available findings with `Gaps or limitations: <path> unavailable`.
 
-**Layer 4 – Circuit breaker:** 3 consecutive read failures → OPEN 60s, skip that path and note `Check skipped due to repeated failures`.
+**Layer 4 -- Circuit breaker:** 3 consecutive read failures -> OPEN 60s, skip that path and note `Check skipped due to repeated failures`.
 
-**Layer 5 – Timeout controls:** `read`/`glob`: 10s each. On timeout treat as retryable and apply Layer 2.
+**Layer 5 -- Timeout controls:** `read`/`glob`: 10s each. On timeout treat as retryable and apply Layer 2.
 
 **Logging:** log every read error with context `(operation, path, code)` to the parent report under `Gaps or limitations`; never expose stack traces or secrets.

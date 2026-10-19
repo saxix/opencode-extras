@@ -8,16 +8,16 @@ Document a skill that extends an AI coding agent. Optimize for installation via 
 
 ## Required Guides
 
-- **User Guide** — Overview & Key Features, Getting Started & Onboarding, **Installation**, **Skill Structure**, **Available Skills** (or single skill detail), FAQs & Troubleshooting.
-- **Development Guide** — Local Environment Setup, Codebase Structure (`agents/`, `skills/`, `commands/`), Git Workflow & Branching, Testing Strategy, CI/CD & Build Pipelines, Contribution Guidelines (how to add a new skill/agent/command).
+- **User Guide** -- Overview & Key Features, Getting Started & Onboarding, **Installation**, **Skill Structure**, **Available Skills** (or single skill detail), FAQs & Troubleshooting.
+- **Development Guide** -- Local Environment Setup, Codebase Structure (`agents/`, `skills/`, `commands/`), Git Workflow & Branching, Testing Strategy, CI/CD & Build Pipelines, Contribution Guidelines (how to add a new skill/agent/command).
 - **Excluded by default:** Administrative Guide, Deploy Guide.
 
 ## Mandatory Sections
 
-1. **Installation** — methods via `npx` (e.g., `npx opencode-extras`, `npx opencode-extras --project`, `npx opencode-extras --agent <target>`, `--copy`/`--link`), verification (skill appears under `~/.config/opencode/skills/` or `.opencode/skills/`), upgrade/uninstall, troubleshooting. Every command executable.
-2. **Skill Structure** — directory layout (`agents/`, `skills/<name>/SKILL.md`, `commands/`, `plugins/`), frontmatter rules (`name`, `description` required, `license`/`compatibility`/`metadata` optional), coexistence-safe per-item install.
-3. **Available Skills / Skill Detail** — for a pack: table of skills with `name` and description; for a single skill: frontmatter, trigger keywords, body, and `refs/` if present.
-4. **Development (Contributing)** — local setup, how to add a new skill (one subdirectory per skill with `SKILL.md`), style (TUI-portable output), testing (`node --test`), release.
+1. **Installation** -- methods via `npx` (e.g., `npx opencode-extras`, `npx opencode-extras --project`, `npx opencode-extras --agent <target>`, `--copy`/`--link`), verification (skill appears under `~/.config/opencode/skills/` or `.opencode/skills/`), upgrade/uninstall, troubleshooting. Every command executable.
+2. **Skill Structure** -- directory layout (`agents/`, `skills/<name>/SKILL.md`, `commands/`, `plugins/`), frontmatter rules (`name`, `description` required, `license`/`compatibility`/`metadata` optional), coexistence-safe per-item install.
+3. **Available Skills / Skill Detail** -- for a pack: table of skills with `name` and description; for a single skill: frontmatter, trigger keywords, body, and `refs/` if present.
+4. **Development (Contributing)** -- local setup, how to add a new skill (one subdirectory per skill with `SKILL.md`), style (TUI-portable output), testing (`node --test`), release.
 
 Flag any missing Installation, Skill Structure, or Available Skills page as High gap.
 
