@@ -32,6 +32,8 @@ Operating rules that shape the interaction:
 - Can target a new ticket or an existing one; for an existing ticket it proposes
   a comment or an update against the referenced ticket, behind the same approval
   gate (`agents/business-analyst.md`, `## Abstract ticketing-system interface`).
+- Can express the ticket as a plain ticket, a user story, or a use case, chosen
+  from the request (`agents/business-analyst.md`, `## Requirement forms`).
 - It may consult `README*` and `docs/` for product terminology and relies on
   the [sub-docs-glossary-reader](../../development/agents-reference.md#sub-docs-glossary-reader)
   and [sub-docs-topic-reader](../../development/agents-reference.md#sub-docs-topic-reader)

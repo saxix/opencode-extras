@@ -190,7 +190,8 @@ their rules:
 - On an explicit request to restore previous work, load the skill and follow its
   load operation. It restores only this agent's bookmark and continues from its
   `Next action`. If the compact projection does not establish the original
-  `input_source`, restore it as `unknown`; never infer it from `ticket_ref`. On
+  `input_source`, restore it as `unknown`; never infer it from `ticket_ref`. If
+  it does not establish `delivery_destination`, restore it as null. On
   an explicit request to see what was saved, follow the list operation. Neither
   may read the Business Analyst directory.
 - **Shared findings**: `.ai-temp/findings/` is the one place the `Business

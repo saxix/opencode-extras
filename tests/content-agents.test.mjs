@@ -147,6 +147,27 @@ describe('agent content integrity', () => {
   });
 });
 
+describe('analyst ticket contract', () => {
+  it('business analyst documents the three requirement forms', () => {
+    const content = readAgent('business-analyst.md');
+    assert.match(content, /## Requirement forms/);
+    assert.match(content, /form: ticket \| user_story \| use_case/);
+  });
+
+  it('business analyst exposes the existing-ticket request shapes', () => {
+    const content = readAgent('business-analyst.md');
+    assert.match(content, /AddTicketCommentRequest/);
+    assert.match(content, /UpdateTicketRequest/);
+  });
+
+  it('system analyst documents both delivery destinations', () => {
+    const content = readAgent('system-analyst.md');
+    assert.match(content, /## Delivery destination and ticket creation/);
+    assert.match(content, /### Destination: new technical ticket/);
+    assert.match(content, /### Destination: comment on an existing ticket/);
+  });
+});
+
 describe('agent TUI-portable output', () => {
   it('agents are ASCII-only outside code (no emoji, arrows, or box drawing)', () => {
     for (const f of listAgents()) {

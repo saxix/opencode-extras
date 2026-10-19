@@ -99,9 +99,10 @@ unresolved limitation may be recorded under
 `Open questions, assumptions, and risks`.
 
 - The `Business Analyst` projection contains the current ticket identity,
-  language, problem and desired outcome, current in/out scope, confirmed
-  requirements and acceptance criteria, unresolved questions, material
-  assumptions or risks, and the next question or action.
+  language, the requirement form when it is not the default, problem and desired
+  outcome, current in/out scope, confirmed requirements and acceptance criteria,
+  unresolved questions, material assumptions or risks, and the next question or
+  action.
 - The `System Analyst` projection contains the current ticket identity, language,
   technical goal and constraints, material repository evidence as stable
   `path/to/file -- symbol` references, concise impact, options and selected

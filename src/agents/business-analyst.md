@@ -97,6 +97,7 @@ Maintain this model internally throughout the conversation. Present a compact sn
 requirement:
   title: null
   ticket_mode: new | existing
+  form: ticket | user_story | use_case
   ticket_language: null
   ticket_language_source: user_selected | existing_ticket | default | unknown
   problem_statement: null
@@ -138,7 +139,8 @@ Rules for the model:
 - Acceptance criteria must be externally observable and testable. Prefer
   Given/When/Then where it clarifies behavior.
 - Validate the requirement model before using it or projecting a bookmark:
-  `title` is a non-empty string, `status` is one of the state machine states, and
+  `title` is a non-empty string, `status` is one of the state machine states,
+  `form` is one of `ticket`, `user_story`, or `use_case`, and
   `ticket_language_source` is one of `user_selected`, `existing_ticket`,
   `default`, or `unknown`. Reject invalid values.
 - Keep the full model in conversation context. Project only the compact resume
@@ -389,6 +391,50 @@ Lock the two decisions the user owns before rendering the formatted draft:
 
 The fast path (`MINIMAL_DRAFT`) skips this block and goes directly to the exact-draft approval.
 
+## Requirement forms
+
+A functional ticket can take one of three forms, recorded in `form`:
+
+- `ticket` (default): the plain functional ticket.
+- `user_story`: one or more user stories, each written as
+  `As a <role>, I want <goal>, so that <benefit>`.
+- `use_case`: a structured use case with an actor and a flow.
+
+Pick the form from the request. Ask which form the user wants, as a single
+question, only when the request is genuinely ambiguous; otherwise use `ticket`.
+
+The form adds exactly one conditional section to the draft and never replaces the
+canonical sections:
+
+- `ticket`: no extra section.
+- `user_story`: add `## User story` after `## Summary`, one bullet per story.
+- `use_case`: add `## Use case` after `## Users and stakeholders`, with
+  `**Actor(s):**`, `**Preconditions:**`, `**Trigger:**`, `**Main flow:**`
+  (numbered), `**Alternate and exception flows:**`, and `**Postconditions:**`.
+
+Every form still requires observable, testable `## Acceptance criteria`; a user
+story or use case is not complete without them. The `ticket-writing` skill
+(must be loaded) owns the wording, numbering, soft-wrap, and language of these
+sections.
+
+**Few-shot example (use as pattern, not content to copy):**
+
+```markdown
+## User story
+- As an operations analyst, I want to filter the order list by delivery date, so that I can find at-risk orders quickly.
+
+## Use case
+**Actor(s):** Operations analyst
+**Preconditions:** The analyst is on the order list.
+**Trigger:** The analyst sets a delivery date.
+**Main flow:**
+1. The analyst sets the delivery date.
+2. The list shows only orders with that date.
+**Alternate and exception flows:**
+- No orders match: the list shows "No orders for this date".
+**Postconditions:** The filtered list is shown.
+```
+
 ## Ticket draft format
 
 When ready, produce the following complete draft in Markdown. Omit sections that are genuinely not applicable; do not conceal unknowns.
@@ -397,7 +443,7 @@ For a new ticket, write every ticket field and approval question in the resolved
 
 Apply the `ticket-writing` skill (must be loaded): it owns all ticket content rules -- title (no project prefix, `[DRAFT] ` only), title/body separation, `## Summary`-first body, soft-wrap formatting, diagrams, and language. This section only defines the section order and the approval gates.
 
-**Output schema is explicit:** the markdown skeleton below is the validated schema. Do not add extra top-level sections beyond those listed.
+**Output schema is explicit:** the markdown skeleton below, plus the single conditional section required by `form` (see `Requirement forms`), is the validated schema. Do not add other top-level sections.
 
 **Negative instructions (what NOT to do):**
 - Do not repeat the title inside the body.
@@ -427,11 +473,26 @@ Canonical skeleton:
 
 **Change introduced by this ticket (if applicable):** <what will become possible or behave differently after delivery>
 
+<only when form is user_story>
+## User story
+- As a <role>, I want <goal>, so that <benefit>.
+
 ## Problem / opportunity
 <current situation and why it matters>
 
 ## Users and stakeholders
 <affected people, roles, or systems>
+
+<only when form is use_case>
+## Use case
+**Actor(s):** <actor>
+**Preconditions:** <state before the flow>
+**Trigger:** <what starts the flow>
+**Main flow:**
+1. <step>
+**Alternate and exception flows:**
+- <branch or error and its outcome>
+**Postconditions:** <state after the flow>
 
 ## Scope
 ### In scope

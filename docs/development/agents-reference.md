@@ -37,6 +37,8 @@ only when the user explicitly asks to save a bookmark, through the
 comment or an update against the referenced ticket through the same
 provider-neutral interface, still behind the approval gate
 (`src/agents/business-analyst.md`, `## Abstract ticketing-system interface`).
+Renders the functional ticket as a plain ticket, a user story, or a use case
+through `form` (`src/agents/business-analyst.md`, `## Requirement forms`).
 
 ## system-analyst
 

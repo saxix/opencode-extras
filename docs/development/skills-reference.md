@@ -183,9 +183,10 @@ regression coverage (`.src/skills/testing-guidelines/SKILL.md:2-3`).
 
 Canonical rules for ticket content shared by the `Business Analyst` and the
 `System Analyst`: title (no project prefix, `[DRAFT] ` only), title/body
-separation, `## Summary`-first body, comment formatting, soft-wrap formatting,
-Mermaid diagrams, and language resolution (`.src/skills/ticket-writing/SKILL.md:2-3`).
-Agents must load it rather than re-implementing its rules.
+separation, `## Summary`-first body, comment formatting, user story and use case
+forms, soft-wrap formatting, Mermaid diagrams, and language resolution
+(`.src/skills/ticket-writing/SKILL.md:2-3`). Agents must load it rather than
+re-implementing its rules.
 
 ## tox-fix
 

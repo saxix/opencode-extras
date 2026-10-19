@@ -1,6 +1,6 @@
 ---
 name: sax-ticket-writing
-description: 'Canonical rules for ticket content shared by the Business Analyst and System Analyst: title, project-prefix ban, draft prefix, body structure, comment formatting, soft-wrap formatting, diagrams, and language resolution. Trigger on "write a ticket", "open a ticket", "ticket title", "ticket body", "ticket comment", "draft mode", "create the ticket". Loaded by the Business Analyst and System Analyst.'
+description: 'Canonical rules for ticket content shared by the Business Analyst and System Analyst: title, project-prefix ban, draft prefix, body structure, comment formatting, user story and use case forms, soft-wrap formatting, diagrams, and language resolution. Trigger on "write a ticket", "open a ticket", "ticket title", "ticket body", "ticket comment", "user story", "use case", "draft mode", "create the ticket". Loaded by the Business Analyst and System Analyst.'
 ---
 
 ## Purpose
@@ -28,6 +28,20 @@ A comment posted on an existing ticket follows the same formatting rules as a
 ticket body (ATX headings, soft-wrap, ASCII only, and the ticket language). It
 differs in two ways: it does not need to start with `## Summary`, and it must not
 repeat the ticket title.
+
+## Requirement form rules
+
+When the ticket uses a non-default requirement form:
+
+- **User story:** write each story as one bullet,
+  `As a <role>, I want <goal>, so that <benefit>`. Keep one story per capability;
+  do not bundle several goals into one line.
+- **Use case:** name the actor, list preconditions and the trigger, number the
+  main flow steps, and list each alternate or exception flow with its outcome.
+  Keep the flow in business language, not code.
+
+Both forms keep the `## Acceptance criteria` section; the story or use case never
+replaces it.
 
 ## Diagram rules
 
