@@ -28,8 +28,8 @@ npm test          # node --test: definition contracts + installer per-item tests
 - the installer removes retired command files on install and uninstall, and
   never installs editor backups or dotfiles from `src/`;
 - installer `scripts/install.mjs:1` behavior: per-item copy/link, coexistence
-  (`other-pack` preserved), `PREFIX` isolation, `--dry-run`, `--uninstall`, target
-  selection, `pi`, `compat`, and rejection of removed selector flags.
+  (`other-pack` preserved), `PREFIX` isolation, `--dry-run`, `--uninstall`,
+  global/project scope, and rejection of removed selector flags.
 
 The tests use isolated temporary prefixes and clean them up automatically. Set
 `KEEP_WORK=1` when inspecting the test fixtures under `~work/`. The directory
@@ -42,8 +42,8 @@ manually against conventions:
 
 | Check | Criterion |
 |---|---|
-| Skill entrypoint | `SKILL.md` exists at the skill directory root (`README.md:180`) |
-| Frontmatter | `name:`/`description:` for skills; `description:` for agents and commands (`README.md:180-182`) |
+| Skill entrypoint | `SKILL.md` exists at the skill directory root (`AGENTS.md:97`) |
+| Frontmatter | `name:`/`description:` for skills; `description:` for agents and commands (`AGENTS.md:97-99`) |
 | Output standard | Content follows the TUI-portable standard (`AGENTS.md:118-131`) |
 | Permissions | Deny-first, allow-last convention and a restricted write surface |
 | Bookmark safety | Active role, paths, names, overwrite, and explicit-only save |

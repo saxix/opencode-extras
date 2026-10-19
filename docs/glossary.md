@@ -23,7 +23,7 @@ One term per entry. Terms are linked from their first use on each page.
 
 A reusable role definition for an AI coding assistant, stored under
 `agents/` as Markdown with YAML frontmatter. Each agent has a purpose, a
-description that carries trigger keywords, optional per-TUI settings
+description that carries trigger keywords, optional opencode settings
 (`mode`, `color`, `steps`, `permissions`), and an operating contract
 (`agents/business-analyst.md:74-85`). See the [agent reference](development/agents-reference.md).
 
@@ -52,8 +52,8 @@ See [Slash command](#slash-command).
 
 The YAML block at the top of a Markdown definition file, delimited by `---`
 lines. Skills require `name:` and `description:`; agents and commands require
-`description:` and may carry per-TUI settings such as `agent`, `mode`, `color`,
-`steps`, and `permissions` (`README.md:180-182`). See the
+`description:` and may carry opencode settings such as `agent`, `mode`, `color`,
+`steps`, and `permissions` (`AGENTS.md:97-99`). See the
 [configuration reference](admin/configuration.md).
 
 ## MCP
@@ -90,7 +90,7 @@ on demand when a task matches their description
 
 The required entrypoint file of every skill. It uses `name:` and `description:`
 frontmatter; the description carries the trigger keywords
-(`README.md:180-181`).
+(`AGENTS.md:97-98`).
 
 ## Slash command
 
@@ -108,9 +108,9 @@ Most subagents are read-only and hidden (`agents/sub-code-impact-explorer.md:3`)
 
 ## TUI
 
-Terminal User Interface. In this repository, the AI coding assistants that
-render Markdown output in a terminal: `opencode`, Claude Code, Gemini CLI,
-hermes, and similar (`README.md:3`).
+Terminal User Interface. In this repository, the AI coding assistant that
+loads the definitions and renders their Markdown output: `opencode`
+(`README.md:3`).
 
 ## TUI-portable output
 

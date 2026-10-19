@@ -35,7 +35,7 @@ const globalFlag = has('--global');
 const projectFlag = has('--project');
 const prefixFlag = get('--prefix');
 let prefix = prefixFlag || process.env.PREFIX || os.homedir();
-const agentValues = ['opencode', 'compat', 'claude', 'codex', 'pi'];
+const agentValues = ['opencode'];
 
 function help() {
   console.log(`
@@ -47,7 +47,6 @@ Usage:
   opencode-extras [options]          (via npm bin)
 
 Options:
-  --agent <target>  Select one target: opencode (default), compat, claude, codex, pi
   --global          Install globally (default unless --project)
   --project         Install in the current project
   --copy            Copy files per-item (default, coexistence-safe)
@@ -58,19 +57,16 @@ Options:
   --help, -h        Show this help
 
 Examples:
-  npx opencode-extras                              # opencode global (default)
-  npx opencode-extras --project                    # opencode project
-  npx opencode-extras --agent claude --global      # claude global
-  npx opencode-extras --agent codex --project      # codex project
-  npx opencode-extras --agent pi --global          # pi global
-  npx opencode-extras --agent compat --link        # project .agents layout
-  npx --yes github:saxix/opencode-extras --project --agent opencode
-  npx opencode-extras --uninstall --agent opencode --global
-  npx opencode-extras --dry-run --agent claude --global
+  npx opencode-extras                              # global (~/.config/opencode)
+  npx opencode-extras --project                    # project (.opencode)
+  npx --yes github:saxix/opencode-extras --project
+  npx opencode-extras --uninstall --global
+  npx opencode-extras --dry-run
 
 Notes:
-  - --agent accepts one target per invocation and defaults to opencode.
-  - --agent compat uses ./.agents and implies --project; it cannot use --global.
+  - Only opencode is supported. The installer writes to
+    ~/.config/opencode (global) or ./.opencode (project).
+  - --agent is accepted for backward compatibility; opencode is the only value.
   - Default is --copy per-item (coexistence-safe, no directory symlink conflict).
   - --link creates per-item symlinks: DEST/skills/sax-<name> -> src/skills/<name>.
   - With GitHub specs, --link points to npx's fetched copy/cache, not a local checkout.
@@ -85,11 +81,12 @@ if (showHelp) { help(); process.exit(0); }
 const booleanFlags = new Set(['--dry-run', '--uninstall', '--link', '--copy', '--global', '--project']);
 const valueFlags = new Set(['--agent', '--prefix']);
 const removedFlags = new Map([
-  ['--compat', '--agent compat'],
-  ['--opencode', '--agent opencode'],
-  ['--claude', '--agent claude'],
-  ['--codex', '--agent codex'],
-  ['--all', 'separate --agent invocations'],
+  ['--compat', 'only opencode is supported; use --project for ./.opencode'],
+  ['--opencode', 'opencode is the only target; omit the flag'],
+  ['--claude', 'only opencode is supported'],
+  ['--codex', 'only opencode is supported'],
+  ['--pi', 'only opencode is supported'],
+  ['--all', 'only opencode is supported'],
 ]);
 
 for (let i = 0; i < args.length; i += 1) {
@@ -100,7 +97,7 @@ for (let i = 0; i < args.length; i += 1) {
     i += 1;
     continue;
   }
-  if (removedFlags.has(arg)) fail(`${arg} has been removed; use ${removedFlags.get(arg)}`);
+  if (removedFlags.has(arg)) fail(`${arg} has been removed; ${removedFlags.get(arg)}`);
   fail(`Unknown option: ${arg}`);
 }
 
@@ -110,10 +107,6 @@ if (!agentValues.includes(agent)) fail(`--agent must be one of: ${agentValues.jo
 
 let scopeGlobal = globalFlag;
 let scopeProject = projectFlag;
-if (agent === 'compat') {
-  if (globalFlag) fail('--agent compat cannot be combined with --global');
-  scopeProject = true;
-}
 if (!scopeGlobal && !scopeProject) scopeGlobal = true;
 
 // Expand prefix
@@ -126,12 +119,10 @@ prefix = expandPrefix(prefix);
 const cwd = process.cwd();
 const dests = [];
 if (scopeGlobal) {
-  const base = agent === 'opencode' ? path.join(prefix, '.config', 'opencode') : path.join(prefix, `.${agent}`);
-  dests.push({ label: `${agent} (global)`, base });
+  dests.push({ label: 'opencode (global)', base: path.join(prefix, '.config', 'opencode') });
 }
 if (scopeProject) {
-  const base = agent === 'compat' ? path.join(cwd, '.agents') : path.join(cwd, `.${agent === 'opencode' ? 'opencode' : agent}`);
-  dests.push({ label: agent === 'compat' ? 'agents (compat project)' : `${agent} (project)`, base });
+  dests.push({ label: 'opencode (project)', base: path.join(cwd, '.opencode') });
 }
 
 // Editor backups (`~name`) and dotfiles are git-ignored scratch, never shipped.
@@ -415,5 +406,4 @@ console.log('\nDone.');
 if (!uninstall && !dryRun) {
   console.log(`Installed skills with prefix "${SKILL_PREFIX}" per-item (coexistence-safe, no directory symlink).`);
   console.log('Tip: npx opencode-extras --project  for project-local opencode install');
-  console.log('     npx opencode-extras --agent compat --link  for project .agents links');
 }

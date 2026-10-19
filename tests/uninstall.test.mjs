@@ -38,17 +38,9 @@ describe('uninstall', () => {
     assert.ok(fs.existsSync(path.join(other, 'SKILL.md')), 'other-keep preserved on uninstall');
   });
 
-  it('lifecycle: install each global target then uninstall', () => {
+  it('lifecycle: install then uninstall the global target', () => {
     const prefix = path.join(tmp, `lifecycle-global-${Date.now()}`);
-    const targets = [
-      ['opencode', ['.config', 'opencode']],
-      ['claude', ['.claude']],
-      ['codex', ['.codex']],
-      ['pi', ['.pi']],
-    ];
-    for (const [agent] of targets) {
-      runInstall(`--agent ${agent}`, { PREFIX: prefix });
-    }
+    runInstall('--agent opencode', { PREFIX: prefix });
     const opencodeSkills = path.join(prefix, '.config', 'opencode', 'skills');
     const opencodeAgents = path.join(prefix, '.config', 'opencode', 'agents');
     const opencodeCommands = path.join(prefix, '.config', 'opencode', 'commands');
@@ -61,9 +53,7 @@ describe('uninstall', () => {
     for (const f of listCommands()) {
       assert.ok(fs.existsSync(path.join(opencodeCommands, f)), `missing command ${f}`);
     }
-    for (const [, directories] of targets) {
-      assert.ok(fs.existsSync(path.join(prefix, ...directories, 'skills', listSkills()[0], 'SKILL.md')));
-    }
+    assert.ok(fs.existsSync(path.join(prefix, '.config', 'opencode', 'skills', listSkills()[0], 'SKILL.md')));
     assert.ok(fs.existsSync(path.join(prefix, '.config', 'opencode', '_shared', 'sax', 'state-persistence.md')), 'shared spec missing at _shared/sax');
     assert.ok(!fs.existsSync(path.join(prefix, '.config', 'opencode', 'agents', '_shared', 'state-persistence.md')), 'legacy agents/_shared should not exist');
 
@@ -71,9 +61,7 @@ describe('uninstall', () => {
     fs.mkdirSync(keep, { recursive: true });
     fs.writeFileSync(path.join(keep, 'SKILL.md'), 'keep');
 
-    for (const [agent] of targets) {
-      runInstall(`--uninstall --agent ${agent}`, { PREFIX: prefix });
-    }
+    runInstall('--uninstall --agent opencode', { PREFIX: prefix });
 
     for (const name of listSkills()) {
       assert.ok(!fs.existsSync(path.join(opencodeSkills, name)), `should be removed ${name}`);
@@ -86,27 +74,14 @@ describe('uninstall', () => {
     }
     assert.ok(fs.existsSync(path.join(keep, 'SKILL.md')), 'unrelated keep-me preserved after uninstall');
     assert.ok(!fs.existsSync(path.join(prefix, '.config', 'opencode', '_shared', 'sax', 'state-persistence.md')), 'shared spec should be removed on uninstall');
-    for (const [, directories] of targets) {
-      for (const name of listSkills()) {
-        assert.ok(!fs.existsSync(path.join(prefix, ...directories, 'skills', name)));
-      }
-    }
   });
 
-  it('lifecycle: install each project target then uninstall', () => {
+  it('lifecycle: install then uninstall the project target', () => {
     const proj = path.join(tmp, `lifecycle-project-${Date.now()}`);
     fs.mkdirSync(proj, { recursive: true });
     fs.writeFileSync(path.join(proj, 'README.md'), 'project readme');
-    const targets = [
-      ['opencode', '.opencode'],
-      ['claude', '.claude'],
-      ['codex', '.codex'],
-      ['pi', '.pi'],
-    ];
 
-    for (const [agent] of targets) {
-      runInstall(`--project --agent ${agent}`, {}, proj);
-    }
+    runInstall('--project --agent opencode', {}, proj);
     const skillsDir = path.join(proj, '.opencode', 'skills');
     const agentsDir = path.join(proj, '.opencode', 'agents');
     const commandsDir = path.join(proj, '.opencode', 'commands');
@@ -115,28 +90,18 @@ describe('uninstall', () => {
     }
     assert.ok(fs.existsSync(path.join(agentsDir, listAgents()[0])));
     assert.ok(fs.existsSync(path.join(commandsDir, listCommands()[0])));
-    for (const [, directory] of targets) {
-      assert.ok(fs.existsSync(path.join(proj, directory, 'skills', listSkills()[0], 'SKILL.md')));
-    }
 
     const keep = path.join(skillsDir, 'keep-project');
     fs.mkdirSync(keep, { recursive: true });
     fs.writeFileSync(path.join(keep, 'SKILL.md'), 'keep');
 
-    for (const [agent] of targets) {
-      runInstall(`--uninstall --project --agent ${agent}`, {}, proj);
-    }
+    runInstall('--uninstall --project --agent opencode', {}, proj);
 
     for (const name of listSkills()) {
       assert.ok(!fs.existsSync(path.join(skillsDir, name)), `project skill should be removed ${name}`);
     }
     assert.ok(fs.existsSync(path.join(keep, 'SKILL.md')), 'project keep preserved');
     assert.ok(fs.existsSync(path.join(proj, 'README.md')), 'unrelated README preserved');
-    for (const [, directory] of targets) {
-      for (const name of listSkills()) {
-        assert.ok(!fs.existsSync(path.join(proj, directory, 'skills', name)));
-      }
-    }
   });
 
   it('--dry-run preserves files in isolated folder', () => {
@@ -184,47 +149,5 @@ describe('uninstall', () => {
     runInstall('--uninstall --agent opencode', { PREFIX: prefix });
     assert.ok(!fs.existsSync(skillLink), 'symlink skill should be removed');
     assert.ok(!fs.existsSync(agentLink), 'symlink agent should be removed');
-  });
-
-  it('compat: install in .agents then uninstall in isolated folder', () => {
-    const proj = path.join(tmp, `compat-${Date.now()}`);
-    fs.mkdirSync(proj, { recursive: true });
-    runInstall('--agent compat', {}, proj);
-    const baseSkills = path.join(proj, '.agents', 'skills');
-    const agentsDir = path.join(proj, '.agents', 'agents');
-    const commandsDir = path.join(proj, '.agents', 'commands');
-    for (const name of listSkills()) {
-      assert.ok(fs.existsSync(path.join(baseSkills, name, 'SKILL.md')), `compat missing skill ${name}`);
-    }
-    assert.ok(fs.existsSync(path.join(agentsDir, listAgents()[0])), 'compat agents missing');
-    assert.ok(fs.existsSync(path.join(commandsDir, listCommands()[0])), 'compat commands missing');
-    assert.ok(fs.existsSync(path.join(proj, '.agents', '_shared', 'sax', 'state-persistence.md')), 'compat shared spec missing at _shared/sax');
-    assert.ok(!fs.existsSync(path.join(proj, '.agents', 'agents', '_shared', 'state-persistence.md')), 'legacy agents/_shared should not exist in compat');
-    assert.ok(!fs.existsSync(path.join(proj, '.opencode', 'skills', listSkills()[0])), 'should not create .opencode in compat');
-    const keep = path.join(baseSkills, 'keep-compat');
-    fs.mkdirSync(keep, { recursive: true });
-    fs.writeFileSync(path.join(keep, 'SKILL.md'), 'keep');
-    runInstall('--uninstall --agent compat', {}, proj);
-    for (const name of listSkills()) {
-      assert.ok(!fs.existsSync(path.join(baseSkills, name)), `compat skill should be removed ${name}`);
-    }
-    assert.ok(fs.existsSync(path.join(keep, 'SKILL.md')), 'compat keep preserved');
-    assert.ok(!fs.existsSync(path.join(proj, '.agents', '_shared', 'sax', 'state-persistence.md')), 'compat shared should be removed');
-  });
-
-  it('compat --dry-run preserves .agents files', () => {
-    const proj = path.join(tmp, `compat-dry-${Date.now()}`);
-    fs.mkdirSync(proj, { recursive: true });
-    runInstall('--agent compat', {}, proj);
-    const skillsDir = path.join(proj, '.agents', 'skills');
-    const out = runInstall('--uninstall --agent compat --dry-run', {}, proj);
-    assert.match(out, /would remove/, 'compat dry-run should log would remove');
-    for (const name of listSkills()) {
-      assert.ok(fs.existsSync(path.join(skillsDir, name, 'SKILL.md')), `compat dry-run should preserve ${name}`);
-    }
-    runInstall('--uninstall --agent compat', {}, proj);
-    for (const name of listSkills()) {
-      assert.ok(!fs.existsSync(path.join(skillsDir, name)));
-    }
   });
 });

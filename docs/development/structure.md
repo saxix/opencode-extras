@@ -20,7 +20,7 @@ Who is this for? This page maps the repository layout for contributors.
 | `.ai-temp/` | Analyst bookmarks and the shared findings directory, git-ignored (may not exist in a fresh clone) |
 | `~work/` | Temporary test fixtures, git-ignored |
 
-Evidence: directory listing, `README.md:5-26`, `package.json:6-8,30-32`.
+Evidence: directory listing, `AGENTS.md:18-27`, `package.json:6-8,30-32`.
 
 ## `src/agents/`
 
@@ -52,7 +52,7 @@ once both analysts needed it).
 
 One directory per skill under `src/skills/`. Each directory must contain `SKILL.md`; reference
 material lives alongside in named subdirectories such as `refs/`,
-`references/`, `languages/`, `infrastructure/` (`README.md:94`). The
+`references/`, `languages/`, `infrastructure/` (`AGENTS.md:101`). The
 `documentation` skill defines the docs site taxonomy; the security skills
 group orchestration, threat modeling, and OWASP reviews.
 
@@ -68,9 +68,9 @@ verifies the active role itself and operates in the current session.
 
 ## Conventions that shape the layout
 
-- Every skill MUST have a `SKILL.md` at its directory root (`README.md:180`).
+- Every skill MUST have a `SKILL.md` at its directory root (`AGENTS.md:97`).
 - `.gitignore` excludes all dotfiles and editor backups (`~*`); only
-  `.gitignore` itself is kept among dotfiles (`AGENTS.md:103`).
+  `.gitignore` itself is kept among dotfiles (`AGENTS.md:102`).
 - Analyst state is explicit and compact: only the `issue-bookmarks` skill writes
   `.ai-temp/<analyst>/<name>.md`; neither analyst may inspect the other analyst's
   directory.

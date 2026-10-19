@@ -6,7 +6,7 @@ commands available in their terminal-based AI coding assistant.
 ## Prerequisites
 
 - Node.js 18+ and `npx` (for `npx opencode-extras`).
-- At least one supported TUI: opencode, Claude Code, Codex, or pi.
+- An installed `opencode` terminal assistant.
 - No Python, `uv`, or other build toolchain is required to install or run the
   definitions. `uv` is used only by the optional ticketing MCP servers
   ([environment variables](../deploy/environment.md)).
@@ -16,30 +16,26 @@ commands available in their terminal-based AI coding assistant.
 The default target is `opencode`, installed globally:
 
 ```sh
-npx opencode-extras
-npx opencode-extras --project
-npx opencode-extras --agent claude --global
-npx opencode-extras --agent codex --project
-npx opencode-extras --agent pi --global
-npx opencode-extras --agent compat
+npx opencode-extras                              # global (~/.config/opencode)
+npx opencode-extras --project                    # project (.opencode)
 npx opencode-extras --agent opencode --link
 ```
 
-`--agent compat` selects the project `.agents` layout and implies `--project`.
-Use `--agent` with one target per invocation; `opencode` is the default.
+`--agent opencode` is accepted for backward compatibility; opencode is the only
+supported target. Global is the default; add `--project` to install into the
+current repository.
 
 The installer copies per-item (`skills/sax-<name>/`, `agents/*.md`, `commands/*.md`)
 so multiple skill packs coexist (no directory symlink). Skills use prefix `sax-` to
-avoid collisions. Use `--link` for live dev symlinks, or `--agent compat` for the
-project `.agents` layout. For a local clone, use the `node` command below; `npx`
-installs the published package.
+avoid collisions. Use `--link` for live dev symlinks. For a local clone, use the
+`node` command below; `npx` installs the published package.
 
 Install from a local clone (dev):
 
 ```sh
 git clone https://github.com/saxix/opencode-extras.git
 node ./scripts/install.mjs --project --link --agent opencode
-node ./scripts/install.mjs --agent compat --link
+node ./scripts/install.mjs --global --link --agent opencode
 ```
 
 Details and alternatives (including `PREFIX` and `--dry-run`) are
@@ -95,4 +91,4 @@ explicit request writes a file.
 
 - Understand the full pipeline: [Agent workflows](workflows/agents.md).
 - Configure behavior: [Configuration reference](../admin/configuration.md).
-- Install on another machine or TUI: [Deploy guide](../deploy/installation.md).
+- Install on another machine: [Deploy guide](../deploy/installation.md).

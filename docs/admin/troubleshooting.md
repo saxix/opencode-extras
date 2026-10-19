@@ -17,19 +17,19 @@ start without the broken project config:
 | `OPENCODE_DISABLE_DEFAULT_PLUGINS=1` | Skip default plugins |
 | `OPENCODE_PURE=1` | Skip external plugins entirely |
 
-Fix the offending file, then restart without the variable. This behavior is
-opencode-specific; other TUIs have their own rescue flags.
+Fix the offending file, then restart without the variable. The rescue variables
+above are opencode-specific.
 
 ## Changes are not picked up
 
 The TUI loads config once at startup and does not hot-reload. Quit and
-restart after any change to `agents/`, `skills/`, `commands/`, or the
+restart opencode after any change to `agents/`, `skills/`, `commands/`, or the
 `*.jsonc` configs.
 
 ## A skill or agent is loaded but misbehaves after an edit
 
 Check frontmatter validity first: missing `name:`/`description:` in a skill
-filters it out; an unknown agent field is silently routed into per-TUI
+filters it out; an unknown agent field is silently routed into opencode
 options. Then verify the file still follows the TUI-portable output standard
 (`AGENTS.md:118-131`) and restart.
 
@@ -56,8 +56,7 @@ symlink, then rerun the command with `--link`. For example:
 npx opencode-extras --agent opencode --global
 ```
 
-The same applies to project installs; use `--agent compat --project` for the
-`.agents` layout.
+The same applies to project installs (`--project`, destination `./.opencode`).
 
 ## A stale editor backup is mistaken for a definition
 

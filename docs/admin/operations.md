@@ -9,21 +9,20 @@ Definitions are plain Markdown files under `agents/`, `skills/`, and
 `commands/`. Copy installations update when the installer is rerun; linked
 installations update from the checkout. After editing:
 
-1. Restart the TUI so it reloads configuration and agent lists.
+1. Restart opencode so it reloads configuration and agent lists.
 2. Verify frontmatter: `description:` is required; a skill directory must keep
-   a file named exactly `SKILL.md` (`README.md:180-182`).
+   a file named exactly `SKILL.md` (`AGENTS.md:97-99`).
 3. Run `npm test` to validate definition contracts and installer behavior.
 4. Verify the change still emits TUI-portable output
    (`AGENTS.md:118-131`).
 
 ## Install management
 
-The installer is idempotent. Re-run the command for each target when a copy is
-stale or a linked destination is broken:
+The installer is idempotent. Re-run the command when a copy is stale or a
+linked destination is broken:
 
 ```sh
 npx opencode-extras --agent opencode --global
-npx opencode-extras --agent claude --global
 ```
 
 Use `--copy` (the default) for coexistence-safe copies or `--link` for live
@@ -67,7 +66,7 @@ checklist in the documentation skill (structure, links, consistency).
 
 ## Housekeeping checklist
 
-- [ ] No tracked dotfiles besides `.gitignore` (`AGENTS.md:103`).
+- [ ] No tracked dotfiles besides `.gitignore` (`AGENTS.md:102`).
 - [ ] No secrets committed; `.envrc` stays untracked (see
   [Security](security.md)).
 - [ ] Skills have a `SKILL.md` entrypoint and frontmatter is valid.

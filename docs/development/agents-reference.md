@@ -1,7 +1,7 @@
 # Agent reference
 
 Who is this for? This page catalogs every agent in `src/agents/`, with its purpose,
-mode, and key constraints. Source of truth: `src/agents/*.md` and `AGENTS.md:32-45`.
+mode, and key constraints. Source of truth: `src/agents/*.md` and `AGENTS.md:29-45`.
 
 ## Summary
 

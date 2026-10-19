@@ -7,8 +7,8 @@ installation.
 
 The repository is the single source of truth for every definition. The
 installer copies per-item by default (`npx opencode-extras`,
-`scripts/install.mjs`), or symlinks per-item with `--link` for live dev. The
-selected `--agent` target determines the destination; default copy is
+`scripts/install.mjs`), or symlinks per-item with `--link` for live dev. Only
+opencode is supported, so the destination is fixed by scope; default copy is
 coexistence-safe across skill packs.
 
 ## Installation topology
@@ -25,11 +25,9 @@ The last rule covers any top-level `src/` directory other than `agents`,
 under the same name so the TUI never discovers them as agents. Only `skills/`
 gets the `sax-` name prefix; `agents/` and `commands/` do not.
 
-`DEST` is `~/.config/opencode` (opencode), `~/.claude` (Claude Code),
-`~/.codex` (Codex), `~/.pi` (pi), or `./.opencode` etc. for `--project`.
-`--agent compat` uses `./.agents` and implies project scope. Default `--copy`
-never creates a directory symlink (`skills -> src/skills`), so multiple packs
-coexist.
+`DEST` is `~/.config/opencode` for global installs or `./.opencode` for
+`--project`. Default `--copy` never creates a directory symlink
+(`skills -> src/skills`), so multiple packs coexist.
 
 Evidence: `scripts/install.mjs`, [Installation](installation.md).
 
@@ -64,4 +62,4 @@ Tickets and specs are treated as untrusted input
 ## Next steps
 
 - What to install: [Installation](installation.md).
-- Per-TUI differences: [Provisioning and deployment](provisioning.md).
+- Scope and destinations: [Interface navigation](../user-guide/navigation.md).

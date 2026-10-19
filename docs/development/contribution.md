@@ -6,14 +6,14 @@ commands in this repository.
 ## General rules
 
 - Every artifact is plain Markdown with YAML frontmatter.
-- Every skill MUST have a `SKILL.md` at its directory root (`README.md:180`).
+- Every skill MUST have a `SKILL.md` at its directory root (`AGENTS.md:97`).
 - Agents and commands require `description:` frontmatter; other fields
-  (`agent`, `mode`, `color`, `steps`, `permissions`) are optional per-TUI
-  settings that other TUIs ignore (`README.md:181`).
+  (`agent`, `mode`, `color`, `steps`, `permissions`) are optional opencode
+  settings (`AGENTS.md:99`).
 - Rules live in only one place. For example, the
   [documenter agent](../development/agents-reference.md#documenter) owns the
   docs workflow, while the [documentation skill](../development/skills-reference.md#documentation)
-  owns the domain knowledge; do not duplicate the content (`AGENTS.md:97`).
+  owns the domain knowledge; do not duplicate the content (`AGENTS.md:114-116`).
 
 ## Authoring a skill
 

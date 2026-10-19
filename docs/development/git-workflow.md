@@ -17,7 +17,7 @@ pipeline; contributors are expected to follow the repo's plain style.
   (`skills/documentation/SKILL.md`).
 - Keep dotfiles out of the index: `.gitignore` excludes all dotfiles and
   editor backups (`~*`), so `.envrc` and `~`-suffixed backups must never be
-  committed (`AGENTS.md:103`).
+  committed (`AGENTS.md:102`).
 - Never commit credentials; see [Security](../admin/security.md).
 - Committing, pushing, or creating branches is not part of the agent
   workflows: the Coder and Documenter do not commit unless explicitly asked

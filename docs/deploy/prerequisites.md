@@ -9,7 +9,7 @@ Who is this for? This page lists what you need before installing the toolkit.
 | `Node.js 18+` + `npx` | Installer and tests (`package.json:10`, `tests/install.test.mjs:1`) |
 | Unix-like shell (`bash`) | Running the Node installer and tests |
 | `git` | Cloning and updating the repository |
-| An AI coding TUI | Consuming the definitions (opencode, Claude Code, Codex, pi; all support `npx opencode-extras`) |
+| `opencode` | Consuming the definitions (the only supported install target) |
 
 ## Optional
 

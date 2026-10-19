@@ -1,7 +1,7 @@
 # eli5
 
 Explains a concept from first principles, assuming no prior background
-(`README.md:144`).
+(`src/commands/eli5.md:2`).
 
 ## Details
 

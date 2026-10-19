@@ -1,6 +1,6 @@
 # agents-skills
 
-Reusable agents, skills, and commands for AI coding TUIs. All definitions are plain Markdown and all generated output follows the TUI-portable standard in this file, so they render correctly in `opencode`, Claude Code, Codex, pi, Gemini CLI, hermes, and other terminal assistants.
+Reusable agents, skills, and commands for the `opencode` terminal assistant. All definitions are plain Markdown and all generated output follows the TUI-portable standard in this file, so the text stays readable in any terminal.
 
 ## Install
 
@@ -9,15 +9,11 @@ Via `npx` (copy per-item, coexistence-safe):
 ```sh
 npx opencode-extras                              # global opencode (default)
 npx opencode-extras --project                    # project opencode
-npx opencode-extras --agent claude --global      # global claude
-npx opencode-extras --agent codex --project      # project codex
-npx opencode-extras --agent pi --global          # global pi
-npx opencode-extras --agent compat               # project .agents layout
 npx opencode-extras --agent opencode --link      # global live symlinks
 npx opencode-extras --help
 ```
 
-Default is `--copy` per-item (safe with other skill packs). Use `--link` for live dev. Use `--agent compat` for the project `.agents` layout.
+Default is `--copy` per-item (safe with other skill packs). Use `--link` for live dev. Only opencode is supported: global installs go to `~/.config/opencode`, project installs to `./.opencode`.
 
 ## Structure
 
@@ -100,7 +96,7 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 
 - Each skill MUST have a `SKILL.md` at its directory root.
 - `SKILL.md` frontmatter uses `name:` and `description:` (required; the description carries trigger keywords) plus optional `license:`, `compatibility:`, `metadata:` keys.
-- Agents and commands use Markdown with YAML frontmatter; `description:` is required, and `agent`, `mode`, `color`, `steps`, `permissions` are optional per-TUI settings that other TUIs ignore.
+- Agents and commands use Markdown with YAML frontmatter; `description:` is required, and `agent`, `mode`, `color`, `steps`, `permissions` are optional opencode settings.
 - The installer mirrors paths: `src/agents/`, `src/skills/`, and `src/commands/` install to `DEST/agents/`, `DEST/skills/`, and `DEST/commands/`. Any other top-level `src/` directory except the reserved `plugins/` is a shared spec namespace and installs under the same name (`src/_shared/sax/` -> `DEST/_shared/sax/`), so an agent references it as `../_shared/sax/<file>`. Only skills get the `sax-` name prefix.
 - Reference materials live alongside `SKILL.md` in named subdirectories (no enforced convention).
 - `.gitignore` excludes all dotfiles and editor backup files (`~*`); only `.gitignore` itself is kept among dotfiles.
@@ -121,13 +117,13 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 
 ## TUI-portable output
 
-All generated output (handoffs, reviews, reports, commit messages, PR descriptions, replies) MUST render correctly in every common terminal-based AI TUI: `opencode`, Claude Code, Gemini CLI, hermes, and similar Markdown renderers. Concretely:
+All generated output (handoffs, reviews, reports, commit messages, PR descriptions, replies) MUST render correctly in the `opencode` terminal UI and stay readable in any plain Markdown renderer. Concretely:
 
 - **Plain CommonMark only.** Use standard Markdown. No raw HTML, no custom containers or admonitions. When the user asks for a diagram or chart, use Mermaid fenced code blocks (`` ```mermaid ``); otherwise, no diagrams. When a Mermaid diagram appears inside a ticket body, use the same language as the ticket.
 - **ASCII-first charset.** Do not emit emoji, box-drawing glyphs, arrows, dingbats, or other non-ASCII list markers. Prefer `--` over the em-dash character and `->` over the arrow character; use `*`, `-`, `[ ]`, `[x]` for lists and checkboxes.
 - **ATX headings.** Use `#`-style headings (`##`, `###`, ...). Avoid setext (underlined) headings and avoid a lone `#` for section bodies.
 - **Structure over layout.** Favor headings, short bullets, and small, narrow tables over wide layout so lines stay under about 100 characters and do not wrap badly in split panes.
-- **Fenced code blocks** with a language tag (`` ```python ``). Avoid indented code blocks. Fence-example formats that another TUI could mis-parse are not allowed.
+- **Fenced code blocks** with a language tag (`` ```python ``). Avoid indented code blocks. Fence-example formats that a Markdown renderer could mis-parse are not allowed.
 - **Self-contained evidence.** Inline evidence (`path/to/file:line`) in prose rather than relying on relative links to repository files the reader may not have open.
 - **Literal special characters** that could be parsed as formatting (`<`, `>`, `*`, quotes around emphasis) are escaped or placed in code spans.
 - **No TUI-specific directives.** Do not emit tool-call syntax, slash-command references, or keybind hints meant for a single TUI.

@@ -1,6 +1,6 @@
 # step-by-step
 
-Deconstructs a task into an idempotent sequential plan (`README.md:149`).
+Deconstructs a task into an idempotent sequential plan (`src/commands/step-by-step.md:2`).
 
 ## Details
 

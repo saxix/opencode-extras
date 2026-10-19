@@ -1,23 +1,23 @@
 # Interface navigation
 
 Who is this for? This page describes where agents, skills, and commands live
-once installed, and how the toolkit maps onto each TUI.
+once installed in opencode.
 
 ## Where definitions live
 
 The repository is the source of truth. The installer copies definitions by
 default; `--link` creates live symlinks to a local checkout.
 
-| `--agent` value | Global destination | Project destination |
-|---|---|---|
-| `opencode` | `~/.config/opencode` | `./.opencode` |
-| `claude` | `~/.claude` | `./.claude` |
-| `codex` | `~/.codex` | `./.codex` |
-| `pi` | `~/.pi` | `./.pi` |
-| `compat` | not supported | `./.agents` (implies `--project`) |
+| Scope | Destination |
+|---|---|
+| Global (default) | `~/.config/opencode` |
+| Project (`--project`) | `./.opencode` |
+
+`--agent opencode` is accepted for backward compatibility; opencode is the only
+supported target.
 
 The root-level `opencode.jsonc` in the repository is a project-scope sample and
-is not installed by the target installer (`opencode.jsonc`).
+is not installed by the installer (`opencode.jsonc`).
 
 ## opencode
 
@@ -34,16 +34,12 @@ is not installed by the target installer (`opencode.jsonc`).
   MCP servers) and `tui.jsonc` (interface settings). Both are loaded once at
   startup.
 
-## Claude Code, Codex, and pi
+## Configurations
 
-The installer writes the portable `agents/`, `skills/`, and `commands/` layout
-to the selected target directory. Each TUI decides which parts it loads.
-
-## Other TUIs
-
-Terminal assistants that read the same Markdown formats consume the definitions
-as portable Markdown. Per-TUI settings in frontmatter (`agent`, `mode`, `color`,
-`steps`, `permissions`) are optional and ignored by TUIs that do not use them.
+Agents, skills, and commands are opencode definitions; the installer writes
+only the opencode layout. The definitions are plain Markdown, so the text
+remains readable outside opencode, but no other assistant is a supported
+install target.
 
 ## After any change
 

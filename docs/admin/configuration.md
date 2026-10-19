@@ -110,7 +110,7 @@ Installed as `~/.config/opencode/tui.jsonc` by
 | `compatibility` | no | TUI or version compatibility notes |
 | `metadata` | no | String-string map of extra metadata |
 
-Evidence: `README.md:180-182`, `skills/security-owasp/SKILL.md:2-4`.
+Evidence: `AGENTS.md:97-99`, `skills/security-owasp/SKILL.md:2-4`.
 
 ### Agents and commands
 
@@ -123,7 +123,7 @@ Evidence: `README.md:180-182`, `skills/security-owasp/SKILL.md:2-4`.
 | `steps` | no | Suggested step budget |
 | `permissions` | no | Per-action allow/deny list, see below |
 
-Evidence: `README.md:180-182`, the frontmatter blocks in `agents/*.md` and
+Evidence: `AGENTS.md:97-99`, the frontmatter blocks in `agents/*.md` and
 `commands/*.md`.
 
 ## Permissions format
@@ -147,8 +147,8 @@ agent needs repository access. Editing is restricted to explicit paths: the
 Business Analyst may write its own bookmark directory and glossary cache, the
 System Analyst may write only its own bookmark directory, both may write the
 shared `.ai-temp/findings/` directory, and shell access is denied for both
-analysts (`agents/business-analyst.md:7-48`, `agents/system-analyst.md:7-27`). Per-TUI handling of this list varies; other
-TUIs ignore it.
+analysts (`agents/business-analyst.md:7-48`, `agents/system-analyst.md:7-27`).
+opencode applies this list as the agent's tool permissions.
 
 ## Keeping this page in sync
 

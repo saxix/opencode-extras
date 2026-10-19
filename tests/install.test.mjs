@@ -299,17 +299,6 @@ describe('installer', () => {
     assert.ok(!fs.existsSync(skillLink), 'broken skill symlink should be removed');
   });
 
-  it('global targets use dedicated destinations', () => {
-    const prefix = path.join(tmp, 'global-targets');
-    const targets = [['claude', '.claude'], ['codex', '.codex'], ['pi', '.pi']];
-    for (const [agent, directory] of targets) {
-      runInstall(`--agent ${agent}`, { PREFIX: prefix });
-      assert.ok(fs.existsSync(path.join(prefix, directory, 'skills', listSkills()[0], 'SKILL.md')));
-      assert.ok(fs.existsSync(path.join(prefix, directory, 'agents', listAgents()[0])));
-      assert.ok(fs.existsSync(path.join(prefix, directory, 'commands', listCommands()[0])));
-    }
-  });
-
   it('coexistence: preserves other-pack skill', () => {
     const prefix = path.join(tmp, 'coexist');
     runInstall('--agent opencode', { PREFIX: prefix });
@@ -330,16 +319,6 @@ describe('installer', () => {
     runInstall('--uninstall --project', {}, proj);
     for (const name of listSkills()) {
       assert.ok(!fs.existsSync(path.join(proj, '.opencode', 'skills', name)));
-    }
-  });
-
-  it('project targets use dedicated destinations', () => {
-    const proj = path.join(tmp, 'proj-targets');
-    fs.mkdirSync(proj, { recursive: true });
-    const targets = [['claude', '.claude'], ['codex', '.codex'], ['pi', '.pi']];
-    for (const [agent, directory] of targets) {
-      runInstall(`--project --agent ${agent}`, {}, proj);
-      assert.ok(fs.existsSync(path.join(proj, directory, 'skills', listSkills()[0], 'SKILL.md')));
     }
   });
 
@@ -371,45 +350,6 @@ describe('installer', () => {
     runInstall('--agent opencode', { PREFIX: prefix });
     assert.ok(fs.statSync(legacy).isDirectory());
     assert.ok(fs.existsSync(path.join(legacy, 'SKILL.md')));
-  });
-
-  it('--agent compat creates .agents per-item (sax- prefix)', () => {
-    const proj = path.join(tmp, 'proj-compat');
-    fs.mkdirSync(proj, { recursive: true });
-    runInstall('--agent compat', {}, proj);
-    const baseSkills = path.join(proj, '.agents', 'skills');
-    assert.ok(fs.existsSync(path.join(baseSkills, listSkills()[0], 'SKILL.md')), 'compat skills missing');
-    assert.ok(fs.existsSync(path.join(proj, '.agents', 'agents', listAgents()[0])), 'compat agents missing');
-    assert.ok(fs.existsSync(path.join(proj, '.agents', 'commands', listCommands()[0])), 'compat commands missing');
-    assert.ok(fs.existsSync(path.join(proj, '.agents', '_shared', 'sax', 'state-persistence.md')), 'compat shared spec missing at _shared/sax');
-    assert.ok(!fs.existsSync(path.join(proj, '.agents', 'agents', '_shared', 'state-persistence.md')), 'legacy agents/_shared should not exist in compat');
-    assert.ok(!fs.existsSync(path.join(proj, '.opencode', 'skills', listSkills()[0])), 'should not create .opencode in compat');
-    assert.ok(!fs.existsSync(path.join(proj, '.claude')), 'should not create .claude in compat');
-    assert.ok(!fs.existsSync(path.join(proj, '.codex')), 'should not create .codex in compat');
-    runInstall('--uninstall --agent compat', {}, proj);
-    for (const name of listSkills()) {
-      assert.ok(!fs.existsSync(path.join(baseSkills, name)));
-    }
-    assert.ok(!fs.existsSync(path.join(proj, '.agents', '_shared', 'sax', 'state-persistence.md')), 'compat shared should be removed on uninstall');
-  });
-
-  it('--agent compat --link creates symlinks in .agents', () => {
-    const proj = path.join(tmp, 'proj-compat-link');
-    fs.mkdirSync(proj, { recursive: true });
-    runInstall('--agent compat --link', {}, proj);
-    const p = path.join(proj, '.agents', 'skills', listSkills()[0]);
-    assert.ok(fs.lstatSync(p).isSymbolicLink(), 'compat symlink should be created');
-    const target = fs.readlinkSync(p);
-    assert.ok(target.includes('src/skills'), `symlink target should point to src/skills: ${target}`);
-    runInstall('--uninstall --agent compat', {}, proj);
-    assert.ok(!fs.existsSync(p));
-  });
-
-  it('--agent compat --dry-run does not touch .agents', () => {
-    const proj = path.join(tmp, 'proj-compat-dry');
-    fs.mkdirSync(proj, { recursive: true });
-    runInstall('--agent compat --dry-run', {}, proj);
-    assert.ok(!fs.existsSync(path.join(proj, '.agents', 'skills', listSkills()[0])));
   });
 
   it('removes retired bookmark commands left by an older install', () => {
@@ -447,12 +387,13 @@ describe('installer', () => {
   });
 
   it('rejects invalid and removed agent selectors', () => {
-    assert.throws(() => runInstall('--agent invalid --dry-run'), /--agent must be one of/);
+    assert.throws(() => runInstall('--agent invalid --dry-run'), /--agent must be one of: opencode/);
+    assert.throws(() => runInstall('--agent claude --dry-run'), /--agent must be one of: opencode/);
+    assert.throws(() => runInstall('--agent compat --dry-run'), /--agent must be one of: opencode/);
     assert.throws(() => runInstall('--agent --dry-run'), /--agent requires a value/);
-    assert.throws(() => runInstall('--agent opencode --agent pi --dry-run'), /only once/);
-    for (const flag of ['--compat', '--opencode', '--claude', '--codex', '--all']) {
+    assert.throws(() => runInstall('--agent opencode --agent opencode --dry-run'), /only once/);
+    for (const flag of ['--compat', '--opencode', '--claude', '--codex', '--pi', '--all']) {
       assert.throws(() => runInstall(`${flag} --dry-run`), new RegExp(`${flag} has been removed`));
     }
-    assert.throws(() => runInstall('--agent compat --global --dry-run'), /cannot be combined with --global/);
   });
 });

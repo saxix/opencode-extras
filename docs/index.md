@@ -1,13 +1,12 @@
 # agents-skills documentation
 
 This site documents **agents-skills**, a repository of reusable agents, skills,
-and slash commands for AI coding TUIs (`opencode`, Claude Code, Gemini CLI,
-hermes, and similar terminal assistants). All definitions are plain Markdown
-and all generated output follows the TUI-portable output standard, so the same
-definitions render correctly in every terminal assistant.
+and slash commands for the `opencode` terminal assistant. All definitions are
+plain Markdown and all generated output follows the TUI-portable output
+standard, so the text stays readable in any Markdown renderer.
 
 The repository contains a small Node installer and tests, but no application
-runtime, lint, typecheck, or CI (`README.md:198-200`). Its primary content is
+runtime, lint, typecheck, or CI (`AGENTS.md:133-135`). Its primary content is
 instruction definitions for coding agents.
 
 ## Guides

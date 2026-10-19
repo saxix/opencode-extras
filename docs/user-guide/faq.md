@@ -14,9 +14,9 @@ installations update from the checkout automatically.
 
 Skills load on demand when the task matches the skill's `description:`
 frontmatter. The description must carry the literal keywords users are likely
-to say (`README.md:156`). Check:
+to say (`AGENTS.md:98`). Check:
 
-- the skill directory has a file named exactly `SKILL.md` (`README.md:180`);
+- the skill directory has a file named exactly `SKILL.md` (`AGENTS.md:97`);
 - `name:` and `description:` are present and the description front-loads the
   trigger keywords;
 - the TUI was restarted after the change.
@@ -31,18 +31,16 @@ command.
 
 ## The installed copy is stale or missing
 
-Re-run the install command for the selected target:
+Re-run the install command:
 
 ```sh
 npx opencode-extras
-npx opencode-extras --agent claude
-npx opencode-extras --agent codex
-npx opencode-extras --agent pi
+npx opencode-extras --project
 ```
 
-Use `--agent compat` for the project `.agents` layout, or pass `--link` when
-the installed files should follow a local checkout. If a path conflicts with an
-existing directory, remove the old directory first and retry.
+Pass `--link` when the installed files should follow a local checkout. If a
+path conflicts with an existing directory, remove the old directory first and
+retry.
 
 ## My report renders badly (emoji, wide tables, raw HTML)
 
@@ -54,7 +52,7 @@ or ask the `init-project` / documentation workflows to conform.
 ## Why is there no application runtime in this repository?
 
 By design. The repository contains a small installer and tests, but its primary
-content is instruction definitions for coding agents (`README.md:198-200`).
+content is instruction definitions for coding agents (`AGENTS.md:133-135`).
 Features are the definitions themselves, not a runtime.
 
 ## Two agents claim the same task

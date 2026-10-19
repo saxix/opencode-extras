@@ -1,33 +1,28 @@
 # Installation
 
 Who is this for? This page is the operational reference for installing the
-toolkit into a TUI. End users should start with
+toolkit into opencode. End users should start with
 [Getting started](../user-guide/getting-started.md).
 
 ## Install via npx (recommended)
 
-The default target is `opencode`, installed globally:
+The installer targets opencode, globally by default:
 
 ```sh
-npx opencode-extras
-npx opencode-extras --project
-npx opencode-extras --agent claude --global
-npx opencode-extras --agent codex --project
-npx opencode-extras --agent pi --global
-npx opencode-extras --agent compat
+npx opencode-extras                              # global (~/.config/opencode)
+npx opencode-extras --project                    # project (.opencode)
 npx opencode-extras --agent opencode --link
 npx opencode-extras --dry-run --agent opencode --global
 ```
 
-`--agent compat` selects the project `.agents` layout and implies `--project`.
-Use `--agent` with one target per invocation; `opencode` is the default.
+`--agent opencode` is accepted for backward compatibility; opencode is the only
+supported target.
 
 Default is `--copy` per-item (safe with other skill packs). Use `--link` for symlink
 installs. For live updates, use a local checkout. The installer never creates a
 directory symlink (`skills -> src/skills`); it copies
 or links per-item (`skills/sax-<name>`) so multiple skill packs can coexist.
-Skills are installed with prefix `sax-` to avoid collisions. Use `--agent compat`
-for the project `.agents` layout.
+Skills are installed with prefix `sax-` to avoid collisions.
 
 ## Install from GitHub
 
@@ -50,10 +45,8 @@ remote branch changes. Use the local checkout workflow below for live developmen
 | `src/commands/*.md` | `DEST/commands/*.md` |
 | `src/_shared/` | `DEST/_shared/` (shared specs; any top-level `src/` dir outside agents, skills, and commands is mirrored under the same name) |
 
-`DEST` is `~/.config/opencode` (global opencode), `~/.claude` (global claude),
-`~/.codex` (global codex), `~/.pi` (global pi), or `./.opencode` etc. for
-`--project`. With `--agent compat`, `DEST` is `./.agents` and the command
-implies `--project`.
+`DEST` is `~/.config/opencode` for global installs or `./.opencode` for
+`--project`.
 
 ### Install from a local clone (dev with --link)
 
@@ -65,15 +58,13 @@ cd opencode-extras
 node ./scripts/install.mjs --project --link --agent opencode
 cd /path/to/your/project
 node /path/to/opencode-extras/scripts/install.mjs --project --link --agent opencode
-node /path/to/opencode-extras/scripts/install.mjs --agent compat --link
 ls -l .opencode/skills/sax-security
-ls -l .agents/skills/sax-security
 readlink .opencode/skills/sax-security
 ```
 
 ## Custom prefix
 
-All targets support overriding the destination home with `PREFIX`:
+The destination home can be overridden with `PREFIX`:
 
 ```sh
 PREFIX=/some/other/home npx opencode-extras --agent opencode --global
@@ -84,7 +75,7 @@ The same mechanism powers the installer tests. The Node test suite uses an isola
 
 ## After install
 
-1. Restart the TUI so it reloads configuration and agent lists.
+1. Restart opencode so it reloads configuration and agent lists.
 2. Verify agents, skills, and commands are visible
    ([Interface navigation](../user-guide/navigation.md)).
 3. Create the local credentials file if the ticketing servers will be used
@@ -95,10 +86,9 @@ The same mechanism powers the installer tests. The Node test suite uses an isola
 ```sh
 npx opencode-extras --uninstall --agent opencode --global
 npx opencode-extras --uninstall --project --agent opencode
-npx opencode-extras --uninstall --agent compat
 ```
 
 ## Next steps
 
-- Per-TUI deployment details: [Provisioning and deployment](provisioning.md).
+- Scope and destinations: [Interface navigation](../user-guide/navigation.md).
 - Environment variables: [Environment variables](environment.md).

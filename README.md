@@ -1,24 +1,24 @@
 # opencode-extras
 
-Reusable **agents**, **skills**, and **commands** for AI coding TUIs. Typeset as plain Markdown with a portable output convention so they render across `opencode`, Claude Code, Codex, pi, Gemini CLI, hermes, and other terminal assistants.
+Reusable **agents**, **skills**, and **commands** for the
+[opencode](https://opencode.ai) terminal assistant. Typeset as plain Markdown
+with a portable output convention so the definitions stay readable in any
+terminal.
 
 Detailed documentation lives in [docs/](docs/).
 
 ## Install
 
-The default target is `opencode`, installed globally:
+The toolkit installs into opencode, globally by default:
 
 ```sh
 npx opencode-extras
 npx opencode-extras --project
-npx opencode-extras --agent claude --global
-npx opencode-extras --agent codex --project
-npx opencode-extras --agent pi --global
-npx opencode-extras --agent compat
+npx opencode-extras --agent opencode --global
 ```
 
-`--agent compat` selects the project `.agents` layout and implies `--project`.
-Default is `--copy` per-item (coexistence-safe). Use `--agent` with one target per invocation.
+Default is `--copy` per-item (coexistence-safe). Use `--link` for live
+symlinks to a local checkout.
 
 ## Install Development Mode
 
@@ -31,7 +31,7 @@ node ./scripts/install.mjs --global --link --agent opencode
 ```
 
 Use `--link` to create per-item symlinks that track your working tree.
-Run the same command with different `--agent` or `--project` flags to install for other targets.
+Use `--project` instead of `--global` to install into `./.opencode`.
 
 ## Uninstall
 
@@ -41,7 +41,6 @@ Remove installed items by appending `--uninstall`:
 npx opencode-extras --uninstall
 npx opencode-extras --uninstall --agent opencode --global
 npx opencode-extras --uninstall --project --agent opencode
-npx opencode-extras --uninstall --agent compat
 ```
 
 For a local checkout development install:
@@ -61,7 +60,6 @@ Usage:
   opencode-extras [options]          (via npm bin)
 
 Options:
-  --agent <target>  Select one target: opencode (default), compat, claude, codex, pi
   --global          Install globally (default unless --project)
   --project         Install in the current project
   --copy            Copy files per-item (default, coexistence-safe)
@@ -72,20 +70,17 @@ Options:
   --help, -h        Show this help
 
 Examples:
-  npx opencode-extras                              # opencode global (default)
-  npx opencode-extras --project                    # opencode project
-  npx opencode-extras --agent claude --global      # claude global
-  npx opencode-extras --agent codex --project      # codex project
-  npx opencode-extras --agent pi --global          # pi global
-  npx opencode-extras --agent compat               # project .agents layout
+  npx opencode-extras                              # global (~/.config/opencode)
+  npx opencode-extras --project                    # project (.opencode)
   npx opencode-extras --agent opencode --link      # global live symlinks
   npx --yes github:saxix/opencode-extras --project --agent opencode
   npx opencode-extras --uninstall --agent opencode --global
-  npx opencode-extras --dry-run --agent claude --global
+  npx opencode-extras --dry-run
 
 Notes:
-  - --agent accepts one target per invocation and defaults to opencode.
-  - --agent compat uses ./.agents and implies --project; it cannot use --global.
+  - Only opencode is supported. The installer writes to
+    ~/.config/opencode (global) or ./.opencode (project).
+  - --agent is accepted for backward compatibility; opencode is the only value.
   - Default is --copy per-item (coexistence-safe, no directory symlink conflict).
   - --link creates per-item symlinks: DEST/skills/sax-<name> -> src/skills/<name>.
   - With GitHub specs, --link points to npx's fetched copy/cache, not a local checkout.

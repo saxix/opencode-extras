@@ -1,7 +1,7 @@
 # devils-advocate
 
 Runs an adversarial review of a proposal as a skeptical reviewer
-(`README.md:143`).
+(`src/commands/devils-advocate.md:2`).
 
 ## Details
 

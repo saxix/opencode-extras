@@ -7,7 +7,7 @@ operators, maintainers, and anyone handling credentials.
 
 The toolkit is primarily a set of instruction definitions: it has a small
 installer, but no application runtime service or data processing
-(`README.md:198-200`). The relevant
+(`AGENTS.md:133-135`). The relevant
 risks are therefore:
 
 - credential leakage from local files;
@@ -67,8 +67,8 @@ Permission lists follow a deny-first, allow-last convention
 ## Repository hygiene
 
 - `.gitignore` excludes all dotfiles and editor backups (`~*`); only
-  `.gitignore` itself is kept among dotfiles (`AGENTS.md:103`).
-- `.ai-temp/` scratch is git-ignored and never committed (`AGENTS.md:104-113`).
+  `.gitignore` itself is kept among dotfiles (`AGENTS.md:102`).
+- `.ai-temp/` scratch is git-ignored and never committed (`AGENTS.md:103-112`).
 - The security audit skills exist precisely to catch credential, SSRF, SQLi,
   and auth flaws in the projects this toolkit drives
   (`skills/security-audit/SKILL.md:2-3`).

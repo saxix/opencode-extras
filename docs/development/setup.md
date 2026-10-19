@@ -10,9 +10,9 @@ definitions in this repository.
 - Unix shell (macOS or Linux) for the commands below.
 - No Python, `uv`, tox, or other build toolchain except for optional ticketing
   MCP servers or `properdocs` site build.
-- Optional: an installed TUI (opencode, Claude Code, Codex, pi) to exercise the
-  definitions; `uv` only if you also run the ticketing MCP servers; `properdocs`
-  only if you want to render the documentation site.
+- Optional: an installed `opencode` to exercise the definitions; `uv` only if
+  you also run the ticketing MCP servers; `properdocs` only if you want to
+  render the documentation site.
 
 ## Clone and verify
 
@@ -33,11 +33,6 @@ ls -l .opencode/skills/sax-security
 cd /path/to/your/project
 node /path/to/opencode-extras/scripts/install.mjs --project --link --agent opencode
 ls -l .opencode/skills/sax-security
-
-# compat layout
-node /path/to/opencode-extras/scripts/install.mjs --agent compat --link
-ls -l .agents/skills/sax-security
-readlink .agents/skills/sax-security
 
 # keep work dir for inspection (tests use ./~work)
 KEEP_WORK=1 node --test tests/install.test.mjs

@@ -1,19 +1,18 @@
 # Provisioning and deployment
 
-Who is this for? This page covers deploying the toolkit across TUIs and
-machines, and keeping deployments current.
+Who is this for? This page covers deploying the toolkit across machines and
+keeping deployments current.
 
-## Supported targets
+## Supported target
 
-The installer writes the same portable artifacts to the selected target layout:
+The installer writes the portable artifacts to the opencode layout. opencode is
+the only supported target; `--agent opencode` is accepted for backward
+compatibility.
 
-| `--agent` value | Global destination | Project destination |
-|---|---|---|
-| `opencode` | `~/.config/opencode` | `./.opencode` |
-| `claude` | `~/.claude` | `./.claude` |
-| `codex` | `~/.codex` | `./.codex` |
-| `pi` | `~/.pi` | `./.pi` |
-| `compat` | not supported | `./.agents` (implies `--project`) |
+| Scope | Destination |
+|---|---|
+| Global (default) | `~/.config/opencode` |
+| Project (`--project`) | `./.opencode` |
 
 Evidence: [Installation](installation.md), `scripts/install.mjs`.
 

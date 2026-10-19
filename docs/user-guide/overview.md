@@ -7,7 +7,8 @@ from scratch each time.
 
 ## What it is
 
-`agents-skills` is a collection of reusable definitions for AI coding TUIs:
+`agents-skills` is a collection of reusable definitions for the `opencode`
+terminal assistant:
 
 - **Agents** -- role definitions such as Business Analyst, System Analyst, and
   Ticket Implementer, each with an operating contract, permissions, a state
@@ -17,16 +18,16 @@ from scratch each time.
 - **Commands** -- slash-command prompt bodies that run a constrained workflow,
   for example "deconstruct a task into an idempotent plan".
 
-All definitions are plain Markdown with YAML frontmatter. The same files work
-in `opencode`, Claude Code, Codex, pi, Gemini CLI, hermes, and other terminal
-assistants (`README.md:3`). The repository ships a Node installer
+All definitions are plain Markdown with YAML frontmatter, written for
+`opencode` (`README.md:3`). The repository ships a Node installer
 (`package.json:10`, `scripts/install.mjs:1`) and a minimal test suite
 (`tests/install.test.mjs:1`, `npm test`); no application runtime is required.
 
 ## Key features
 
 - **TUI-portable output standard.** Every agent, skill, and command must emit
-  output that renders correctly in any terminal assistant: plain CommonMark,
+  output that renders correctly in opencode and stays plain enough for any
+  Markdown renderer: plain CommonMark,
   ASCII-first, ATX headings, narrow tables, self-contained evidence
   (`AGENTS.md:118-131`).
 - **Read-only analysis roles.** The System Analyst and its discovery subagents
@@ -44,8 +45,8 @@ assistants (`README.md:3`). The repository ships a Node installer
 - **One-skill-per-directory layout.** Each skill has a `SKILL.md` entrypoint
   and optional reference material (see the
   [skill reference](../development/skills-reference.md)).
-- **Plug-and-play install.** One `npx` command copies per-item into the default
-  OpenCode config (`npx opencode-extras`), with `--agent` for other targets
+- **Plug-and-play install.** One `npx` command copies per-item into the
+  opencode config (`npx opencode-extras`), globally or with `--project`
   (see [getting started](getting-started.md) and
   [installation](../deploy/installation.md)).
 
