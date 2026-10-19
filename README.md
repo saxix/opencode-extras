@@ -14,7 +14,7 @@ The toolkit installs into opencode, globally by default:
 ```sh
 npx opencode-extras
 npx opencode-extras --project
-npx opencode-extras --agent opencode --global
+npx opencode-extras --global
 ```
 
 Default is `--copy` per-item (coexistence-safe). Use `--link` for live
@@ -27,7 +27,7 @@ For live updates from a local checkout:
 ```sh
 git clone https://github.com/saxix/opencode-extras.git
 cd opencode-extras
-node ./scripts/install.mjs --global --link --agent opencode
+node ./scripts/install.mjs --global --link
 ```
 
 Use `--link` to create per-item symlinks that track your working tree.
@@ -39,14 +39,14 @@ Remove installed items by appending `--uninstall`:
 
 ```sh
 npx opencode-extras --uninstall
-npx opencode-extras --uninstall --agent opencode --global
-npx opencode-extras --uninstall --project --agent opencode
+npx opencode-extras --uninstall --global
+npx opencode-extras --uninstall --project
 ```
 
 For a local checkout development install:
 
 ```sh
-node ./scripts/install.mjs --uninstall --global --link --agent opencode
+node ./scripts/install.mjs --uninstall --global --link
 ```
 
 ## CLI Help
@@ -72,15 +72,15 @@ Options:
 Examples:
   npx opencode-extras                              # global (~/.config/opencode)
   npx opencode-extras --project                    # project (.opencode)
-  npx opencode-extras --agent opencode --link      # global live symlinks
-  npx --yes github:saxix/opencode-extras --project --agent opencode
-  npx opencode-extras --uninstall --agent opencode --global
+  npx opencode-extras --link                       # global live symlinks
+  npx --yes github:saxix/opencode-extras --project
+  npx opencode-extras --uninstall --global
   npx opencode-extras --dry-run
 
 Notes:
   - Only opencode is supported. The installer writes to
     ~/.config/opencode (global) or ./.opencode (project).
-  - --agent is accepted for backward compatibility; opencode is the only value.
+  - There is no target selector: --agent has been removed.
   - Default is --copy per-item (coexistence-safe, no directory symlink conflict).
   - --link creates per-item symlinks: DEST/skills/sax-<name> -> src/skills/<name>.
   - With GitHub specs, --link points to npx's fetched copy/cache, not a local checkout.

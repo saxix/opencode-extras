@@ -13,8 +13,8 @@ default; `--link` creates live symlinks to a local checkout.
 | Global (default) | `~/.config/opencode` |
 | Project (`--project`) | `./.opencode` |
 
-`--agent opencode` is accepted for backward compatibility; opencode is the only
-supported target.
+There is no target selector: opencode is the only target (`--agent` was
+removed).
 
 The root-level `opencode.jsonc` in the repository is a project-scope sample and
 is not installed by the installer (`opencode.jsonc`).

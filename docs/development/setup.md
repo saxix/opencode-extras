@@ -26,12 +26,12 @@ npm test
 
 ```sh
 # install this clone into itself
-node ./scripts/install.mjs --project --link --agent opencode
+node ./scripts/install.mjs --project --link
 ls -l .opencode/skills/sax-security
 
 # install this clone into another project
 cd /path/to/your/project
-node /path/to/opencode-extras/scripts/install.mjs --project --link --agent opencode
+node /path/to/opencode-extras/scripts/install.mjs --project --link
 ls -l .opencode/skills/sax-security
 
 # keep work dir for inspection (tests use ./~work)

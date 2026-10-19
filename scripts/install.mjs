@@ -35,7 +35,6 @@ const globalFlag = has('--global');
 const projectFlag = has('--project');
 const prefixFlag = get('--prefix');
 let prefix = prefixFlag || process.env.PREFIX || os.homedir();
-const agentValues = ['opencode'];
 
 function help() {
   console.log(`
@@ -66,7 +65,7 @@ Examples:
 Notes:
   - Only opencode is supported. The installer writes to
     ~/.config/opencode (global) or ./.opencode (project).
-  - --agent is accepted for backward compatibility; opencode is the only value.
+  - The --agent selector has been removed; pass no target flag.
   - Default is --copy per-item (coexistence-safe, no directory symlink conflict).
   - --link creates per-item symlinks: DEST/skills/sax-<name> -> src/skills/<name>.
   - With GitHub specs, --link points to npx's fetched copy/cache, not a local checkout.
@@ -79,8 +78,9 @@ Notes:
 if (showHelp) { help(); process.exit(0); }
 
 const booleanFlags = new Set(['--dry-run', '--uninstall', '--link', '--copy', '--global', '--project']);
-const valueFlags = new Set(['--agent', '--prefix']);
+const valueFlags = new Set(['--prefix']);
 const removedFlags = new Map([
+  ['--agent', 'only opencode is supported; pass no target flag'],
   ['--compat', 'only opencode is supported; use --project for ./.opencode'],
   ['--opencode', 'opencode is the only target; omit the flag'],
   ['--claude', 'only opencode is supported'],
@@ -100,10 +100,6 @@ for (let i = 0; i < args.length; i += 1) {
   if (removedFlags.has(arg)) fail(`${arg} has been removed; ${removedFlags.get(arg)}`);
   fail(`Unknown option: ${arg}`);
 }
-
-if (args.filter((arg) => arg === '--agent').length > 1) fail('--agent may be specified only once');
-const agent = get('--agent', 'opencode');
-if (!agentValues.includes(agent)) fail(`--agent must be one of: ${agentValues.join(', ')}`);
 
 let scopeGlobal = globalFlag;
 let scopeProject = projectFlag;

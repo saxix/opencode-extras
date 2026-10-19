@@ -9,7 +9,7 @@ Via `npx` (copy per-item, coexistence-safe):
 ```sh
 npx opencode-extras                              # global opencode (default)
 npx opencode-extras --project                    # project opencode
-npx opencode-extras --agent opencode --link      # global live symlinks
+npx opencode-extras --link                       # global live symlinks
 npx opencode-extras --help
 ```
 

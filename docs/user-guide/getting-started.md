@@ -18,11 +18,11 @@ The default target is `opencode`, installed globally:
 ```sh
 npx opencode-extras                              # global (~/.config/opencode)
 npx opencode-extras --project                    # project (.opencode)
-npx opencode-extras --agent opencode --link
+npx opencode-extras --link
 ```
 
-`--agent opencode` is accepted for backward compatibility; opencode is the only
-supported target. Global is the default; add `--project` to install into the
+opencode is the only supported target; there is no target selector (`--agent`
+was removed). Global is the default; add `--project` to install into the
 current repository.
 
 The installer copies per-item (`skills/sax-<name>/`, `agents/*.md`, `commands/*.md`)
@@ -34,8 +34,8 @@ Install from a local clone (dev):
 
 ```sh
 git clone https://github.com/saxix/opencode-extras.git
-node ./scripts/install.mjs --project --link --agent opencode
-node ./scripts/install.mjs --global --link --agent opencode
+node ./scripts/install.mjs --project --link
+node ./scripts/install.mjs --global --link
 ```
 
 Details and alternatives (including `PREFIX` and `--dry-run`) are

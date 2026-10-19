@@ -11,12 +11,12 @@ The installer targets opencode, globally by default:
 ```sh
 npx opencode-extras                              # global (~/.config/opencode)
 npx opencode-extras --project                    # project (.opencode)
-npx opencode-extras --agent opencode --link
-npx opencode-extras --dry-run --agent opencode --global
+npx opencode-extras --link
+npx opencode-extras --dry-run --global
 ```
 
-`--agent opencode` is accepted for backward compatibility; opencode is the only
-supported target.
+opencode is the only supported target; there is no target selector (`--agent`
+was removed).
 
 Default is `--copy` per-item (safe with other skill packs). Use `--link` for symlink
 installs. For live updates, use a local checkout. The installer never creates a
@@ -29,7 +29,7 @@ Skills are installed with prefix `sax-` to avoid collisions.
 Run the default branch directly from GitHub without a published npm release:
 
 ```sh
-npx --yes github:saxix/opencode-extras --project --agent opencode
+npx --yes github:saxix/opencode-extras --project
 ```
 
 **Warning:** `npx github:... --link` points the symlinks to the package copy/cache
@@ -55,9 +55,9 @@ For a local checkout, use `node` to install directly from this working tree:
 ```sh
 git clone https://github.com/saxix/opencode-extras.git
 cd opencode-extras
-node ./scripts/install.mjs --project --link --agent opencode
+node ./scripts/install.mjs --project --link
 cd /path/to/your/project
-node /path/to/opencode-extras/scripts/install.mjs --project --link --agent opencode
+node /path/to/opencode-extras/scripts/install.mjs --project --link
 ls -l .opencode/skills/sax-security
 readlink .opencode/skills/sax-security
 ```
@@ -67,7 +67,7 @@ readlink .opencode/skills/sax-security
 The destination home can be overridden with `PREFIX`:
 
 ```sh
-PREFIX=/some/other/home npx opencode-extras --agent opencode --global
+PREFIX=/some/other/home npx opencode-extras --global
 ```
 
 The same mechanism powers the installer tests. The Node test suite uses an isolated
@@ -84,8 +84,8 @@ The same mechanism powers the installer tests. The Node test suite uses an isola
 ## Uninstall
 
 ```sh
-npx opencode-extras --uninstall --agent opencode --global
-npx opencode-extras --uninstall --project --agent opencode
+npx opencode-extras --uninstall --global
+npx opencode-extras --uninstall --project
 ```
 
 ## Next steps

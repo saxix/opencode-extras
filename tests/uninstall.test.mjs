@@ -27,11 +27,11 @@ describe('uninstall', () => {
 
   it('removes only known items and preserves unrelated', () => {
     const prefix = path.join(tmp, 'uninstall');
-    runInstall('--agent opencode', { PREFIX: prefix });
+    runInstall('', { PREFIX: prefix });
     const other = path.join(prefix, '.config', 'opencode', 'skills', 'other-keep');
     fs.mkdirSync(other, { recursive: true });
     fs.writeFileSync(path.join(other, 'SKILL.md'), 'keep');
-    runInstall('--uninstall --agent opencode', { PREFIX: prefix });
+    runInstall('--uninstall', { PREFIX: prefix });
     for (const name of listSkills()) {
       assert.ok(!fs.existsSync(path.join(prefix, '.config', 'opencode', 'skills', name)));
     }
@@ -40,7 +40,7 @@ describe('uninstall', () => {
 
   it('lifecycle: install then uninstall the global target', () => {
     const prefix = path.join(tmp, `lifecycle-global-${Date.now()}`);
-    runInstall('--agent opencode', { PREFIX: prefix });
+    runInstall('', { PREFIX: prefix });
     const opencodeSkills = path.join(prefix, '.config', 'opencode', 'skills');
     const opencodeAgents = path.join(prefix, '.config', 'opencode', 'agents');
     const opencodeCommands = path.join(prefix, '.config', 'opencode', 'commands');
@@ -61,7 +61,7 @@ describe('uninstall', () => {
     fs.mkdirSync(keep, { recursive: true });
     fs.writeFileSync(path.join(keep, 'SKILL.md'), 'keep');
 
-    runInstall('--uninstall --agent opencode', { PREFIX: prefix });
+    runInstall('--uninstall', { PREFIX: prefix });
 
     for (const name of listSkills()) {
       assert.ok(!fs.existsSync(path.join(opencodeSkills, name)), `should be removed ${name}`);
@@ -81,7 +81,7 @@ describe('uninstall', () => {
     fs.mkdirSync(proj, { recursive: true });
     fs.writeFileSync(path.join(proj, 'README.md'), 'project readme');
 
-    runInstall('--project --agent opencode', {}, proj);
+    runInstall('--project', {}, proj);
     const skillsDir = path.join(proj, '.opencode', 'skills');
     const agentsDir = path.join(proj, '.opencode', 'agents');
     const commandsDir = path.join(proj, '.opencode', 'commands');
@@ -95,7 +95,7 @@ describe('uninstall', () => {
     fs.mkdirSync(keep, { recursive: true });
     fs.writeFileSync(path.join(keep, 'SKILL.md'), 'keep');
 
-    runInstall('--uninstall --project --agent opencode', {}, proj);
+    runInstall('--uninstall --project', {}, proj);
 
     for (const name of listSkills()) {
       assert.ok(!fs.existsSync(path.join(skillsDir, name)), `project skill should be removed ${name}`);
@@ -106,18 +106,18 @@ describe('uninstall', () => {
 
   it('--dry-run preserves files in isolated folder', () => {
     const prefix = path.join(tmp, `uninstall-dry-${Date.now()}`);
-    runInstall('--agent opencode', { PREFIX: prefix });
+    runInstall('', { PREFIX: prefix });
     const skillsDir = path.join(prefix, '.config', 'opencode', 'skills');
     const keep = path.join(skillsDir, 'keep-dry');
     fs.mkdirSync(keep, { recursive: true });
     fs.writeFileSync(path.join(keep, 'SKILL.md'), 'keep');
-    const out = runInstall('--uninstall --agent opencode --dry-run', { PREFIX: prefix });
+    const out = runInstall('--uninstall --dry-run', { PREFIX: prefix });
     assert.match(out, /would remove/, 'dry-run should log would remove');
     for (const name of listSkills()) {
       assert.ok(fs.existsSync(path.join(skillsDir, name, 'SKILL.md')), `dry-run should preserve ${name}`);
     }
     assert.ok(fs.existsSync(path.join(keep, 'SKILL.md')));
-    runInstall('--uninstall --agent opencode', { PREFIX: prefix });
+    runInstall('--uninstall', { PREFIX: prefix });
     for (const name of listSkills()) {
       assert.ok(!fs.existsSync(path.join(skillsDir, name)));
     }
@@ -126,27 +126,27 @@ describe('uninstall', () => {
 
   it('is idempotent and handles empty folder', () => {
     const prefix = path.join(tmp, `uninstall-idem-${Date.now()}`);
-    runInstall('--agent opencode', { PREFIX: prefix });
+    runInstall('', { PREFIX: prefix });
     const skillsDir = path.join(prefix, '.config', 'opencode', 'skills');
-    runInstall('--uninstall --agent opencode', { PREFIX: prefix });
+    runInstall('--uninstall', { PREFIX: prefix });
     for (const name of listSkills()) {
       assert.ok(!fs.existsSync(path.join(skillsDir, name)));
     }
-    const out2 = runInstall('--uninstall --agent opencode', { PREFIX: prefix });
+    const out2 = runInstall('--uninstall', { PREFIX: prefix });
     assert.ok(out2.includes('Done'), 'second uninstall should complete');
     const emptyPrefix = path.join(tmp, `uninstall-empty-${Date.now()}`);
-    const out3 = runInstall('--uninstall --agent opencode', { PREFIX: emptyPrefix });
+    const out3 = runInstall('--uninstall', { PREFIX: emptyPrefix });
     assert.ok(out3.includes('Done'));
   });
 
   it('removes symlink install correctly in isolated folder', () => {
     const prefix = path.join(tmp, `uninstall-link-${Date.now()}`);
-    runInstall('--agent opencode --link', { PREFIX: prefix });
+    runInstall('--link', { PREFIX: prefix });
     const skillLink = path.join(prefix, '.config', 'opencode', 'skills', listSkills()[0]);
     assert.ok(fs.lstatSync(skillLink).isSymbolicLink(), 'should be symlink before uninstall');
     const agentLink = path.join(prefix, '.config', 'opencode', 'agents', listAgents()[0]);
     assert.ok(fs.lstatSync(agentLink).isSymbolicLink());
-    runInstall('--uninstall --agent opencode', { PREFIX: prefix });
+    runInstall('--uninstall', { PREFIX: prefix });
     assert.ok(!fs.existsSync(skillLink), 'symlink skill should be removed');
     assert.ok(!fs.existsSync(agentLink), 'symlink agent should be removed');
   });

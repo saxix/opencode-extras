@@ -25,7 +25,7 @@ after updating or checking out a version:
 
 ```sh
 git pull
-npx opencode-extras --agent opencode --global
+npx opencode-extras --global
 ```
 
 Linked installations follow the checkout automatically, but must be refreshed
@@ -38,7 +38,7 @@ installer:
 
 ```sh
 git checkout <previous-commit-or-branch>
-npx opencode-extras --agent opencode --global
+npx opencode-extras --global
 ```
 
 Restart the TUI afterwards. For a linked installation, checking out the

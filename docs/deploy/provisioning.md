@@ -6,8 +6,7 @@ keeping deployments current.
 ## Supported target
 
 The installer writes the portable artifacts to the opencode layout. opencode is
-the only supported target; `--agent opencode` is accepted for backward
-compatibility.
+the only supported target; there is no target selector.
 
 | Scope | Destination |
 |---|---|
@@ -23,7 +22,7 @@ Evidence: [Installation](installation.md), `scripts/install.mjs`.
    git clone <repository-url> agents-skills
    ```
 2. Run the applicable install command, for example
-   `npx opencode-extras --agent opencode --global`.
+   `npx opencode-extras --global`.
 3. Export the local credential environment (`.envrc` style; see
    [Environment variables](environment.md)).
 4. Restart the TUI.
@@ -45,7 +44,7 @@ Options:
 - Each machine keeps its own checkout (recommended): definitions stay the
   single source of truth, credentials stay per-machine.
 - Or share a checkout over a mounted path and point `PREFIX` at each user's
-  config home (`PREFIX=... npx opencode-extras --agent opencode --global`).
+  config home (`PREFIX=... npx opencode-extras --global`).
 
 Never commit credentials when provisioning (see
 [Security](../admin/security.md)).
