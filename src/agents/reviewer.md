@@ -7,6 +7,12 @@ permissions:
   - action: read
     resource: "*"
     effect: allow
+  - action: read
+    resource: "~/.gitconfig"
+    effect: allow
+  - action: read
+    resource: ".git"
+    effect: allow
   - action: glob
     resource: "*"
     effect: allow
