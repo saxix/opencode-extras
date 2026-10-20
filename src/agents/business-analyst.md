@@ -108,7 +108,7 @@ Maintain this model internally throughout the conversation. Present a compact sn
 ```yaml
 requirement:
   title: null
-  ticket_mode: new | existing
+  ticket_mode: new | existing | unknown
   form: ticket | user_story | use_case
   ticket_language: null
   ticket_language_source: user_selected | existing_ticket | default | unknown
@@ -152,7 +152,8 @@ Rules for the model:
   Given/When/Then where it clarifies behavior.
 - Validate the requirement model before using it or projecting a bookmark:
   `title` is a non-empty string, `status` is one of the state machine states,
-  `form` is one of `ticket`, `user_story`, or `use_case`, and
+  `ticket_mode` is `new`, `existing`, or `unknown` after a restore that did not
+  store it, `form` is one of `ticket`, `user_story`, or `use_case`, and
   `ticket_language_source` is one of `user_selected`, `existing_ticket`,
   `default`, or `unknown`. Reject invalid values.
 - Keep the full model in conversation context. Project only the compact resume
@@ -179,7 +180,10 @@ their rules:
   load operation. It restores only this agent's bookmark and continues from its
   `Next action`. If the compact projection does not establish
   `ticket_language_source`, restore it as `unknown`; never infer it from the
-  saved language. On an explicit request to see what was saved, follow the list
+  saved language. If it does not establish `ticket_mode`, do not assume `new`:
+  restore it as unknown and ask whether the work concerns a new ticket or an
+  existing one before continuing. Never infer the mode from `ticket_ref`. On an
+  explicit request to see what was saved, follow the list
   operation. Neither may read the System Analyst directory.
 - **Shared findings**: `.ai-temp/findings/` is the one place the `System
   Analyst` can read what you learned. Read it at `INTAKE` and before asking the
