@@ -27,7 +27,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install properdocs
-        run: pip install properdocs properdocs-theme-mkdocs
+        run: pip install properdocs properdocs-theme-mkdocs pymdown-extensions
 
       - name: Build documentation
         run: properdocs build
