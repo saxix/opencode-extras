@@ -25,6 +25,7 @@ exporting them manually. Never commit this file.
 | `MCP_REDMINE_URL` | redmine server | Redmine instance base URL |
 | `MCP_REDMINE_PROJECT` | redmine server | Redmine project identifier or ID (default scope) |
 | `MCP_REDMINE_API_KEY` | redmine server | Redmine API key (secret) |
+| `MCP_REDMINE_VERSION` | redmine server | Optional. Declared Redmine version (e.g. `4.2`, `6.1`, `7.0`); supported 4.2 - 7.x. Never auto-detected: declare your server version. When empty the latest profile (7.x) is used |
 
 Evidence: `.envrc` export lines; server wiring in `opencode_cfg.jsonc:21-34`.
 

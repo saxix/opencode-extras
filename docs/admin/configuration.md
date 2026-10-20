@@ -79,12 +79,19 @@ the current project instead.
 ```
 
 The same pattern applies to the Redmine server, which forwards
-`MCP_REDMINE_URL`, `MCP_REDMINE_PROJECT`, and `MCP_REDMINE_API_KEY`.
+`MCP_REDMINE_URL`, `MCP_REDMINE_PROJECT`, and `MCP_REDMINE_API_KEY`. An
+optional `MCP_REDMINE_VERSION` (e.g. `4.2`, `6.1`, `7.0`) can be forwarded too:
+it **declares** the server version (supported majors: 4.x, 5.x, 6.x, 7.x --
+see the "Supported Versions" table in `mcp-ticketing/docs/redmine.md`), and
+the backend selects that version's API profile. The version is never
+auto-detected (the `X-Redmine-Version` header is not sent by all
+deployments); when empty, the latest profile (7.x) is used.
 
 The `{env:VAR}` syntax reads values from the shell environment at runtime.
 Each project must define `MCP_GITHUB_OWNER`, `MCP_GITHUB_REPO`,
 `MCP_GITHUB_TOKEN` (and, for Redmine, `MCP_REDMINE_URL`,
-`MCP_REDMINE_PROJECT`, `MCP_REDMINE_API_KEY`) in its own `.envrc` file.
+`MCP_REDMINE_PROJECT`, `MCP_REDMINE_API_KEY`, and optionally
+`MCP_REDMINE_VERSION`) in its own `.envrc` file.
 The `environment` field values override those loaded by `uv run` from the
 server's `.envrc`.
 
