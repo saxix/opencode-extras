@@ -54,7 +54,7 @@ describe('uninstall', () => {
       assert.ok(fs.existsSync(path.join(opencodeCommands, f)), `missing command ${f}`);
     }
     assert.ok(fs.existsSync(path.join(prefix, '.config', 'opencode', 'skills', listSkills()[0], 'SKILL.md')));
-    assert.ok(fs.existsSync(path.join(prefix, '.config', 'opencode', '_shared', 'sax', 'state-persistence.md')), 'shared spec missing at _shared/sax');
+    assert.ok(fs.existsSync(path.join(prefix, '.config', 'opencode', 'skills', 'sax-state-persistence', 'SKILL.md')));
     assert.ok(!fs.existsSync(path.join(prefix, '.config', 'opencode', 'agents', '_shared', 'state-persistence.md')), 'legacy agents/_shared should not exist');
 
     const keep = path.join(opencodeSkills, 'keep-me');
@@ -73,7 +73,7 @@ describe('uninstall', () => {
       assert.ok(!fs.existsSync(path.join(opencodeCommands, f)), `command should be removed ${f}`);
     }
     assert.ok(fs.existsSync(path.join(keep, 'SKILL.md')), 'unrelated keep-me preserved after uninstall');
-    assert.ok(!fs.existsSync(path.join(prefix, '.config', 'opencode', '_shared', 'sax', 'state-persistence.md')), 'shared spec should be removed on uninstall');
+    assert.ok(!fs.existsSync(path.join(prefix, '.config', 'opencode', 'skills', 'sax-state-persistence')), 'state skill should be removed on uninstall');
   });
 
   it('lifecycle: install then uninstall the project target', () => {

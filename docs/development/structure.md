@@ -34,19 +34,19 @@ and a handoff/report format.
 
 One directory per shared spec namespace. A spec here is neither an agent, a
 skill, nor a command, so the TUI must not discover it. The installer mirrors the
-source path verbatim: `src/_shared/sax/state-persistence.md` lands at
-`DEST/_shared/sax/state-persistence.md`, and an agent references it as
-`../_shared/sax/state-persistence.md`. Only `agents`, `skills`, and
+source path verbatim: `src/_shared/sax/project-context.md` lands at
+`DEST/_shared/sax/project-context.md`, and an agent references it as
+`../_shared/sax/project-context.md`. Only `agents`, `skills`, and
 `commands` have item-level rules; every other top-level directory is
 copied or linked as one unit.
 
-A shared spec exists because more than one agent depends on it:
-`state-persistence.md` carries the `.ai-temp/` state layout, write policy, and
-legacy state rules used by both analysts, plus the shared `findings/` directory
-where they exchange observations. Rules that only one consumer applies belong in
-that consumer (the Business Analyst project terms cache lives in this spec
-because only it may read `docs/`, and the bookmark contract moved into a skill
-once both analysts needed it).
+A spec exists here only when more than one consumer needs it and it is not a
+skill: `project-context.md` is a shared contract. The analyst state layout moved
+into the `state-persistence` skill once the TUI began discovering and loading
+skills, because a skill gives the definitions a proper loadable home; only the
+shared findings directory they exchange observations through is described there.
+Rules that only one consumer applies stay in that consumer (the Business Analyst
+project terms cache is owned by that agent).
 
 ## `src/skills/`
 
@@ -73,7 +73,8 @@ verifies the active role itself and operates in the current session.
   `.gitignore` itself is kept among dotfiles (`AGENTS.md:102`).
 - Analyst state is explicit and compact: only the `issue-bookmarks` skill writes
   `.ai-temp/<analyst>/<name>.md`; neither analyst may inspect the other analyst's
-  directory.
+  directory. The layout, write policy, and legacy paths live in the
+  `state-persistence` skill.
 
 ## Next steps
 

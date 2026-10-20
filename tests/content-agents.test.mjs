@@ -12,6 +12,7 @@ const COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/;
 const SKILL_NAMES = new Set(listSkills());
 
 const readAgent = f => fs.readFileSync(path.join(SRC_AGENTS, f), 'utf8');
+const ANALYST_AGENTS = ['business-analyst.md', 'system-analyst.md'];
 
 function frontmatterText(content) {
   const m = content.match(/^---\n([\s\S]*?)\n---/);
@@ -152,6 +153,9 @@ describe('analyst ticket contract', () => {
     const content = readAgent('business-analyst.md');
     assert.match(content, /## Requirement forms/);
     assert.match(content, /form: ticket \| user_story \| use_case/);
+    // each form has its own example; the draft never has both sections
+    assert.match(content, /For `form: user_story`:/);
+    assert.match(content, /For `form: use_case`:/);
   });
 
   it('business analyst exposes the existing-ticket request shapes', () => {
@@ -165,6 +169,49 @@ describe('analyst ticket contract', () => {
     assert.match(content, /## Delivery destination and ticket creation/);
     assert.match(content, /### Destination: new technical ticket/);
     assert.match(content, /### Destination: comment on an existing ticket/);
+  });
+
+  it('every subagent named in an agent body is reachable through a permission', () => {
+    for (const f of listAgents()) {
+      const content = readAgent(f);
+      const entries = parsePermissions(frontmatterText(content));
+      const allowed = new Set(
+        entries
+          .filter(e => e.action === 'subagent' && e.resource !== '*' && e.effect !== 'deny')
+          .map(e => e.resource)
+      );
+      const mentioned = new Set([...content.matchAll(/`(sub-[a-z-]+)`/g)].map(m => m[1]));
+      for (const name of mentioned) {
+        assert.ok(allowed.has(name), `${f} mentions ${name} but no permission allows it`);
+      }
+    }
+  });
+
+  it('every skill the analysts say to load is reachable through a permission', () => {
+    for (const f of ANALYST_AGENTS) {
+      const content = readAgent(f);
+      const entries = parsePermissions(frontmatterText(content));
+      const allowed = new Set(
+        entries
+          .filter(e => e.action === 'skill' && e.resource !== '*' && e.effect !== 'deny')
+          .map(e => `sax-${e.resource}`)
+      );
+      const mentioned = new Set(
+        [...content.matchAll(/`([a-z][a-z0-9]*(?:-[a-z0-9]+)+)`\s+skill/g)].map(m => `sax-${m[1]}`)
+      );
+      for (const name of mentioned) {
+        if (!SKILL_NAMES.has(name)) continue;
+        assert.ok(allowed.has(name), `${f} says to load ${name} but no permission allows it`);
+      }
+    }
+  });
+
+  it('the System Analyst cannot edit the glossary cache it never owns', () => {
+    const content = readAgent('system-analyst.md');
+    assert.match(
+      content,
+      /- action: edit\n\s+resource: "\.ai-temp\/findings\/glossary\.yaml"\n\s+effect: deny/
+    );
   });
 });
 

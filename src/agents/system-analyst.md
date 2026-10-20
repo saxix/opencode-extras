@@ -31,6 +31,9 @@ permissions:
   - action: edit
     resource: ".ai-temp/findings/**"
     effect: allow
+  - action: edit
+    resource: ".ai-temp/findings/glossary.yaml"
+    effect: deny
   - action: shell
     resource: "*"
     effect: deny
@@ -45,6 +48,15 @@ permissions:
     effect: allow
   - action: subagent
     resource: "sub-researcher"
+    effect: allow
+  - action: skill
+    resource: "ticket-writing"
+    effect: allow
+  - action: skill
+    resource: "issue-bookmarks"
+    effect: allow
+  - action: skill
+    resource: "state-persistence"
     effect: allow
 ---
 
@@ -174,10 +186,10 @@ Rules for the model:
 Two shared definitions back this section; load them instead of re-implementing
 their rules:
 
-- `../_shared/sax/state-persistence.md` (installed at
-  `DEST/_shared/sax/state-persistence.md`) owns the `.ai-temp/` state layout,
-  the shared findings directory, the write policy, and the legacy state to
-  ignore. It is shared with the `Business Analyst`.
+- The `state-persistence` skill (must be loaded) owns the `.ai-temp/` state
+  layout, the shared findings directory, the write policy, the project terms
+  cache, and the legacy state to ignore. It is shared with the `Business
+  Analyst`.
 - The `issue-bookmarks` skill owns the bookmark operations, name rules, schema,
   validity contract, and the per-analyst projection content.
 
@@ -201,7 +213,8 @@ their rules:
   there without asking: one note file per repository fact the `Business Analyst`
   would otherwise have to re-ask about, such as a component's role, an entry
   point, or an environment constraint, recorded as `path/to/file -- symbol`.
-  Follow the shared spec for the file shape and for what never belongs. Never
+  Follow the `state-persistence` skill for the file shape and for what never
+  belongs. Never
   write a term entry you could not confirm from `docs/`, and never record a
   decision the user has not confirmed. It is not an issue bookmark.
 

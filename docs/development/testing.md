@@ -14,17 +14,21 @@ npm test          # node --test: definition contracts + installer per-item tests
 ```
 
 `npm test` covers:
-- all 24 skills have valid `name`/`description`, a root `SKILL.md`, and quoted
+- all 26 skills have valid `name`/`description`, a root `SKILL.md`, and quoted
   descriptions when they contain `:`;
 - all 10 agents and every command that declares frontmatter have valid
   frontmatter; all 8 command files are non-empty;
 - the retired `issue-save`, `issue-load`, and `issue-list` commands are gone and the
   `issue-bookmarks` skill enforces the two analyst roles, validated names, the
   shared compact persistence contract, and one validity rule set;
-- each analyst loads both that skill and the shared state layout spec, and
+- each analyst loads the `issue-bookmarks` and `state-persistence` skills and
   names only its own bookmark directory;
 - both analysts are granted read, glob, and edit on `.ai-temp/findings/**` and
   nothing broader under `.ai-temp/`;
+- every subagent and skill an analyst names in its body is reachable through a
+  matching permission (guards against a documented path that is hard-denied);
+- the System Analyst explicitly denies `edit` on the glossary cache it must
+  never write;
 - the installer removes retired command files on install and uninstall, and
   never installs editor backups or dotfiles from `src/`;
 - installer `scripts/install.mjs:1` behavior: per-item copy/link, coexistence

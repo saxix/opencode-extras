@@ -18,6 +18,7 @@ import {
 
 const RETIRED_COMMANDS = ['issue-save.md', 'issue-load.md', 'issue-list.md', 'new-spec.md', '~new-spec.md'];
 const BOOKMARK_SKILL = 'sax-issue-bookmarks';
+const STATE_SKILL = 'sax-state-persistence';
 const ANALYST_AGENTS = ['business-analyst.md', 'system-analyst.md'];
 const normalize = value => value.replace(/\s+/g, ' ').trim();
 const readSkill = name => normalize(fs.readFileSync(path.join(SRC_SKILLS, name, 'SKILL.md'), 'utf8'));
@@ -27,7 +28,7 @@ const readSkill = name => normalize(fs.readFileSync(path.join(SRC_SKILLS, name, 
 describe('skill frontmatter', () => {
   it('every skill has SKILL.md with valid name and description', () => {
     const skills = listSkills();
-    assert.equal(skills.length, 25, `expected 25 skills, got ${skills.length}`);
+    assert.equal(skills.length, 26, `expected 26 skills, got ${skills.length}`);
     for (const name of skills) {
       const fm = parseFrontmatter(path.join(SRC_SKILLS, name, 'SKILL.md'));
       assert.ok(fm, `${name}/SKILL.md missing frontmatter`);
@@ -167,8 +168,8 @@ describe('command frontmatter', () => {
     assert.match(content, /mark absent provenance as unknown or unconfirmed/);
   });
 
-  it('shares the state layout spec with both analysts', () => {
-    const content = normalize(fs.readFileSync(path.join(SRC_SHARED, 'sax', 'state-persistence.md'), 'utf8'));
+  it('shares the state layout skill with both analysts', () => {
+    const content = readSkill(STATE_SKILL);
     assert.match(content, /business-analyst/);
     assert.match(content, /system-analyst/);
     assert.match(content, /\.ai-temp\/findings\//);
@@ -185,7 +186,7 @@ describe('command frontmatter', () => {
   });
 
   it('defines the shared findings contract', () => {
-    const content = normalize(fs.readFileSync(path.join(SRC_SHARED, 'sax', 'state-persistence.md'), 'utf8'));
+    const content = readSkill(STATE_SKILL);
     assert.match(content, /A finding is an observation with evidence, not a decision and not working state/);
     assert.match(content, /author: business-analyst \| system-analyst/);
     assert.match(content, /recorded_at/);
@@ -205,15 +206,27 @@ describe('command frontmatter', () => {
     }
   });
 
-  it('points both analysts at the shared spec and the bookmark skill', () => {
+  it('points both analysts at the state skill and the bookmark skill', () => {
     for (const agent of ANALYST_AGENTS) {
       const content = normalize(fs.readFileSync(path.join(SRC_AGENTS, agent), 'utf8'));
-      assert.match(content, /\.\.\/_shared\/sax\/state-persistence\.md/);
+      assert.match(content, /The `state-persistence` skill/);
       assert.match(content, /It is shared with the/);
       assert.match(content, /The `issue-bookmarks` skill owns the bookmark operations/);
       assert.match(content, /\*\*Shared findings\*\*/);
       // the layout, write policy, and legacy rules live only in the spec
       assert.doesNotMatch(content, /autosave|migrate|no autosave/);
+      // no agent still points at the retired shared-spec path
+      assert.doesNotMatch(content, /_shared\/sax\/state-persistence/);
+    }
+  });
+
+  it('both analysts declare the shared skills they load', () => {
+    for (const agent of ANALYST_AGENTS) {
+      const content = fs.readFileSync(path.join(SRC_AGENTS, agent), 'utf8');
+      for (const skill of ['ticket-writing', 'issue-bookmarks', 'state-persistence']) {
+        const re = new RegExp('- action: skill\\n\\s+resource: "' + skill + '"\\n\\s+effect: allow');
+        assert.match(content, re, `${agent} must allow the ${skill} skill`);
+      }
     }
   });
 });
@@ -257,7 +270,14 @@ describe('installer', () => {
     assert.ok(!fs.existsSync(path.join(prefix, '.claude')));
     assert.ok(!fs.existsSync(path.join(prefix, '.codex')));
     assert.ok(!fs.existsSync(path.join(prefix, '.pi')));
-    assert.ok(fs.existsSync(path.join(prefix, '.config', 'opencode', '_shared', 'sax', 'state-persistence.md')), 'shared spec missing at _shared/sax');
+    assert.ok(
+      fs.existsSync(path.join(prefix, '.config', 'opencode', 'skills', STATE_SKILL, 'SKILL.md')),
+      'state skill missing under skills/'
+    );
+    assert.ok(
+      !fs.existsSync(path.join(prefix, '.config', 'opencode', '_shared', 'sax', 'state-persistence.md')),
+      'retired shared spec should not be installed'
+    );
     assert.ok(!fs.existsSync(path.join(prefix, '.config', 'opencode', 'agents', '_shared', 'state-persistence.md')), 'legacy agents/_shared should not exist');
   });
 
@@ -283,7 +303,6 @@ describe('installer', () => {
     runInstall('', { PREFIX: prefix });
     assert.ok(!fs.existsSync(path.join(base, 'sax')), 'legacy sax/shared should be removed');
     assert.ok(!fs.existsSync(path.join(base, 'agents', '_shared')), 'legacy agents/_shared should be removed');
-    assert.ok(fs.existsSync(path.join(base, '_shared', 'sax', 'state-persistence.md')));
   });
 
   it('removes broken symlinks left behind by a moved source', () => {

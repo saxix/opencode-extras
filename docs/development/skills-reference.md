@@ -1,7 +1,7 @@
 # Skill reference
 
 Who is this for? This page catalogs every skill in `src/skills/`, with its purpose
-and trigger keywords. Source of truth: `src/skills/*/SKILL.md` (24 skills).
+and trigger keywords. Source of truth: `src/skills/*/SKILL.md` (26 skills).
 
 ## Summary
 
@@ -27,6 +27,7 @@ and trigger keywords. Source of truth: `src/skills/*/SKILL.md` (24 skills).
 | [security-owasp](#security-owasp) | OWASP-based security review |
 | [spec-inspect](#spec-inspect) | Audit `.specs/` against codebase behavior |
 | [spec-write](#spec-write) | Interactive specification refinement |
+| [state-persistence](#state-persistence) | Canonical analyst state layout, shared findings, write policy, legacy state |
 | [testing-guidelines](#testing-guidelines) | Testing patterns and guidance |
 | [ticket-writing](#ticket-writing) | Canonical ticket content rules shared by the analysts |
 | [tox-fix](#tox-fix) | Run tox, fix failures, re-run until green |
@@ -118,13 +119,33 @@ files on the next run.
 | Schema | `bookmark`, `agent`, `schema_version`, `ticket_ref`, `ticket_title`, `ticket_language`, `status`, `saved_at` |
 
 Saves are explicit only: there is no autosave and no persistence on a state
-transition, per the write policy in the shared layout spec
-(`src/_shared/sax/state-persistence.md`), which both analysts also load. Load
+transition, per the write policy in the state layout skill
+(`src/skills/sax-state-persistence/SKILL.md`), which both analysts also load. Load
 restores the compact projection and continues from
 `Next action`. List is read-only and shows the analyst's own bookmarks newest
 first, marking an invalid file as `invalid` instead of repairing it. The project
 shared findings directory at `.ai-temp/findings/` is separate and is never
 touched by this skill.
+
+## state-persistence
+
+Canonical analyst state layout shared by the `Business Analyst` and the
+`System Analyst`: which `.ai-temp/` path belongs to which analyst, the shared
+findings directory, the write policy, the project terms cache, and the legacy
+state to ignore. Loaded by the two analysts
+(`src/skills/sax-state-persistence/SKILL.md:2`).
+
+| Aspect | Value |
+|---|---|
+| Layout | `.ai-temp/business-analyst/`, `.ai-temp/system-analyst/`, `.ai-temp/findings/` |
+| Write policy | No autosave; a bookmark only on explicit request, a finding without asking |
+| Findings | `glossary.yaml` written by the Business Analyst; one `<topic>.md` per observation |
+| Legacy | `business-analyst.yaml`, `system-analyst.yaml`, `glossary-known-terms.yaml` ignored |
+
+It was previously the shared spec `src/_shared/sax/state-persistence.md`; it
+became a skill so the definitions are loaded like the other shared contracts.
+The bookmark contract itself still belongs to
+[issue-bookmarks](#issue_bookmarks).
 
 ## pull-request
 

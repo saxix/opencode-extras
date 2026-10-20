@@ -69,6 +69,7 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `security-owasp/` | OWASP-based security review |
 | `spec-inspect/` | Audit `.specs/` against codebase behavior |
 | `spec-write/` | Interactive specification refinement |
+| `state-persistence/` | Canonical analyst state layout, shared findings, write policy, legacy state |
 | `testing-guidelines/` | Testing patterns and guidance |
 | `ticket-writing/` | Canonical ticket content rules shared by Business Analyst and System Analyst (title, prefixes, soft-wrap, diagrams, language) |
 | `tox-fix/` | Run tox, fix failures, re-run until green |
@@ -113,7 +114,7 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 - Every agent, skill, and command MUST emit output that follows the TUI-portable standard below.
 - The `documenter` agent generates or updates documentation (operator role: gates, permissions, workflow); the `documentation` skill owns the domain knowledge (four-guide taxonomy, audit clauses, style, build checks, findings template) and is shared by `documenter`, standalone audits, and any future docs agent. Rules live in only one place: the skill.
 - The `ticket-writing` skill owns the canonical ticket content rules (title, prefixes, body, soft-wrap, diagrams, language) shared by the `Business Analyst` and the `System Analyst`. Rules live in only one place: the skill; agents must load it rather than re-implementing its rules.
-- The `issue-bookmarks` skill owns the analyst ticket bookmark contract and the save/load/list operations (guard, name validation, schema, validity, compact projection) shared by the `Business Analyst` and the `System Analyst`. There are no `issue-*` commands. The `src/_shared/sax/state-persistence.md` spec owns the shared analyst state layout (which `.ai-temp/` path belongs to which analyst, the write policy, and the legacy state to ignore) plus the Business Analyst project terms cache; both analysts load it.
+- The `issue-bookmarks` skill owns the analyst ticket bookmark contract and the save/load/list operations (guard, name validation, schema, validity, compact projection) shared by the `Business Analyst` and the `System Analyst`. There are no `issue-*` commands. It loads the `state-persistence` skill, which owns the shared analyst state layout (which `.ai-temp/` path belongs to which analyst, the shared findings directory, the write policy, and the legacy state to ignore) plus the Business Analyst project terms cache.
 
 ## TUI-portable output
 

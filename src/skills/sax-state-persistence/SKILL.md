@@ -1,15 +1,19 @@
-# Shared Analyst State Layout
+---
+name: sax-state-persistence
+description: 'Canonical analyst state layout shared by the Business Analyst and System Analyst: which .ai-temp/ path belongs to which analyst, the shared findings directory, the write policy, the project terms cache, and the legacy state to ignore. Trigger on "where do I save state", "analyst state layout", "shared findings directory", "project terms cache", "glossary cache location". Loaded by the Business Analyst and System Analyst.'
+---
 
-This file owns where analyst state may live and the policy that governs it. It
-is shared by `business-analyst` and `system-analyst`, which must reference it
-instead of restating the layout. It is installed at
-`DEST/_shared/sax/state-persistence.md` and is neither an agent, a skill, nor a
-command, so the TUI does not discover it.
+## Purpose
+
+This skill is the single source of truth for where analyst state may live and
+the policy that governs it. The `Business Analyst` and the `System Analyst` must
+load it instead of restating the layout.
 
 Bookmark operations, schema, and validity are not described here: the
-`sax-issue-bookmarks` skill is their single source of truth. This file owns the
+`sax-issue-bookmarks` skill is their single source of truth. This skill owns the
 locations those operations write to, the shared findings directory, the policy
-around writing them, and the legacy state both analysts must ignore.
+around writing them, and the legacy state both analysts must ignore. Load both;
+do not restate either contract.
 
 ## State layout
 
@@ -142,8 +146,10 @@ Rules:
   mtime of a `docs/` file referenced in `source` is newer than `resolved_at`.
 - Entries are documentation observations, never confirmed requirements; the
   cache is not a substitute for user confirmation.
-- The `System Analyst` never writes this file, and never creates a term entry
-  for something it could not confirm from `docs/`.
+- The `System Analyst` never writes this file: its `edit` permission denies
+  `.ai-temp/findings/glossary.yaml` explicitly, so the ownership rule is
+  enforced, not only stated. It also never creates a term entry for something it
+  could not confirm from `docs/`.
 - The cache is not a ticket bookmark: never list, load, or write it through the
   `sax-issue-bookmarks` skill.
 

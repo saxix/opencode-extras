@@ -95,7 +95,9 @@ and follows the matching operation:
 
 The operations stop without reading or changing files if the active agent is not
 exactly `business-analyst` or `system-analyst`. Only an explicit request writes a
-bookmark, and the analysts cannot inspect each other's bookmarks.
+bookmark, and the analysts cannot inspect each other's bookmarks (the layout and
+write policy live in the
+[state-persistence skill](../../development/skills-reference.md#state-persistence)).
 
 The two agents also share `.ai-temp/findings/`: a fact one establishes for the
 other is recorded there once, with its evidence, instead of being re-derived or

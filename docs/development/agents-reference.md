@@ -77,9 +77,10 @@ after an initial letter or digit. Overwrite requires confirmation. Legacy
 ignored and are not migrated.
 
 The rules are split so each one has a single owner, and both analysts load both:
-the shared spec `src/_shared/sax/state-persistence.md` owns the `.ai-temp/` state
+the [state-persistence skill](skills-reference.md#state-persistence) owns the
+`.ai-temp/` state
 layout, the write policy (no autosave, explicit writes only, git-ignored scratch),
-and the legacy state; the
+the shared findings directory, and the legacy state; the
 [issue-bookmarks skill](skills-reference.md#issue_bookmarks) owns the operations,
 name rules, schema, validity contract, and the per-analyst projection.
 
@@ -99,7 +100,7 @@ Each analyst reads the directory at `INTAKE` and before asking the user anything
 that may already be recorded. The Business Analyst cannot read the repository
 and the System Analyst cannot read `docs/`, which is exactly why the directory
 is shared: it is the documented hand-off between the two. Source:
-`src/_shared/sax/state-persistence.md`.
+`src/skills/sax-state-persistence/SKILL.md`.
 
 ## coder
 
