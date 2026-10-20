@@ -23,7 +23,6 @@ nav:
     - Workflows:
       - Agents: user-guide/workflows/agents.md
       - Commands: user-guide/workflows/commands.md
-  - Glossary: glossary.md
 
 markdown_extensions:
   - toc:
