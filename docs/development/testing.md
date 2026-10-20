@@ -16,7 +16,7 @@ npm test          # node --test: definition contracts + installer per-item tests
 `npm test` covers:
 - all 26 skills have valid `name`/`description`, a root `SKILL.md`, and quoted
   descriptions when they contain `:`;
-- all 10 agents and every command that declares frontmatter have valid
+- every agent and every command that declares frontmatter has valid
   frontmatter; all 8 command files are non-empty;
 - the retired `issue-save`, `issue-load`, and `issue-list` commands are gone and the
   `issue-bookmarks` skill enforces the two analyst roles, validated names, the
@@ -29,6 +29,12 @@ npm test          # node --test: definition contracts + installer per-item tests
   matching permission (guards against a documented path that is hard-denied);
 - the System Analyst explicitly denies `edit` on the glossary cache it must
   never write;
+- a golden analyst-flow set (`tests/golden-cases.mjs`, run by
+  `tests/golden-analyst-flow.test.mjs`) verifies the end-to-end promises of the
+  two analysts as rule-based invariants: the two approval gates, the three
+  requirement forms, both publication destinations, the lightweight bookmark
+  contract, the per-analyst split, the enforced glossary owner, and the
+  resilience fallbacks;
 - the installer removes retired command files on install and uninstall, and
   never installs editor backups or dotfiles from `src/`;
 - installer `scripts/install.mjs:1` behavior: per-item copy/link, coexistence
@@ -55,6 +61,30 @@ manually against conventions:
 
 For TUI behavior, open a session in this repository and trigger the changed
 agent, skill, or command; then restart to confirm it reloads.
+
+## Golden analyst flows
+
+`tests/golden-cases.mjs` is the regression baseline for the analyst pipeline. It
+is a list of cases, each stating one end-to-end promise and the rule-based
+invariant that verifies it, and `tests/golden-analyst-flow.test.mjs` runs every
+case. The evaluators are rule-based on purpose: the two analysts are `primary`
+agents, they are not runnable as subagents, and no ticketing provider is
+configured in the test environment, so a live generation step is not available.
+The set validates the contract a live run must satisfy, not sampled output.
+
+Each case carries an `id`, a `scenario`, a `rationale`, a `source`, and one or
+more `checks` (`match`, `notMatch`, `count`, `balancedFences`, `ascii`). When a
+change touches the analysts, the `ticket-writing` skill, or the
+bookmark/state skills:
+
+1. Run the golden set on the old definitions to record the baseline.
+2. Apply the change and run it again.
+3. A case that flips to failing is a regression: fix the definition or update
+   the case deliberately, never to make a red test green by accident.
+
+To prove a case is still effective, mutate the definition it guards (for
+example, rename the creation-approval question) and confirm the case fails; then
+restore the definition.
 
 ## When more tests appear
 
