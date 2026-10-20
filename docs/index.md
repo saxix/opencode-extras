@@ -14,9 +14,6 @@ instruction definitions for coding agents.
 | Guide | Audience | What it covers |
 |---|---|---|
 | [User Guide](user-guide/overview.md) | End users of the toolkit | What the agents, skills, and commands do, how to install and use them |
-| [Administrative Guide](admin/configuration.md) | Operators and maintainers | Configuration, operations, security, troubleshooting |
-| [Development Guide](development/setup.md) | Contributors | Repository structure, conventions, and full references |
-| [Deploy Guide](deploy/installation.md) | Deployment owners | Installing the toolkit into a TUI and environment variables |
 
 ## Quick links
 

@@ -2,7 +2,7 @@
 
 Who is this for? This page answers common questions from end users of the
 toolkit. Operators should also read the
-[Administrative troubleshooting page](../admin/troubleshooting.md).
+repository documentation.
 
 ## My new agent does not appear
 
@@ -64,5 +64,5 @@ or rejected handoffs (`user-guide/workflows/agents.md`).
 
 ## Next steps
 
-- Operator-level problems: [Administrative troubleshooting](../admin/troubleshooting.md).
-- Understanding the output standard: [Contribution guidelines](../development/contribution.md).
+- Operator-level problems: see repository documentation.
+- Understanding the output standard: see AGENTS.md in the repository.

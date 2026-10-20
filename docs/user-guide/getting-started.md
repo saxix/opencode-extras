@@ -9,7 +9,7 @@ commands available in their terminal-based AI coding assistant.
 - An installed `opencode` terminal assistant.
 - No Python, `uv`, or other build toolchain is required to install or run the
   definitions. `uv` is used only by the optional ticketing MCP servers
-  ([environment variables](../deploy/environment.md)).
+  (environment variables).
 
 ## Install
 
@@ -39,7 +39,7 @@ node ./scripts/install.mjs --global --link
 ```
 
 Details and alternatives (including `PREFIX` and `--dry-run`) are
-in the [installation guide](../deploy/installation.md).
+in the installation guide.
 
 ## Restart your TUI
 
@@ -51,10 +51,10 @@ A running session keeps using the configuration it loaded at startup.
 
 1. Open your TUI in a project worktree.
 2. Ask for a task that matches an agent description, for example "document
-   this project" (triggers the [documenter agent](../development/agents-reference.md#documenter)).
+   this project" (triggers the documenter agent).
    Keyword triggers live in each definition's `description:` frontmatter.
 3. Or name a workflow directly, for example "create a ticket for this idea"
-   (triggers the [Business Analyst](../development/agents-reference.md#business-analyst)).
+   (triggers the Business Analyst).
 4. Review the agent's proposal before it acts: the Business Analyst and System
    Analyst stop at explicit approval gates before creating a ticket or locking
    a technical direction (`agents/business-analyst.md:85`, `agents/system-analyst.md:69`).
@@ -71,7 +71,7 @@ load requirements-review
 ```
 
 The active analyst loads the
-[issue-bookmarks skill](../development/skills-reference.md#issue_bookmarks) and
+issue-bookmarks skill and
 follows the matching operation. Saving stores compact current work under that
 analyst's `.ai-temp/` directory. Listing shows that analyst's bookmarks, newest
 first, and loading restores one. Nothing happens if the loaded agent is not
@@ -83,12 +83,12 @@ explicit request writes a file.
 - Agents appear in the assistant's agent list after restart.
 - Skills load on demand: a task matching a skill description (for example
   "audit the code") triggers the
-  [security skill](../development/skills-reference.md#security).
+  security skill.
 - Commands run when invoked by name (see the
-  [command reference](../development/commands/debug-code.md)).
+  command reference).
 
 ## Next steps
 
 - Understand the full pipeline: [Agent workflows](workflows/agents.md).
-- Configure behavior: [Configuration reference](../admin/configuration.md).
-- Install on another machine: [Deploy guide](../deploy/installation.md).
+- Configure behavior: Configuration reference.
+- Install on another machine: Deploy guide.

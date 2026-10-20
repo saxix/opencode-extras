@@ -44,23 +44,22 @@ All definitions are plain Markdown with YAML frontmatter, written for
   `properdocs.yml` / `properdocs.yaml`, `agents/documenter.md:14-28`).
 - **One-skill-per-directory layout.** Each skill has a `SKILL.md` entrypoint
   and optional reference material (see the
-  [skill reference](../development/skills-reference.md)).
+  [skill reference](../../README.md)).
 - **Plug-and-play install.** One `npx` command copies per-item into the
   opencode config (`npx opencode-extras`), globally or with `--project`
   (see [getting started](getting-started.md) and
-  [installation](../deploy/installation.md)).
+  [installation](getting-started.md)).
 
 ## What you get
 
 | Artifact | Count | Reference |
 |---|---|---|
-| Agents | 10 | [agent reference](../development/agents-reference.md) |
-| Skills | 23 | [skill reference](../development/skills-reference.md) |
-| Commands | 12 | [command reference](../development/commands/debug-code.md) |
+| Agents | 13 | - |
+| Skills | 26 | - |
+| Commands | 8 | - |
 
 ## Next steps
 
 - Install the toolkit: [Getting started](getting-started.md).
 - Run the ticket pipeline: [Agent workflows](workflows/agents.md).
-- Browse the inventories: [agent reference](../development/agents-reference.md),
-  [skill reference](../development/skills-reference.md).
+- Browse the inventories in the repository root (`src/agents/`, `src/skills/`, `src/commands/`).

@@ -1,4 +1,4 @@
-site_name: agents-skills
+site_name: opencode-extras
 site_description: Reusable agents, skills and commands for AI coding TUIs
 site_author: saxix
 site_url: https://saxix.github.io/opencode-extras/
@@ -23,35 +23,6 @@ nav:
     - Workflows:
       - Agents: user-guide/workflows/agents.md
       - Commands: user-guide/workflows/commands.md
-  - Administrative Guide:
-    - Configuration: admin/configuration.md
-    - Operations: admin/operations.md
-    - Security: admin/security.md
-    - Troubleshooting: admin/troubleshooting.md
-  - Development Guide:
-    - Setup: development/setup.md
-    - Structure: development/structure.md
-    - Git Workflow: development/git-workflow.md
-    - Testing: development/testing.md
-    - Contribution: development/contribution.md
-    - Agents Reference: development/agents-reference.md
-    - Skills Reference: development/skills-reference.md
-    - Commands:
-      - debug-code: development/commands/debug-code.md
-      - devils-advocate: development/commands/devils-advocate.md
-      - eli5: development/commands/eli5.md
-      - git-status: development/commands/git-status.md
-      - humanize: development/commands/humanize.md
-      - init-project: development/commands/init-project.md
-      - step-by-step: development/commands/step-by-step.md
-      - truthmode: development/commands/truthmode.md
-  - Deploy Guide:
-    - Architecture: deploy/architecture.md
-    - Prerequisites: deploy/prerequisites.md
-    - Installation: deploy/installation.md
-    - Provisioning: deploy/provisioning.md
-    - Environment: deploy/environment.md
-    - Release: deploy/release.md
   - Glossary: glossary.md
 
 markdown_extensions:

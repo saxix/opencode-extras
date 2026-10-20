@@ -9,20 +9,20 @@ by name; user input is passed through `$ARGUMENTS`
 
 | Command | Purpose | Agent |
 |---|---|---|
-| [debug-code](../../development/commands/debug-code.md) | Debug failures/bugs with a root-cause fix loop | build |
-| [devils-advocate](../../development/commands/devils-advocate.md) | Adversarial review of a proposal | default |
-| [eli5](../../development/commands/eli5.md) | Explain a concept from first principles | default |
-| [humanize](../../development/commands/humanize.md) | Rewrite text without corporate or AI markers | default |
-| [init-project](../../development/commands/init-project.md) | Create or update `AGENTS.md` and `.ai/*` files | build |
-| [step-by-step](../../development/commands/step-by-step.md) | Deconstruct a task into an idempotent sequential plan | default |
-| [truthmode](../../development/commands/truthmode.md) | Strict empirical rigor and epistemic calibration | default |
-| [git-status](../../development/commands/git-status.md) | Explain what the pending git changes are trying to do | default |
+| debug-code | Debug failures/bugs with a root-cause fix loop | build |
+| devils-advocate | Adversarial review of a proposal | default |
+| eli5 | Explain a concept from first principles | default |
+| humanize | Rewrite text without corporate or AI markers | default |
+| init-project | Create or update `AGENTS.md` and `.ai/*` files | build |
+| step-by-step | Deconstruct a task into an idempotent sequential plan | default |
+| truthmode | Strict empirical rigor and epistemic calibration | default |
+| git-status | Explain what the pending git changes are trying to do | default |
 
 The table reflects the frontmatter in `commands/*.md`. Commands without an
 `agent:` key run in the TUI's current session.
 
 Analyst bookmarks are not commands. They live in the
-[issue-bookmarks skill](../../development/skills-reference.md#issue_bookmarks),
+issue-bookmarks skill skill,
 which the Business Analyst and System Analyst load on an explicit request. The
 older `issue-save`, `issue-load`, and `issue-list` commands are retired and are
 removed by the installer.
@@ -61,10 +61,10 @@ removed by the installer.
 - **Save analyst work.** While the Business Analyst or System Analyst is active,
   ask "save this work as ticket-refinement". Use "list my bookmarks" to find the
   name and "load ticket-refinement" to resume it in a later session. The analyst
-  loads the [issue-bookmarks skill](../../development/skills-reference.md#issue_bookmarks)
+  loads the issue-bookmarks skill skill
   to do it.
 
 ## Next steps
 
 - Full behavior for each command is documented in the linked reference pages.
-- Author a new command: [Contribution guidelines](../../development/contribution.md).
+- Author a new command: [Contribution guidelines](../https://github.com/saxix/opencode-extras).

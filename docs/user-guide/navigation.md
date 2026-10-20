@@ -48,5 +48,5 @@ update when the checkout changes; restart the TUI in either case.
 
 ## Next steps
 
-- Install details and alternatives: [Installation](../deploy/installation.md).
-- Settings and frontmatter reference: [Configuration reference](../admin/configuration.md).
+- Install details and alternatives: Installation.
+- Settings and frontmatter reference: Configuration reference.
