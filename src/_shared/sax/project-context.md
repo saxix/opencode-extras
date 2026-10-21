@@ -36,6 +36,30 @@ Rules:
 
 Optional files are created only when the project has something specific to say.
 
+## Reference block in AGENTS.md
+
+`AGENTS.md` should point at the topic files that exist, so a session finds the
+project rules without scanning the tree. Keep exactly one block:
+
+```markdown
+## Project context
+
+Project-specific rules live in `.ai/`. Read only the files relevant to the
+current task and resolve them per this contract.
+
+- `.ai/project.md` -- product, repo layout, branch and deploy model
+- `.ai/architecture.md` -- boundaries, entrypoints, data flow
+- `.ai/technical.md` -- language, versions, commands, toolchain
+- `.ai/best-practices.md` -- code conventions and workflow rules
+- `.ai/testing.md` -- how to test, coverage expectations
+```
+
+Add `.ai/security.md`, `.ai/docs.md`, and `.ai/review.md` to the list only when
+those files exist. Never reference a missing file and never list the same file
+twice. If `AGENTS.md` already links `.ai/*` files elsewhere, improve that block
+instead of adding a second one. `init-project` writes the block; `config-check`
+audits it.
+
 ## Stable headings
 
 Files are free-form Markdown. These headings are recognized when present, so agents can find them reliably:

@@ -82,7 +82,7 @@ describe('agent frontmatter', () => {
 describe('command frontmatter', () => {
   it('every command with frontmatter has description', () => {
     const cmds = listCommands();
-    assert.equal(cmds.length, 8, `expected 8 commands, got ${cmds.length}`);
+    assert.equal(cmds.length, 9, `expected 9 commands, got ${cmds.length}`);
     const withFm = cmds.filter(f => parseFrontmatter(path.join(SRC_COMMANDS, f)));
     assert.ok(withFm.length >= 3, `expected >=3 commands with frontmatter`);
     for (const f of withFm) {
@@ -291,6 +291,21 @@ describe('installer', () => {
       assert.ok(fs.readlinkSync(p).endsWith(path.join('src', name)), `${name} should mirror the source path`);
     }
     assert.ok(!fs.existsSync(path.join(base, 'sax')), 'legacy sax/ dir should be gone');
+  });
+
+  it('never installs the reserved plugins/ directory in any mode', () => {
+    for (const mode of ['', '--link']) {
+      const label = mode === '--link' ? 'link' : 'copy';
+      const prefix = path.join(tmp, `plugins-skip-${label}`);
+      runInstall(mode, { PREFIX: prefix });
+      const base = path.join(prefix, '.config', 'opencode');
+      assert.ok(!fs.existsSync(path.join(base, 'plugins')), `plugins/ must not be installed (${label} mode)`);
+      // the assertion above is not vacuous: shared dirs must still be installed
+      assert.ok(listShared().length > 0, 'expected at least one shared dir');
+      for (const name of listShared()) {
+        assert.ok(fs.existsSync(path.join(base, name)), `missing shared dir ${name} (${label} mode)`);
+      }
+    }
   });
 
   it('cleans up shared specs left by an older install layout', () => {

@@ -1,13 +1,13 @@
 # Overview and key features
 
-Who is this for? This guide is for people who want to use `agents-skills` in
+Who is this for? This guide is for people who want to use `opencode-extras` in
 their terminal-based AI coding assistant: developers, technical writers, and
 maintainers who want prebuilt roles and routines instead of writing prompts
 from scratch each time.
 
 ## What it is
 
-`agents-skills` is a collection of reusable definitions for the `opencode`
+`opencode-extras` is a collection of reusable definitions for the `opencode`
 terminal assistant:
 
 - **Agents** -- role definitions such as Business Analyst, System Analyst, and
@@ -44,7 +44,7 @@ All definitions are plain Markdown with YAML frontmatter, written for
   `properdocs.yml` / `properdocs.yaml`, `agents/documenter.md:14-28`).
 - **One-skill-per-directory layout.** Each skill has a `SKILL.md` entrypoint
   and optional reference material (see the
-  [skill reference](../../README.md)).
+  [skill reference](../reference/skills.md)).
 - **Plug-and-play install.** One `npx` command copies per-item into the
   opencode config (`npx opencode-extras`), globally or with `--project`
   (see [getting started](getting-started.md) and
@@ -54,9 +54,10 @@ All definitions are plain Markdown with YAML frontmatter, written for
 
 | Artifact | Count | Reference |
 |---|---|---|
-| Agents | 13 | - |
-| Skills | 26 | - |
-| Commands | 8 | - |
+| Agents | 13 | [Agent reference](../reference/agents.md) |
+| Skills | 26 | [Skill reference](../reference/skills.md) |
+| Commands | 9 | [Command reference](../reference/commands.md) |
+| Plugins | 1 | [Plugin reference](../reference/plugins.md) |
 
 ## Next steps
 

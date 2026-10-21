@@ -14,6 +14,7 @@ by name; user input is passed through `$ARGUMENTS`
 | eli5 | Explain a concept from first principles | default |
 | humanize | Rewrite text without corporate or AI markers | default |
 | init-project | Create or update `AGENTS.md` and `.ai/*` files | build |
+| config-check | Audit `AGENTS.md` references and `.ai/*` files against the code | build |
 | step-by-step | Deconstruct a task into an idempotent sequential plan | default |
 | truthmode | Strict empirical rigor and epistemic calibration | default |
 | git-status | Explain what the pending git changes are trying to do | default |
@@ -56,6 +57,11 @@ removed by the installer.
   (`commands/truthmode.md:3-9`).
 - **Start or reshape project instructions.** Run `init-project` to create or
   update `AGENTS.md` and `.ai/*` files (`commands/init-project.md:2-3`).
+- **Audit project instructions.** Run `config-check` to verify that `AGENTS.md`
+  references the existing `.ai/*` files, that those files exist, and that their
+  commands and paths still match the code. It reports drift, asks how to resolve
+  it, and applies only the instruction edits you approve
+  (`commands/config-check.md`).
 - **Debug a failure.** Run `debug-code` to trigger a root-cause fix loop
   (`commands/debug-code.md`).
 - **Save analyst work.** While the Business Analyst or System Analyst is active,
@@ -67,4 +73,4 @@ removed by the installer.
 ## Next steps
 
 - Full behavior for each command is documented in the linked reference pages.
-- Author a new command: [Contribution guidelines](../https://github.com/saxix/opencode-extras).
+- Author a new command: [Development](../../maintainers/development.md#adding-or-changing-a-definition).

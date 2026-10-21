@@ -1,0 +1,50 @@
+[
+  {
+    "id": "reviewer-clean-branch",
+    "workflow": "clean-branch",
+    "base_branch": "main",
+    "request": "review diff",
+    "task_file": "TASK.md",
+    "branch_files": ["hunks/orders.hunk", "hunks/test_orders.hunk"],
+    "expect": "APPROVE",
+    "forbid_any": ["**Blocker**", "REQUEST_CHANGES"],
+    "expected": "The diff is a coherent, tested change that follows the project rules; the reviewer approves it and states that it inspected the branch diff against the base."
+  },
+  {
+    "id": "reviewer-working-tree",
+    "workflow": "working-tree",
+    "request": "review code",
+    "expect_any": ["Decimal", "float"],
+    "forbid_any": [],
+    "expected": "With no diff requested, the reviewer inspects the current file content: it reports the float-based money handling in pricing.py as an issue against .ai/best-practices.md, and it runs no git command to get there."
+  },
+  {
+    "id": "reviewer-working-files",
+    "workflow": "working-tree",
+    "request": "review code pricing.py",
+    "expect_any": ["Decimal", "float"],
+    "forbid_any": [],
+    "expected": "With an explicit file scope, the reviewer reports the float-based money handling in pricing.py as an issue against the project rules and names the file it reviewed."
+  },
+  {
+    "id": "reviewer-staged",
+    "workflow": "staged",
+    "base_branch": null,
+    "request": "review diff",
+    "staged_files": ["hunks/orders.hunk", "hunks/test_orders.hunk"],
+    "expect": "APPROVE",
+    "forbid_any": ["**Blocker**", "REQUEST_CHANGES"],
+    "expected": "The staged change is reviewed although nothing is committed: the reviewer states that the review covers staged and uncommitted work."
+  },
+  {
+    "id": "reviewer-pr-flow",
+    "workflow": "pr-flow",
+    "base_branch": "main",
+    "request": "review pr",
+    "task_file": "TASK.md",
+    "branch_files": ["hunks/orders.hunk", "hunks/test_orders.hunk"],
+    "expect_any": ["PR", "pr"],
+    "forbid_any": [],
+    "expected": "With no PR number and an explicit PR request, the reviewer either reports the absence of an open PR and falls back to the local diff, or asks once which PR to review; it never publishes anything."
+  }
+]

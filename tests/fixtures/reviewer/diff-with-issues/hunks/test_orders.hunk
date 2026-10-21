@@ -1,0 +1,43 @@
+-from orders import gross_amount, tax_rate
++import pytest
++
++from decimal import Decimal
++
++from orders import gross_amount, tax_rate
+ 
+ 
+ def test_tax_rate_is_case_insensitive():
+-    assert tax_rate("it") == 0.22
++    assert tax_rate("it") == Decimal("0.22")
++
++
++def test_unknown_country_has_no_tax():
++    assert tax_rate("XX") == Decimal("0")
+ 
+ 
+ def test_gross_amount_adds_the_country_tax():
+-    assert gross_amount({"net_amount": 100.0, "country": "IT"}) == 122.0
++    order = {"net_amount": Decimal("100.00"), "country": "IT"}
++    assert gross_amount(order) == Decimal("122.00")
++
++
++def test_gross_amount_without_a_known_country_adds_no_tax():
++    order = {"net_amount": Decimal("100.00"), "country": "XX"}
++    assert gross_amount(order) == Decimal("100.00")
++
++
++def test_gross_amount_is_quantized_to_cents():
++    order = {"net_amount": Decimal("10.01"), "country": "DE"}
++    gross = gross_amount(order)
++    assert gross == Decimal("11.91")
++    assert gross.as_tuple().exponent == -2
++
++
++def test_gross_amount_rounds_half_up():
++    order = {"net_amount": Decimal("0.005"), "country": "XX"}
++    assert gross_amount(order) == Decimal("0.01")
++
++
++def test_gross_amount_rejects_a_float_amount():
++    with pytest.raises(TypeError):
++        gross_amount({"net_amount": 100.0, "country": "IT"})

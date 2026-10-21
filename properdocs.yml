@@ -21,8 +21,19 @@ nav:
     - Navigation: user-guide/navigation.md
     - FAQ: user-guide/faq.md
     - Workflows:
+      - Pipeline: user-guide/workflows/pipeline.md
       - Agents: user-guide/workflows/agents.md
       - Commands: user-guide/workflows/commands.md
+  - Reference:
+    - Agents: reference/agents.md
+    - Skills: reference/skills.md
+    - Commands: reference/commands.md
+    - Plugins: reference/plugins.md
+  - Maintainers:
+    - Conventions: maintainers/conventions.md
+    - Development: maintainers/development.md
+    - CI: maintainers/ci.md
+    - Releasing: maintainers/releasing.md
 
 markdown_extensions:
   - toc:
@@ -32,7 +43,14 @@ markdown_extensions:
   - attr_list
   - def_list
   - admonition
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+
+extra_javascript:
+  - javascripts/mermaid.mjs
 
 plugins:
   - search

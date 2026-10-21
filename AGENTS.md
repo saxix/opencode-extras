@@ -1,9 +1,9 @@
-# agents-skills
+# opencode-extras
 
 Reusable agents, skills, and commands for the `opencode` terminal assistant. All definitions are plain Markdown and all generated output follows the TUI-portable standard in this file, so the text stays readable in any terminal.
 
 ## Install
-
+[.bashrc](../../../../../.bashrc)
 Via `npx` (copy per-item, coexistence-safe):
 
 ```sh
@@ -48,32 +48,32 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 
 | Directory | Description |
 |---|---|
-| `architecture-review/` | Staff-level codebase health review |
-| `code-review-django/` | Code review following personal engineering practices (Django stack) |
-| `code-review-python/` | Python idioms, PEP 8, type hints and modern Python review |
-| `commit/` | Safely stage and commit changes |
-| `commit-message/` | Draft a structured commit message |
-| `create_github_issue/` | Open a GitHub issue via `gh` |
-| `debug/` | Investigate failures, implement minimal fixes |
-| `django-migration/` | Django migration generation |
-| `django-models/` | Django ORM model design |
-| `documentation/` | Canonical docs site taxonomy, audit clauses, style, and build checks (loaded by `documenter`; triggered standalone for audits) |
-| `find-bugs/` | Bug and vulnerability finding |
-| `issue-bookmarks/` | Canonical analyst ticket bookmark rules and save/load/list operations shared by Business Analyst and System Analyst |
-| `pr-review/` | Canonical rubric for reviewing a branch or pull request |
-| `pull-request/` | Validate, commit, push, and open a PR |
-| `push/` | Stage, validate with tox, and push |
-| `release/` | Generate release notes and a GitHub release |
-| `security/` | Orchestrated security audit |
-| `security-audit/` | Threat-modeling security audit |
-| `security-owasp/` | OWASP-based security review |
-| `spec-inspect/` | Audit `.specs/` against codebase behavior |
-| `spec-write/` | Interactive specification refinement |
-| `state-persistence/` | Canonical analyst state layout, shared findings, write policy, legacy state |
-| `testing-guidelines/` | Testing patterns and guidance |
-| `ticket-writing/` | Canonical ticket content rules shared by Business Analyst and System Analyst (title, prefixes, soft-wrap, diagrams, language) |
-| `tox-fix/` | Run tox, fix failures, re-run until green |
-| `upgrade/` | Dependency upgrade checker |
+| `sax-architecture-review/` | Staff-level codebase health review |
+| `sax-code-review-django/` | Code review following personal engineering practices (Django stack) |
+| `sax-code-review-python/` | Python idioms, PEP 8, type hints and modern Python review |
+| `sax-commit/` | Safely stage and commit changes |
+| `sax-commit-message/` | Draft a structured commit message |
+| `sax-create_github_issue/` | Open a GitHub issue via `gh` |
+| `sax-debug/` | Investigate failures, implement minimal fixes |
+| `sax-django-migration/` | Django migration generation |
+| `sax-django-models/` | Django ORM model design |
+| `sax-documentation/` | Canonical docs site taxonomy, audit clauses, style, and build checks (loaded by `documenter`; triggered standalone for audits) |
+| `sax-find-bugs/` | Bug and vulnerability finding |
+| `sax-issue-bookmarks/` | Canonical analyst ticket bookmark rules and save/load/list operations shared by Business Analyst and System Analyst |
+| `sax-pr-review/` | Canonical rubric for reviewing a branch or pull request |
+| `sax-pull-request/` | Validate, commit, push, and open a PR |
+| `sax-push/` | Stage, validate with tox, and push |
+| `sax-release/` | Generate release notes and a GitHub release |
+| `sax-security/` | Orchestrated security audit |
+| `sax-security-audit/` | Threat-modeling security audit |
+| `sax-security-owasp/` | OWASP-based security review |
+| `sax-spec-inspect/` | Audit `.specs/` against codebase behavior |
+| `sax-spec-write/` | Interactive specification refinement |
+| `sax-state-persistence/` | Canonical analyst state layout, shared findings, write policy, legacy state |
+| `sax-testing-guidelines/` | Testing patterns and guidance |
+| `sax-ticket-writing/` | Canonical ticket content rules shared by Business Analyst and System Analyst (title, prefixes, soft-wrap, diagrams, language) |
+| `sax-tox-fix/` | Run tox, fix failures, re-run until green |
+| `sax-upgrade/` | Dependency upgrade checker |
 
 ## Commands
 
@@ -84,6 +84,7 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `eli5` | Explain a concept from first principles |
 | `humanize` | Rewrite text without corporate or AI markers |
 | `init-project` | Create or update `AGENTS.md` and `.ai/*` files |
+| `config-check` | Audit `AGENTS.md` references and `.ai/*` files against the code |
 | `step-by-step` | Deconstruct a task into an idempotent sequential plan |
 | `truthmode` | Strict empirical rigor and epistemic calibration |
 | `git-status` | Explain what pending changes are trying to do |
@@ -115,6 +116,7 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 - The `documenter` agent generates or updates documentation (operator role: gates, permissions, workflow); the `documentation` skill owns the domain knowledge (four-guide taxonomy, audit clauses, style, build checks, findings template) and is shared by `documenter`, standalone audits, and any future docs agent. Rules live in only one place: the skill.
 - The `ticket-writing` skill owns the canonical ticket content rules (title, prefixes, body, soft-wrap, diagrams, language) shared by the `Business Analyst` and the `System Analyst`. Rules live in only one place: the skill; agents must load it rather than re-implementing its rules.
 - The `issue-bookmarks` skill owns the analyst ticket bookmark contract and the save/load/list operations (guard, name validation, schema, validity, compact projection) shared by the `Business Analyst` and the `System Analyst`. There are no `issue-*` commands. It loads the `state-persistence` skill, which owns the shared analyst state layout (which `.ai-temp/` path belongs to which analyst, the shared findings directory, the write policy, and the legacy state to ignore) plus the Business Analyst project terms cache.
+- The `.ai/` topic contract, resolution order, and `AGENTS.md` reference block are owned by `_shared/sax/project-context.md`. The `init-project` command creates the files and the block; `config-check` audits references, existence, and drift. Rules live in only one place: the contract.
 
 ## TUI-portable output
 
@@ -133,4 +135,9 @@ When a skills or agent file prescribes an output template, that template is gove
 
 ## No code
 
-This repository contains a small Node installer and tests, but no application runtime, lint, typecheck, or CI. Its primary content is instruction definitions for coding agents.
+This repository contains a small Node installer and tests, but no application runtime, lint, or typecheck. Its primary content is instruction definitions for coding agents.
+
+Test layers:
+
+- `npm test` runs `node --test tests/*.test.mjs`: the installer, content, golden, and fixture-contract suites. It never runs the agent.
+- `npm run eval:reviewer` runs the reviewer agent against `tests/fixtures/reviewer/` and rewrites `tests/fixtures/reviewer/expectations.md`. It needs the `opencode` binary and a configured provider, so it stays outside `npm test`; CI does not run it.

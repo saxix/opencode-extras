@@ -45,7 +45,13 @@ permissions:
     resource: "git merge-base *"
     effect: allow
   - action: shell
-    resource: "git branch *"
+    resource: "git branch --show-current"
+    effect: allow
+  - action: shell
+    resource: "git branch --list *"
+    effect: allow
+  - action: shell
+    resource: "git branch -r *"
     effect: allow
   - action: subagent
     resource: "*"

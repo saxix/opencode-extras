@@ -1,7 +1,9 @@
 # Agent workflows
 
 Who is this for? This page describes the end-to-end workflows that the primary
-agents automate, so you know which agent to call and what to expect.
+agents automate, so you know which agent to call and what to expect. For the
+whole picture, including approval gates and state, see
+[Flow overview](pipeline.md).
 
 ## The ticket pipeline
 

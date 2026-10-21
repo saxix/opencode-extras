@@ -3,6 +3,7 @@ name: Build and Deploy Documentation
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -30,7 +31,7 @@ jobs:
         run: pip install properdocs properdocs-theme-mkdocs pymdown-extensions
 
       - name: Build documentation
-        run: properdocs build
+        run: properdocs build --strict
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

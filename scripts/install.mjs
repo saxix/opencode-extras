@@ -145,9 +145,13 @@ function listCommands() {
 // same top-level name, so src/_shared/sax/ lands at DEST/_shared/sax/. The
 // reserved plugins/ directory is not installed.
 const RESERVED_SRC_DIRS = new Set(['agents', 'skills', 'commands']);
+// plugins/ is reserved for opencode itself: it is never installed, and it is
+// never uninstalled, so a user's own DEST/plugins/ cannot be wiped by
+// `--uninstall`.
+const SKIP_SRC_DIRS = new Set([...RESERVED_SRC_DIRS, 'plugins']);
 function listShared() {
   return fs.readdirSync(SRC, { withFileTypes: true })
-    .filter(e => e.isDirectory() && isSourceItem(e.name) && !RESERVED_SRC_DIRS.has(e.name))
+    .filter(e => e.isDirectory() && isSourceItem(e.name) && !SKIP_SRC_DIRS.has(e.name))
     .map(e => e.name)
     .sort();
 }
@@ -221,6 +225,7 @@ function installForDest(dest) {
   }
 
   if (uninstall) {
+    const exists = p => fs.existsSync(p) || isSymlink(p);
     for (const name of skills) {
       const prefixed = prefixedSkillName(name);
       const target = path.join(skillsDest, prefixed);
@@ -229,36 +234,50 @@ function installForDest(dest) {
         path.join(base, LEGACY_PKG, 'skills', name),
         path.join(base, 'skills', LEGACY_PKG, name),
       ];
-      if (dryRun) console.log(`  would remove skills/${prefixed}`);
+      if (dryRun) { if (exists(target)) console.log(`  would remove skills/${prefixed}`); }
       else {
-        if (fs.existsSync(target) || isSymlink(target)) { removeRecursive(target); console.log(`  removed skills/${prefixed}`); }
+        if (exists(target)) { removeRecursive(target); console.log(`  removed skills/${prefixed}`); }
         for (const lt of legacyTargets) {
-          if ((fs.existsSync(lt) || isSymlink(lt)) && lt !== target) { removeRecursive(lt); console.log(`  removed legacy skills/${path.basename(lt)}`); }
+          if (exists(lt) && lt !== target) { removeRecursive(lt); console.log(`  removed legacy skills/${path.basename(lt)}`); }
         }
       }
     }
     for (const name of agents) {
       const target = path.join(agentsDest, name);
-      if (dryRun) console.log(`  would remove agents/${name}`);
-      else if (fs.existsSync(target) || isSymlink(target)) { fs.rmSync(target, { force: true }); console.log(`  removed agents/${name}`); }
+      if (dryRun) { if (exists(target)) console.log(`  would remove agents/${name}`); }
+      else if (exists(target)) { fs.rmSync(target, { force: true }); console.log(`  removed agents/${name}`); }
     }
     for (const name of commands) {
       const target = path.join(commandsDest, name);
-      if (dryRun) { console.log(`  would remove commands/${name}`); continue; }
-      if (fs.existsSync(target) || isSymlink(target)) { fs.rmSync(target, { force: true }); console.log(`  removed commands/${name}`); }
+      if (dryRun) { if (exists(target)) console.log(`  would remove commands/${name}`); continue; }
+      if (exists(target)) { fs.rmSync(target, { force: true }); console.log(`  removed commands/${name}`); }
     }
     for (const name of RETIRED_COMMANDS) {
       const target = path.join(commandsDest, name);
-      if (dryRun) { console.log(`  would remove retired commands/${name}`); continue; }
-      if (fs.existsSync(target) || isSymlink(target)) { fs.rmSync(target, { force: true }); console.log(`  removed retired commands/${name}`); }
+      if (dryRun) { if (exists(target)) console.log(`  would remove retired commands/${name}`); continue; }
+      if (exists(target)) { fs.rmSync(target, { force: true }); console.log(`  removed retired commands/${name}`); }
     }
     for (const name of shared) {
       const target = path.join(base, name);
-      if (dryRun) { console.log(`  would remove ${name}/`); continue; }
-      if (fs.existsSync(target) || isSymlink(target)) { removeRecursive(target); console.log(`  removed ${name}/`); }
+      if (dryRun) { if (exists(target)) console.log(`  would remove ${name}/`); continue; }
+      if (exists(target)) { removeRecursive(target); console.log(`  removed ${name}/`); }
     }
-    if (dryRun) console.log(`  would remove legacy ${path.join('sax', 'shared', 'state-persistence.md')}`);
+    if (dryRun) {
+      if (exists(path.join(legacySaxDir, 'shared', 'state-persistence.md')) || exists(legacySharedDest)) {
+        console.log(`  would remove legacy ${path.join('sax', 'shared', 'state-persistence.md')}`);
+      }
+    }
     else removeLegacyShared();
+    // Older versions installed src/plugins/ as DEST/plugins/. Remove it only
+    // when it is a symlink pointing into this checkout's src/, never a real
+    // directory (which would belong to the user).
+    {
+      const pluginsDest = path.join(base, 'plugins');
+      if (isSymlink(pluginsDest) && fs.readlinkSync(pluginsDest) === path.join(SRC, 'plugins')) {
+        if (dryRun) console.log(`  would remove legacy plugins symlink ${pluginsDest}`);
+        else { fs.unlinkSync(pluginsDest); console.log(`  removed legacy plugins symlink ${pluginsDest}`); }
+      }
+    }
     // also remove legacy directory symlinks if present
     for (const legacy of [skillsDest, agentsDest, commandsDest]) {
       if (isSymlink(legacy)) {

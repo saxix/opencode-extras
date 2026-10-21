@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   REPO_ROOT,
+  SRC,
   listSkills,
   listAgents,
   listCommands,
@@ -149,5 +150,60 @@ describe('uninstall', () => {
     runInstall('--uninstall', { PREFIX: prefix });
     assert.ok(!fs.existsSync(skillLink), 'symlink skill should be removed');
     assert.ok(!fs.existsSync(agentLink), 'symlink agent should be removed');
+  });
+
+  // --- Regression guards: DEST/plugins/ belongs to the user, never to us ---
+
+  it('preserves a user-owned plugins/ directory on uninstall', () => {
+    const prefix = path.join(tmp, 'plugins-keep');
+    runInstall('', { PREFIX: prefix });
+    const plugins = path.join(prefix, '.config', 'opencode', 'plugins');
+    fs.mkdirSync(plugins, { recursive: true });
+    fs.writeFileSync(path.join(plugins, 'mine.js'), 'user plugin');
+    runInstall('--uninstall', { PREFIX: prefix });
+    assert.ok(fs.existsSync(path.join(plugins, 'mine.js')), 'user plugins/ must survive uninstall');
+  });
+
+  it('removes the legacy installer-owned plugins symlink only', () => {
+    const prefix = path.join(tmp, 'plugins-legacy-link');
+    runInstall('--link', { PREFIX: prefix });
+    const plugins = path.join(prefix, '.config', 'opencode', 'plugins');
+    // older versions linked src/plugins into DEST; recreate that state
+    fs.symlinkSync(path.join(SRC, 'plugins'), plugins, 'dir');
+    assert.ok(fs.lstatSync(plugins).isSymbolicLink());
+    runInstall('--uninstall', { PREFIX: prefix });
+    assert.ok(!fs.existsSync(plugins), 'legacy plugins symlink should be removed');
+    assert.ok(fs.existsSync(path.join(SRC, 'plugins')), 'src/plugins must never be touched');
+  });
+
+  it('preserves a plugins symlink not owned by the installer', () => {
+    const prefix = path.join(tmp, 'plugins-foreign-link');
+    runInstall('', { PREFIX: prefix });
+    const foreign = path.join(tmp, 'foreign-plugins');
+    fs.mkdirSync(foreign, { recursive: true });
+    fs.writeFileSync(path.join(foreign, 'theirs.js'), 'not ours');
+    const plugins = path.join(prefix, '.config', 'opencode', 'plugins');
+    fs.symlinkSync(foreign, plugins, 'dir');
+    runInstall('--uninstall', { PREFIX: prefix });
+    assert.ok(fs.lstatSync(plugins).isSymbolicLink(), 'foreign plugins symlink must survive uninstall');
+    assert.ok(fs.existsSync(path.join(foreign, 'theirs.js')), 'foreign plugin content must survive uninstall');
+  });
+
+  it('--dry-run uninstall on an empty prefix reports no removals', () => {
+    const prefix = path.join(tmp, 'dry-run-empty');
+    // the exact command shape from the README, against a prefix with nothing installed
+    const out = runInstall('--uninstall --global --link --dry-run', { PREFIX: prefix });
+    assert.doesNotMatch(out, /would remove/, 'empty prefix must not claim any removal');
+    assert.ok(out.includes('Done'), 'dry-run should still complete');
+  });
+
+  it('--dry-run uninstall lists only items that exist', () => {
+    const prefix = path.join(tmp, 'dry-run-partial');
+    runInstall('', { PREFIX: prefix });
+    const skillsDir = path.join(prefix, '.config', 'opencode', 'skills');
+    fs.rmSync(path.join(skillsDir, listSkills()[0]), { recursive: true, force: true });
+    const out = runInstall('--uninstall --global --dry-run', { PREFIX: prefix });
+    assert.doesNotMatch(out, new RegExp(`would remove skills/${listSkills()[0]}\\b`), 'removed skill must not be listed');
+    assert.match(out, /would remove skills\//, 'remaining skills should still be listed');
   });
 });

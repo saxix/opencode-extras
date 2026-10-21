@@ -9,9 +9,10 @@ Review changes on this branch for bugs, security vulnerabilities, and code quali
 
 ## Phase 1: Complete Input Gathering
 
-1. Get the FULL diff: `git diff $(gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name')...HEAD`
-2. If output is truncated, read each changed file individually until you have seen every changed line
-3. List all files modified in this branch before proceeding
+1. Resolve the base branch: `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`
+2. Get the FULL diff against it: `git diff <base>...HEAD`
+3. If output is truncated, read each changed file individually until you have seen every changed line
+4. List all files modified in this branch before proceeding
 
 ## Phase 2: Attack Surface Mapping
 

@@ -38,8 +38,29 @@ node ./scripts/install.mjs --project --link
 node ./scripts/install.mjs --global --link
 ```
 
-Details and alternatives (including `PREFIX` and `--dry-run`) are
-in the installation guide.
+Details and alternatives (including `PREFIX` and `--dry-run`) are in
+`README.md`.
+
+## Uninstall
+
+Remove installed items by appending `--uninstall`:
+
+```sh
+npx opencode-extras --uninstall
+npx opencode-extras --uninstall --global
+npx opencode-extras --uninstall --project
+```
+
+For a local checkout (run from the repository root):
+
+```sh
+node ./scripts/install.mjs --uninstall --global
+```
+
+If nothing is installed in the target directory the command prints no
+`removed ...` lines and exits 0 -- there was nothing to remove. Uninstall never
+touches `plugins/`, which belongs to the user. `--link` is install-time only;
+uninstall removes both copied and linked items.
 
 ## Restart your TUI
 
@@ -71,7 +92,7 @@ load requirements-review
 ```
 
 The active analyst loads the
-issue-bookmarks skill and
+[issue-bookmarks skill](../reference/skills.md#sax-issue-bookmarks) and
 follows the matching operation. Saving stores compact current work under that
 analyst's `.ai-temp/` directory. Listing shows that analyst's bookmarks, newest
 first, and loading restores one. Nothing happens if the loaded agent is not
@@ -83,12 +104,12 @@ explicit request writes a file.
 - Agents appear in the assistant's agent list after restart.
 - Skills load on demand: a task matching a skill description (for example
   "audit the code") triggers the
-  security skill.
+  [security skill](../reference/skills.md#sax-security).
 - Commands run when invoked by name (see the
-  command reference).
+  [command reference](../reference/commands.md)).
 
 ## Next steps
 
 - Understand the full pipeline: [Agent workflows](workflows/agents.md).
-- Configure behavior: Configuration reference.
-- Install on another machine: Deploy guide.
+- Learn the conventions: [Conventions](../maintainers/conventions.md).
+- Work on the repository: [Development](../maintainers/development.md).

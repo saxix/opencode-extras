@@ -5,7 +5,8 @@ Reusable **agents**, **skills**, and **commands** for the
 with a portable output convention so the definitions stay readable in any
 terminal.
 
-Detailed documentation lives in [docs/](docs/).
+Detailed documentation lives in [docs/](docs/). To build from a checkout, run the
+tests, or open an issue, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Install
 
@@ -43,11 +44,20 @@ npx opencode-extras --uninstall --global
 npx opencode-extras --uninstall --project
 ```
 
-For a local checkout development install:
+For a local checkout development install (run from the repository root):
 
 ```sh
-node ./scripts/install.mjs --uninstall --global --link
+node ./scripts/install.mjs --uninstall --global
 ```
+
+Notes:
+
+- The script must be run from the repository root (or via an absolute path);
+  otherwise node fails with `Cannot find module './scripts/install.mjs'`.
+- If nothing is installed in the target directory the command prints no
+  `removed ...` lines and exits 0 -- that means there was nothing to remove.
+- `--link` is only an install-time option; uninstall removes both copied and
+  linked items, so it can be omitted.
 
 ## CLI Help
 

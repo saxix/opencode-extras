@@ -1,0 +1,46 @@
+-"""Order catalogue and its tax rules."""
+-
+-TAX_RATES = {
+-    "IT": 0.22,
+-    "DE": 0.19,
+-    "FR": 0.20,
+-}
+-
+-
+-def tax_rate(country):
+-    """Return the tax rate for a country, or zero when it is unknown."""
+-    return TAX_RATES.get(country.upper(), 0)
+-
+-
+-def gross_amount(order):
+-    """Return the gross amount for an order."""
+-    return order["net_amount"] * (1 + tax_rate(order["country"]))
++"""Order catalogue and its tax rules."""
++
++from decimal import ROUND_HALF_UP, Decimal
++
++CENTS = Decimal("0.01")
++
++TAX_RATES = {
++    "IT": Decimal("0.22"),
++    "DE": Decimal("0.19"),
++    "FR": Decimal("0.20"),
++}
++
++
++def tax_rate(country: str) -> Decimal:
++    """Return the tax rate for a country, or zero when it is unknown."""
++    return TAX_RATES.get(country.upper(), Decimal("0"))
++
++
++def gross_amount(order: dict) -> Decimal:
++    """Return the gross amount for an order, rounded to cents.
++
++    ``order["net_amount"]`` must already be a ``Decimal``; a float is rejected so
++    that money never passes through binary floating point.
++    """
++    net = order["net_amount"]
++    if not isinstance(net, Decimal):
++        raise TypeError("net_amount must be a Decimal")
++    gross = net * (Decimal("1") + tax_rate(order["country"]))
++    return gross.quantize(CENTS, rounding=ROUND_HALF_UP)
