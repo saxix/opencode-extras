@@ -7,9 +7,10 @@ Audit the project instruction set: check that `AGENTS.md` points at the `.ai/`
 topic files, that those files exist, and that their content still matches the
 code. Optional focus from the user (topic names): $ARGUMENTS
 
-Load `../_shared/sax/project-context.md` first. It owns the topic list, the
+Load the `sax-project-context` skill first. It owns the topic list, the
 resolution order, and the `AGENTS.md` reference block template. Do not invent
-topics, rename files, or duplicate its rules here.
+topics, rename files, or duplicate its rules here. If that skill cannot be
+loaded, stop and report it instead of auditing against an invented topic list.
 
 ## Rules
 

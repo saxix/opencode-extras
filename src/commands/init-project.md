@@ -4,7 +4,7 @@ agent: build
 #model: anthropic/claude-3-5-sonnet-20241022
 ---
 
-Analyze this repository and create (or update) the agent documentation set under `.ai/` in the project root. The topic list, the resolution order, and the `AGENTS.md` reference block are owned by `../_shared/sax/project-context.md`; load it and do not extend the list.
+Analyze this repository and create (or update) the agent documentation set under `.ai/` in the project root. The topic list, the resolution order, and the `AGENTS.md` reference block are owned by the `sax-project-context` skill; load it and do not extend the list. If that skill cannot be loaded, stop and report it instead of inventing a topic list.
 
 Instead of a single `AGENTS.md`, write one Markdown file per topic:
 
@@ -59,7 +59,7 @@ Do not ask about anything the repo already makes clear.
 
 After creating or updating the topic files, make sure `AGENTS.md` contains one
 `## Project context` block that lists only the files you created, using the
-template in `../_shared/sax/project-context.md`. Add missing entries, remove
+template in the `sax-project-context` skill. Add missing entries, remove
 dead ones, and never reference a file that does not exist. If `AGENTS.md` does
 not exist, create it with a short project summary plus that block.
 

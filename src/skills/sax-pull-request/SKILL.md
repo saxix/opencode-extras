@@ -31,11 +31,11 @@ You are a senior software engineer validating code, creating appropriate topic b
 
 ---
 
-## Phase 2: Validate, Commit & Push (Delegate to `push`)
-1. Invoke the `push` skill.
-   - *Note:* The `push` skill stages changes (`git add .`), runs `tox-fix` validation/testing (halt if still errors after `tox-fix`) invokes `commit-message` for commit generation, and executes `git push -u origin <branch>`.
-2. **CRITICAL:** Check the outcome of the `push` execution.
-   - If `push` fails at any step (e.g., unresolvable `tox` failures or git errors), **STOP HERE**. Do not draft or create the PR.
+## Phase 2: Validate, Commit & Push (Delegate to `sax-push`)
+1. Invoke the `sax-push` skill.
+   - *Note:* The `sax-push` skill stages changes (`git add .`), runs `sax-tox-fix` validation/testing (halt if still errors after `sax-tox-fix`) invokes `sax-commit-message` for commit generation, and executes `git push -u origin <branch>`.
+2. **CRITICAL:** Check the outcome of the `sax-push` execution.
+   - If `sax-push` fails at any step (e.g., unresolvable `tox` failures or git errors), **STOP HERE**. Do not draft or create the PR.
 
 ---
 

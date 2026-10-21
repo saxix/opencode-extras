@@ -67,25 +67,33 @@ describe('AGENTS.md stays in sync with src/', () => {
 });
 
 describe('project context contract', () => {
-  const contractPath = path.join(REPO_ROOT, 'src', '_shared', 'sax', 'project-context.md');
+  const contractPath = path.join(REPO_ROOT, 'src', 'skills', 'sax-project-context', 'SKILL.md');
   const contract = fs.readFileSync(contractPath, 'utf8');
   const topics = new Set(
     [...contract.matchAll(/^\|\s*`\.ai\/([a-z-]+)\.md`\s*\|/gm)].map(m => m[1])
   );
 
-  it('defines the topic files', () => {
-    assert.ok(topics.size >= 5, 'project-context.md topic table is missing or empty');
+  it('is a loadable skill, not an unrecognised directory', () => {
+    const fm = parseFrontmatter(contractPath);
+    assert.ok(fm, 'the contract must have YAML frontmatter');
+    assert.equal(fm.name, 'sax-project-context');
+    assert.ok(fm.description, 'the contract skill must have a description');
   });
 
-  it('commands reference only topics defined by the contract', () => {
+  it('defines the topic files', () => {
+    assert.ok(topics.size >= 5, 'the project-context skill topic table is missing or empty');
+  });
+
+  it('commands reference the contract skill, never a path', () => {
     for (const command of ['init-project', 'config-check']) {
       const file = path.join(REPO_ROOT, 'src', 'commands', `${command}.md`);
       const text = fs.readFileSync(file, 'utf8');
       assert.match(
         text,
-        /\.\.\/_shared\/sax\/project-context\.md/,
-        `${command} must reference the shared contract`
+        /sax-project-context/,
+        `${command} must reference the project-context skill`
       );
+      assert.doesNotMatch(text, /\.\.\/_shared\//, `${command} must not reference the retired shared path`);
       for (const m of text.matchAll(/\.ai\/([a-z-]+)\.md/g)) {
         assert.ok(topics.has(m[1]), `${command} mentions unknown topic .ai/${m[1]}.md`);
       }

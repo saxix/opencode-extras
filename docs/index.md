@@ -10,7 +10,7 @@ they stay readable in any terminal.
 | Artifact | Count | Reference |
 |---|---|---|
 | Agents | 13 | [Agent reference](reference/agents.md) |
-| Skills | 26 | [Skill reference](reference/skills.md) |
+| Skills | 27 | [Skill reference](reference/skills.md) |
 | Commands | 9 | [Command reference](reference/commands.md) |
 | Plugins | 1 | [Plugin reference](reference/plugins.md) |
 
@@ -40,7 +40,6 @@ Full options, uninstall, and troubleshooting: [Getting started](user-guide/getti
 | `src/agents/` | Agent definitions (Markdown + frontmatter) |
 | `src/skills/` | Skills, one directory per skill with a `SKILL.md` entrypoint |
 | `src/commands/` | Slash-command prompt bodies |
-| `src/_shared/` | Shared specs installed under the same name |
 | `src/plugins/` | TypeScript plugins (not installed by the installer) |
 | `scripts/install.mjs` | Zero-dependency installer (`npx opencode-extras`) |
 | `scripts/gen-references.mjs` | Generator for the pages under `docs/reference/` |

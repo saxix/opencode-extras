@@ -87,7 +87,7 @@ The Business Analyst and System Analyst keep the full working model in the
 current conversation. They do not autosave it. To move work across sessions,
 ask the active analyst in plain language, for example "save this work as
 requirements-review". The analyst loads the
-`issue-bookmarks` skill
+`sax-issue-bookmarks` skill
 and follows the matching operation:
 
 - **save** writes a compact resume state under that analyst's `.ai-temp/`
@@ -99,7 +99,7 @@ The operations stop without reading or changing files if the active agent is not
 exactly `business-analyst` or `system-analyst`. Only an explicit request writes a
 bookmark, and the analysts cannot inspect each other's bookmarks (the layout and
 write policy live in the
-`state-persistence` skill).
+`sax-state-persistence` skill).
 
 The two agents also share `.ai-temp/findings/`: a fact one establishes for the
 other is recorded there once, with its evidence, instead of being re-derived or

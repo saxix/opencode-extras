@@ -56,15 +56,28 @@ describe('skill content integrity', () => {
     }
   });
 
-  it('shared spec references resolve to real files', () => {
-    const sharedRoot = path.resolve(SRC_SKILLS, '..', '_shared');
+  it('no skill references the retired shared-spec namespace', () => {
     for (const name of listSkills()) {
       for (const f of walkSkillFiles(name)) {
         if (!f.endsWith('.md')) continue;
         const content = fs.readFileSync(f, 'utf8');
-        for (const m of content.matchAll(/\.\.\/_shared\/([A-Za-z0-9_./-]+)/g)) {
-          const p = path.join(sharedRoot, m[1]);
-          assert.ok(fs.existsSync(p), `${name} references missing shared file: ../_shared/${m[1]}`);
+        assert.doesNotMatch(content, /\.\.\/_shared\//,
+          `${name} references the retired ../_shared/ namespace in ${path.relative(SRC_SKILLS, f)}`);
+      }
+    }
+  });
+
+  it('skill references in skill prose resolve to installed skill ids', () => {
+    const ids = new Set(listSkills());
+    for (const name of listSkills()) {
+      for (const f of walkSkillFiles(name)) {
+        if (!f.endsWith('.md')) continue;
+        const content = fs.readFileSync(f, 'utf8');
+        for (const m of content.matchAll(/`(sax-[a-z0-9-]+)`/g)) {
+          assert.ok(ids.has(m[1]), `${name} references unknown skill id "${m[1]}"`);
+        }
+        for (const m of content.matchAll(/`([a-z][a-z0-9-]*)` skill/g)) {
+          assert.ok(ids.has(m[1]), `${name} references unknown skill "${m[1]}"`);
         }
       }
     }

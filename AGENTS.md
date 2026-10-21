@@ -22,7 +22,6 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `agents/` | Agent definitions (Markdown with YAML frontmatter; `description:` required) |
 | `skills/` | Skills (one subdirectory per skill with a `SKILL.md` entrypoint and optional reference docs) |
 | `commands/` | Slash-command definitions (Markdown prompt bodies with an optional YAML frontmatter: `description:`, `agent:`) |
-| `_shared/` | Shared specs that are not agents, skills, or commands; installed under the same name |
 | `plugins/` | Reserved for TUI plugins |
 | `*.jsonc` | Sample opencode global and TUI configs (`opencode.jsonc`, `opencode_cfg.jsonc`, `tui_cfg.jsonc`) |
 
@@ -61,6 +60,7 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `sax-find-bugs/` | Bug and vulnerability finding |
 | `sax-issue-bookmarks/` | Canonical analyst ticket bookmark rules and save/load/list operations shared by Business Analyst and System Analyst |
 | `sax-pr-review/` | Canonical rubric for reviewing a branch or pull request |
+| `sax-project-context/` | Canonical `.ai/` topic contract, resolution order, and `AGENTS.md` reference block |
 | `sax-pull-request/` | Validate, commit, push, and open a PR |
 | `sax-push/` | Stage, validate with tox, and push |
 | `sax-release/` | Generate release notes and a GitHub release |
@@ -98,13 +98,14 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 
 - Each skill MUST have a `SKILL.md` at its directory root.
 - `SKILL.md` frontmatter uses `name:` and `description:` (required; the description carries trigger keywords) plus optional `license:`, `compatibility:`, `metadata:` keys.
-- Agents and commands use Markdown with YAML frontmatter; `description:` is required, and `agent`, `mode`, `color`, `steps`, `permissions` are optional opencode settings.
-- The installer mirrors paths: `src/agents/`, `src/skills/`, and `src/commands/` install to `DEST/agents/`, `DEST/skills/`, and `DEST/commands/`. Any other top-level `src/` directory except the reserved `plugins/` is a shared spec namespace and installs under the same name (`src/_shared/sax/` -> `DEST/_shared/sax/`), so an agent references it as `../_shared/sax/<file>`. Only skills get the `sax-` name prefix.
+- Agents use Markdown with YAML frontmatter; `description:` is required, and `agent`, `mode`, `color`, `steps`, `permissions` are optional opencode settings. Commands accept only `description:`, `agent:`, and `model:`; they cannot declare `permissions`, so a command that loads a skill relies on the global `skill` permission.
+- The installer mirrors paths: `src/agents/`, `src/skills/`, and `src/commands/` install to `DEST/agents/`, `DEST/skills/`, and `DEST/commands/`. The reserved `src/plugins/` is never installed. Any other top-level `src/` directory is not a definition kind opencode can load, so the installer warns instead of installing it. Only skills get the `sax-` name prefix.
+- A skill is referenced by its installed id (the directory basename, `sax-<name>`), never by path: a relative path resolves against the session working directory, not against the installed definition, and reading outside it triggers an `external_directory` permission prompt. The same id is the `action: skill` permission resource.
 - Reference materials live alongside `SKILL.md` in named subdirectories (no enforced convention).
 - `.gitignore` excludes all dotfiles and editor backup files (`~*`); only `.gitignore` itself is kept among dotfiles.
 - `.ai-temp/` is git-ignored agent scratch, never a deliverable. The `Business
   Analyst` and `System Analyst` persist compact resume state only when the user
-  explicitly asks to save one through the `issue-bookmarks` skill, using
+  explicitly asks to save one through the `sax-issue-bookmarks` skill, using
   `.ai-temp/business-analyst/<name>.md` and `.ai-temp/system-analyst/<name>.md`
   respectively. Loading and listing run only in the active analyst role. There
   is no autosave or fixed analyst snapshot. The business-analyst separately
@@ -113,10 +114,10 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
   fallback when the documentation has no structured glossary, and one note file
   per topic records findings the other analyst would otherwise re-ask about.
 - Every agent, skill, and command MUST emit output that follows the TUI-portable standard below.
-- The `documenter` agent generates or updates documentation (operator role: gates, permissions, workflow); the `documentation` skill owns the domain knowledge (four-guide taxonomy, audit clauses, style, build checks, findings template) and is shared by `documenter`, standalone audits, and any future docs agent. Rules live in only one place: the skill.
-- The `ticket-writing` skill owns the canonical ticket content rules (title, prefixes, body, soft-wrap, diagrams, language) shared by the `Business Analyst` and the `System Analyst`. Rules live in only one place: the skill; agents must load it rather than re-implementing its rules.
-- The `issue-bookmarks` skill owns the analyst ticket bookmark contract and the save/load/list operations (guard, name validation, schema, validity, compact projection) shared by the `Business Analyst` and the `System Analyst`. There are no `issue-*` commands. It loads the `state-persistence` skill, which owns the shared analyst state layout (which `.ai-temp/` path belongs to which analyst, the shared findings directory, the write policy, and the legacy state to ignore) plus the Business Analyst project terms cache.
-- The `.ai/` topic contract, resolution order, and `AGENTS.md` reference block are owned by `_shared/sax/project-context.md`. The `init-project` command creates the files and the block; `config-check` audits references, existence, and drift. Rules live in only one place: the contract.
+- The `documenter` agent generates or updates documentation (operator role: gates, permissions, workflow); the `sax-documentation` skill owns the domain knowledge (four-guide taxonomy, audit clauses, style, build checks, findings template) and is shared by `documenter`, standalone audits, and any future docs agent. Rules live in only one place: the skill.
+- The `sax-ticket-writing` skill owns the canonical ticket content rules (title, prefixes, body, soft-wrap, diagrams, language) shared by the `Business Analyst` and the `System Analyst`. Rules live in only one place: the skill; agents must load it rather than re-implementing its rules.
+- The `sax-issue-bookmarks` skill owns the analyst ticket bookmark contract and the save/load/list operations (guard, name validation, schema, validity, compact projection) shared by the `Business Analyst` and the `System Analyst`. There are no `issue-*` commands. It loads the `sax-state-persistence` skill, which owns the shared analyst state layout (which `.ai-temp/` path belongs to which analyst, the shared findings directory, the write policy, and the legacy state to ignore) plus the Business Analyst project terms cache.
+- The `.ai/` topic contract, resolution order, and `AGENTS.md` reference block are owned by the `sax-project-context` skill. The `init-project` command creates the files and the block; `config-check` audits references, existence, and drift. Rules live in only one place: the skill. Consumers load it by name and never restate the topic list.
 
 ## TUI-portable output
 

@@ -30,7 +30,7 @@ export const GOLDEN_CASES = [
     source: 'src/agents/business-analyst.md',
     checks: [
       { label: 'summary-first body is documented', kind: 'match', value: /## Summary/ },
-      { label: 'the draft follows the ticket-writing skill', kind: 'match', value: /Apply the `ticket-writing` skill \(must be loaded\)/ },
+      { label: 'the draft follows the ticket-writing skill', kind: 'match', value: /Apply the `sax-ticket-writing` skill \(must be loaded\)/ },
       { label: 'never names code, files, or frameworks', kind: 'match', value: /Never name or discuss code, files, libraries/ },
       { label: 'the BA cannot read the repository', kind: 'match', value: /Never read source code directly/ },
     ],
@@ -52,7 +52,7 @@ export const GOLDEN_CASES = [
     rationale: 'Writing the ticket in the conversation language is the classic silent failure.',
     source: 'src/agents/business-analyst.md',
     checks: [
-      { label: 'resolution order is delegated to the skill', kind: 'match', value: /resolution order defined in the `ticket-writing` skill/ },
+      { label: 'resolution order is delegated to the skill', kind: 'match', value: /resolution order defined in the `sax-ticket-writing` skill/ },
       { label: 'never infer from conversation language', kind: 'match', value: /Never infer the language from the conversation language/ },
       { label: 'the source is recorded', kind: 'match', value: /ticket_language_source/ },
     ],
@@ -211,7 +211,7 @@ export const GOLDEN_CASES = [
     source: 'src/agents/business-analyst.md',
     checks: [
       { label: 'the code-impact subagent is allowed for the BA', kind: 'match', value: /resource: "sub-code-impact-explorer"\n\s+effect: ask/ },
-      { label: 'the shared skills are allowed', kind: 'match', value: /resource: "state-persistence"\n\s+effect: allow/ },
+      { label: 'the shared skills are allowed', kind: 'match', value: /resource: "sax-state-persistence"\n\s+effect: allow/ },
     ],
   },
   {

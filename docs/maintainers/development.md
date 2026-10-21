@@ -89,7 +89,6 @@ set (`--global`, `--project`, `--copy`, `--link`, `--prefix`, `--uninstall`,
 | `src/skills/<name>/` | `~/.config/opencode/skills/sax-<name>/` | `./.opencode/skills/sax-<name>/` |
 | `src/agents/*.md` | `~/.config/opencode/agents/` | `./.opencode/agents/` |
 | `src/commands/*.md` | `~/.config/opencode/commands/` | `./.opencode/commands/` |
-| `src/_shared/<name>/` | `~/.config/opencode/<name>/` | `./.opencode/<name>/` |
 | `src/plugins/` | not installed | not installed |
 
 `--copy` is the default; `--link` creates per-item symlinks. Directories
@@ -97,6 +96,6 @@ set (`--global`, `--project`, `--copy`, `--link`, `--prefix`, `--uninstall`,
 removes only known items and never touches `plugins/`, which belongs to the
 user. Dry-run reports only paths that actually exist.
 
-When adding a new top-level directory under `src/`, remember that it is treated
-as a shared spec and installed under the same name; update the ignore list if
-that is not intended.
+Any other top-level directory under `src/` is not installed: opencode loads
+agents, skills, and commands only, so the installer warns about it. Move the
+content into a skill (`src/skills/<name>/SKILL.md`) or a command.

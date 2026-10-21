@@ -7,7 +7,7 @@ description: Design Django ORM models following architectural conventions for si
 
 This skill captures the _architectural_ decisions that go into a Dango model. It does not cover Django syntax, import order, or migration generation -- for those:
 
-- Migrations: invoke the `django-migration` skill after the model is designed.
+- Migrations: invoke the `sax-django-migration` skill after the model is designed.
 
 ## Other norms worth encoding
 
@@ -76,5 +76,5 @@ class MyThing(models.Model):
 
 ## After the model is designed
 
-1. Generate the migration: invoke the `django-migration` skill.
+1. Generate the migration: invoke the `sax-django-migration` skill.
 3. If the app's `models/__init__.py` re-exports its models, add your new one there too -- it's a convenience for callers (`from <prj>.<app>.models import Thing`), not a Django requirement, so match the app's precedent.

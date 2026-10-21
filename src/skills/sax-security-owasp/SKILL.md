@@ -1,6 +1,6 @@
 ---
 name: sax-security-owasp
-description: OWASP-based security review -- trace data flow, verify exploitability, report only high-confidence findings. Use ONLY when invoked via the security skill or when explicitly asked for an OWASP review.
+description: OWASP-based security review -- trace data flow, verify exploitability, report only high-confidence findings. Use ONLY when invoked via the `sax-security` skill or when explicitly asked for an OWASP review.
 license: LICENSE
 ---
 

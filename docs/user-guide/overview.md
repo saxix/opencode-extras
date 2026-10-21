@@ -36,7 +36,7 @@ All definitions are plain Markdown with YAML frontmatter, written for
 - **Explicit approval gates.** The Business Analyst and System Analyst do not
   mutate tickets or choose technical directions without user approval
   (`agents/business-analyst.md:85`, `agents/system-analyst.md:69`).
-- **Explicit analyst bookmarks.** The `issue-bookmarks` skill persists and
+- **Explicit analyst bookmarks.** The `sax-issue-bookmarks` skill persists and
   restores compact analyst state only when the user asks for it in an active
   analyst session; there is no autosave.
 - **Deny-by-default permissions.** Agents explicitly allow a narrow write

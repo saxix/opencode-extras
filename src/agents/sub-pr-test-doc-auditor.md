@@ -27,7 +27,13 @@ permissions:
     resource: "*"
     effect: deny
   - action: skill
-    resource: "testing-guidelines"
+    resource: "sax-testing-guidelines"
+    effect: allow
+  - action: skill
+    resource: "sax-pr-review"
+    effect: allow
+  - action: skill
+    resource: "sax-project-context"
     effect: allow
 ---
 
@@ -43,7 +49,7 @@ Your parent must provide:
 - `focus`: `tests | docs | both` (default `both`);
 - CI coverage data if available (check names, coverage percentage or report path);
 - the PR claims (condensed description) and any ticket acceptance criteria;
-- paths of project rule files when present (`.ai/testing.md`, `.ai/docs.md`), resolved per `../_shared/sax/project-context.md`. Project rules (coverage thresholds, doc language and structure, `## Overrides`, `## Not applicable`) win over the defaults below; report when a default was applied.
+- paths of project rule files when present (`.ai/testing.md`, `.ai/docs.md`), resolved per the `sax-project-context` skill. Project rules (coverage thresholds, doc language and structure, `## Overrides`, `## Not applicable`) win over the defaults below; report when a default was applied.
 
 Return `code: VALIDATION_ERROR` if the file list is missing.
 
@@ -53,7 +59,7 @@ Return `code: VALIDATION_ERROR` if the file list is missing.
 2. For each changed production symbol with new or changed behavior, find tests that exercise it (glob test directories, grep symbol names). Report `covered`, `partial`, or `none`.
 3. Check quality: assertions present and meaningful, edge and error paths, no skipped or xfail tests added, no tests weakened or deleted without reason, deterministic (no sleeps, real network).
 4. Coverage: use only data the parent supplies or reports committed in CI artifacts. Never claim a number that was not read. If absent, report `coverage data unavailable` and give a qualitative mapping only.
-5. If the project has `testing-guidelines` conventions, load that skill and compare.
+5. If the project has `sax-testing-guidelines` conventions, load that skill and compare.
 
 ## Documentation audit
 
@@ -88,7 +94,7 @@ Return only this structure, max 12 findings, one line per row:
 - <coverage data missing, files unreadable, or "None">
 ```
 
-Severity: `Blocker`, `Major`, `Minor`, `Nit` as defined by the `pr-review` skill. Do not invent paths or numbers. Do not include code patches.
+Severity: `Blocker`, `Major`, `Minor`, `Nit` as defined by the `sax-pr-review` skill. Do not invent paths or numbers. Do not include code patches.
 
 ## Resilience
 

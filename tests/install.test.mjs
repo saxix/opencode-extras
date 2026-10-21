@@ -7,12 +7,10 @@ import {
   SRC_SKILLS,
   SRC_AGENTS,
   SRC_COMMANDS,
-  SRC_SHARED,
   parseFrontmatter,
   listSkills,
   listAgents,
   listCommands,
-  listShared,
   runInstall,
 } from './helpers.mjs';
 
@@ -28,7 +26,7 @@ const readSkill = name => normalize(fs.readFileSync(path.join(SRC_SKILLS, name, 
 describe('skill frontmatter', () => {
   it('every skill has SKILL.md with valid name and description', () => {
     const skills = listSkills();
-    assert.equal(skills.length, 26, `expected 26 skills, got ${skills.length}`);
+    assert.equal(skills.length, 27, `expected 27 skills, got ${skills.length}`);
     for (const name of skills) {
       const fm = parseFrontmatter(path.join(SRC_SKILLS, name, 'SKILL.md'));
       assert.ok(fm, `${name}/SKILL.md missing frontmatter`);
@@ -145,7 +143,7 @@ describe('command frontmatter', () => {
   it('points both analysts at the bookmark skill and not at the old commands', () => {
     for (const agent of ANALYST_AGENTS) {
       const content = normalize(fs.readFileSync(path.join(SRC_AGENTS, agent), 'utf8'));
-      assert.match(content, /The `issue-bookmarks` skill owns the bookmark operations/);
+      assert.match(content, /The `sax-issue-bookmarks` skill owns the bookmark operations/);
       assert.doesNotMatch(content, /issue-save|issue-load|issue-list/);
     }
   });
@@ -209,9 +207,9 @@ describe('command frontmatter', () => {
   it('points both analysts at the state skill and the bookmark skill', () => {
     for (const agent of ANALYST_AGENTS) {
       const content = normalize(fs.readFileSync(path.join(SRC_AGENTS, agent), 'utf8'));
-      assert.match(content, /The `state-persistence` skill/);
+      assert.match(content, /The `sax-state-persistence` skill/);
       assert.match(content, /It is shared with the/);
-      assert.match(content, /The `issue-bookmarks` skill owns the bookmark operations/);
+      assert.match(content, /The `sax-issue-bookmarks` skill owns the bookmark operations/);
       assert.match(content, /\*\*Shared findings\*\*/);
       // the layout, write policy, and legacy rules live only in the spec
       assert.doesNotMatch(content, /autosave|migrate|no autosave/);
@@ -223,7 +221,7 @@ describe('command frontmatter', () => {
   it('both analysts declare the shared skills they load', () => {
     for (const agent of ANALYST_AGENTS) {
       const content = fs.readFileSync(path.join(SRC_AGENTS, agent), 'utf8');
-      for (const skill of ['ticket-writing', 'issue-bookmarks', 'state-persistence']) {
+      for (const skill of ['sax-ticket-writing', 'sax-issue-bookmarks', 'sax-state-persistence']) {
         const re = new RegExp('- action: skill\\n\\s+resource: "' + skill + '"\\n\\s+effect: allow');
         assert.match(content, re, `${agent} must allow the ${skill} skill`);
       }
@@ -264,9 +262,6 @@ describe('installer', () => {
     for (const f of listCommands()) {
       assert.ok(fs.existsSync(path.join(prefix, '.config', 'opencode', 'commands', f)));
     }
-    for (const name of listShared()) {
-      assert.ok(fs.existsSync(path.join(prefix, '.config', 'opencode', name)), `missing shared dir ${name}`);
-    }
     assert.ok(!fs.existsSync(path.join(prefix, '.claude')));
     assert.ok(!fs.existsSync(path.join(prefix, '.codex')));
     assert.ok(!fs.existsSync(path.join(prefix, '.pi')));
@@ -281,16 +276,15 @@ describe('installer', () => {
     assert.ok(!fs.existsSync(path.join(prefix, '.config', 'opencode', 'agents', '_shared', 'state-persistence.md')), 'legacy agents/_shared should not exist');
   });
 
-  it('mirrors shared dirs under the same top-level name', () => {
-    const prefix = path.join(tmp, 'shared-mirror');
-    runInstall('--link', { PREFIX: prefix });
+  it('installs the project-context contract as a loadable skill', () => {
+    const prefix = path.join(tmp, 'project-context-skill');
+    runInstall('', { PREFIX: prefix });
     const base = path.join(prefix, '.config', 'opencode');
-    for (const name of listShared()) {
-      const p = path.join(base, name);
-      assert.ok(fs.lstatSync(p).isSymbolicLink(), `${name} should be a symlink in link mode`);
-      assert.ok(fs.readlinkSync(p).endsWith(path.join('src', name)), `${name} should mirror the source path`);
-    }
-    assert.ok(!fs.existsSync(path.join(base, 'sax')), 'legacy sax/ dir should be gone');
+    assert.ok(
+      fs.existsSync(path.join(base, 'skills', 'sax-project-context', 'SKILL.md')),
+      'the project-context contract must be installed as a skill'
+    );
+    assert.ok(!fs.existsSync(path.join(base, '_shared')), 'the shared-spec namespace must not be installed');
   });
 
   it('never installs the reserved plugins/ directory in any mode', () => {
@@ -300,10 +294,10 @@ describe('installer', () => {
       runInstall(mode, { PREFIX: prefix });
       const base = path.join(prefix, '.config', 'opencode');
       assert.ok(!fs.existsSync(path.join(base, 'plugins')), `plugins/ must not be installed (${label} mode)`);
-      // the assertion above is not vacuous: shared dirs must still be installed
-      assert.ok(listShared().length > 0, 'expected at least one shared dir');
-      for (const name of listShared()) {
-        assert.ok(fs.existsSync(path.join(base, name)), `missing shared dir ${name} (${label} mode)`);
+      // the assertion above is not vacuous: the skills must still be installed
+      assert.ok(listSkills().length > 0, 'expected at least one skill');
+      for (const name of listSkills()) {
+        assert.ok(fs.existsSync(path.join(base, 'skills', name)), `missing skill ${name} (${label} mode)`);
       }
     }
   });
@@ -315,9 +309,43 @@ describe('installer', () => {
     fs.writeFileSync(path.join(base, 'sax', 'shared', 'state-persistence.md'), 'old');
     fs.mkdirSync(path.join(base, 'agents', '_shared'), { recursive: true });
     fs.writeFileSync(path.join(base, 'agents', '_shared', 'state-persistence.md'), 'old');
+    fs.mkdirSync(path.join(base, '_shared', 'sax'), { recursive: true });
+    fs.writeFileSync(path.join(base, '_shared', 'sax', 'project-context.md'), 'old');
     runInstall('', { PREFIX: prefix });
     assert.ok(!fs.existsSync(path.join(base, 'sax')), 'legacy sax/shared should be removed');
     assert.ok(!fs.existsSync(path.join(base, 'agents', '_shared')), 'legacy agents/_shared should be removed');
+    assert.ok(!fs.existsSync(path.join(base, '_shared', 'sax')), 'legacy _shared/sax should be removed');
+    assert.ok(
+      fs.existsSync(path.join(base, 'skills', 'sax-project-context', 'SKILL.md')),
+      'the contract must be installed as a skill after the migration'
+    );
+  });
+
+  it('removes the retired shared-spec namespace on uninstall', () => {
+    const prefix = path.join(tmp, 'shared-uninstall');
+    const base = path.join(prefix, '.config', 'opencode');
+    fs.mkdirSync(path.join(base, '_shared', 'sax'), { recursive: true });
+    fs.writeFileSync(path.join(base, '_shared', 'sax', 'project-context.md'), 'old');
+    runInstall('--uninstall', { PREFIX: prefix });
+    assert.ok(!fs.existsSync(path.join(base, '_shared', 'sax')), 'legacy _shared/sax should be removed on uninstall');
+  });
+
+  it('removes the dangling _shared symlink left by an older --link install', () => {
+    const prefix = path.join(tmp, 'shared-link');
+    const base = path.join(prefix, '.config', 'opencode');
+    fs.mkdirSync(base, { recursive: true });
+    fs.symlinkSync(path.join(tmp, 'gone', '_shared'), path.join(base, '_shared'), 'dir');
+    runInstall('', { PREFIX: prefix });
+    assert.ok(!fs.lstatSync(path.join(base, '_shared'), { throwIfNoEntry: false }), 'legacy _shared symlink should be removed');
+  });
+
+  it('keeps a user-owned _shared directory', () => {
+    const prefix = path.join(tmp, 'shared-user');
+    const base = path.join(prefix, '.config', 'opencode');
+    fs.mkdirSync(path.join(base, '_shared'), { recursive: true });
+    fs.writeFileSync(path.join(base, '_shared', 'mine.md'), 'keep');
+    runInstall('', { PREFIX: prefix });
+    assert.ok(fs.existsSync(path.join(base, '_shared', 'mine.md')), 'a user-owned _shared directory must survive');
   });
 
   it('removes broken symlinks left behind by a moved source', () => {

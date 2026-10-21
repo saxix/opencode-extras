@@ -49,14 +49,14 @@ The docs site is organized in four guides plus shared sections. Required sub-sec
 Not every project needs all four guides. Before generating or auditing, you MUST ask the user which guides/sections they want.
 
 - Ask explicitly which of the four guides are in scope: **User Guide**, **Administrative Guide**, **Development Guide**, **Deploy Guide** (plus shared sections as needed). Do not assume the full set.
-- For presets and guide mapping, see `specs/index.md` within this skill (Library -> `library.md`, CLI -> `cli.md`, Skill -> `skill.md`, MCP Server -> `mcp-server.md`, Project -> `project.md`) -- after install at `skills/documentation/specs/index.md`, in the source repo at `src/skills/documentation/specs/index.md`. Propose presets and let the user pick or customize; record the confirmed scope as the baseline for coverage, gaps, and verification. Never generate excluded guides without explicit confirmation.
+- For presets and guide mapping, see `specs/index.md` within this skill (Library -> `library.md`, CLI -> `cli.md`, Skill -> `skill.md`, MCP Server -> `mcp-server.md`, Project -> `project.md`) -- after install at `skills/sax-documentation/specs/index.md`, in the source repo at `src/skills/sax-documentation/specs/index.md`. Propose presets and let the user pick or customize; record the confirmed scope as the baseline for coverage, gaps, and verification. Never generate excluded guides without explicit confirmation.
 - Example question (adapt language to the project's default language): "What type of project is this? For a library, User Guide and Development Guide are usually enough, without Deploy/Administrative. Which guides do you want to include? [ ] User [ ] Administrative [ ] Development [ ] Deploy"
-- For profile details, see the corresponding spec in `specs/` within this skill (`library.md`, `cli.md`, `skill.md`, `mcp-server.md`, `project.md` in `skills/documentation/specs/`, source repo `src/skills/documentation/specs/`); all profiles inherit `common.md`.
+- For profile details, see the corresponding spec in `specs/` within this skill (`library.md`, `cli.md`, `skill.md`, `mcp-server.md`, `project.md` in `skills/sax-documentation/specs/`, source repo `src/skills/sax-documentation/specs/`); all profiles inherit `common.md`.
 - If the user does not answer, do not proceed to `WRITE`; stay in `INTAKE`/`SCOPE` and re-ask. A vague "everything" / "full set" means all four guides; otherwise tailor.
 
 ### Profile-specific mandatory coverage
 
-When the project type is confirmed, load the corresponding profile from `specs/` within this skill (`skills/documentation/specs/<type>.md` after install, source repo `src/skills/documentation/specs/<type>.md`) and treat its Mandatory Sections as required. See `library.md`, `cli.md`, `skill.md`, `mcp-server.md`, `project.md` for the per-type mandatory areas. Map them to the selected guides and flag any missing area as High severity. For per-type details, see the corresponding spec in `specs/<type>.md`.
+When the project type is confirmed, load the corresponding profile from `specs/` within this skill (`skills/sax-documentation/specs/<type>.md` after install, source repo `src/skills/sax-documentation/specs/<type>.md`) and treat its Mandatory Sections as required. See `library.md`, `cli.md`, `skill.md`, `mcp-server.md`, `project.md` for the per-type mandatory areas. Map them to the selected guides and flag any missing area as High severity. For per-type details, see the corresponding spec in `specs/<type>.md`.
 
 For reference, the CLI/MCP mandatory areas are:
 

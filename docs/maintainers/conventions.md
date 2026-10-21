@@ -11,8 +11,12 @@ the documentation site.
 | `src/agents/*.md` | One agent per file; `description:` frontmatter is required, `mode:` is `primary` or `subagent` |
 | `src/skills/<name>/SKILL.md` | One skill per directory; `name:` and `description:` are required |
 | `src/commands/*.md` | One command per file; `description:` is required, `agent:` is optional |
-| `src/_shared/<name>/` | Shared specs, installed under the same top-level name, never under `agents/` |
 | `src/plugins/` | Reserved for opencode plugins; **never** installed by the installer |
+
+Any other top-level directory under `src/` is not a definition kind opencode
+can load: the installer warns about it instead of installing it. Put shared
+reference material in a skill (`src/skills/<name>/`) and load that skill by
+name.
 
 Skill directories are installed with the `sax-` prefix
 (`DEST/skills/sax-<name>/`) to avoid collisions with other skill packs. Editor
@@ -51,8 +55,8 @@ same language as the surrounding document.
 
 Agents declare a deny-by-default permission surface in frontmatter. Only the
 Business Analyst and System Analyst persist state, and only on an explicit user
-request, through the `issue-bookmarks` skill; the layout is owned by the
-`state-persistence` skill. The scratch area is `.ai-temp/` (git-ignored).
+request, through the `sax-issue-bookmarks` skill; the layout is owned by the
+`sax-state-persistence` skill. The scratch area is `.ai-temp/` (git-ignored).
 
 ## Documentation contract
 

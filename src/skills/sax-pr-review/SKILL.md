@@ -7,7 +7,7 @@ description: Canonical rubric for reviewing a pull request, a local diff, or the
 
 This skill owns the review rules. The `Reviewer` agent orchestrates and gates; it must load this skill rather than re-implementing the rules.
 
-Everything below is a default. Project rules resolved per `../_shared/sax/project-context.md` (notably `.ai/review.md`, `best-practices.md`, `testing.md`, `security.md`, `docs.md`) win over it: apply their `## Overrides` (severity, thresholds, language, decision rules) and skip dimensions listed under `## Not applicable`. State in the comment which defaults were applied because the project was silent.
+Everything below is a default. Project rules resolved per the `sax-project-context` skill (notably `.ai/review.md`, `best-practices.md`, `testing.md`, `security.md`, `docs.md`) win over it: apply their `## Overrides` (severity, thresholds, language, decision rules) and skip dimensions listed under `## Not applicable`. State in the comment which defaults were applied because the project was silent.
 
 ## Review dimensions
 
@@ -18,7 +18,7 @@ Evaluate each dimension and record one status: `PASS`, `WARN`, `FAIL`, or `N/A` 
 | 1 | Description fit | Every claim in the title/body (PR), in the commit messages and stated intent (`Diff`), or in the user's stated intent (`Code`) is backed by the diff or by the current code; no undocumented behavior change; breaking changes declared | PR body, commit messages, stated intent, diff or current code |
 | 2 | Ticket adherence | Each acceptance criterion is implemented; nothing out of scope added | Ticket context, diff |
 | 3 | Project standards | `AGENTS.md`, `CONTRIBUTING*`, lint/format config, naming, layering, commit style | Repo instruction files |
-| 4 | Security | Injection, authn/authz, secrets, unsafe deserialization, dependency changes | Diff, `find-bugs`, `security-owasp` |
+| 4 | Security | Injection, authn/authz, secrets, unsafe deserialization, dependency changes | Diff, `sax-find-bugs`, `sax-security-owasp` |
 | 5 | Performance | Complexity, N+1 queries, unbounded loops or memory, blocking I/O | Diff |
 | 6 | Tests | New or changed behavior has tests; edge cases; coverage of changed lines | Test files, CI coverage |
 | 7 | Documentation | README/docs/changelog/docstrings updated for user-visible change; quality and accuracy | Diff, `docs/` |

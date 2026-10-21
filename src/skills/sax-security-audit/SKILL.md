@@ -1,6 +1,6 @@
 ---
 name: sax-security-audit
-description: Threat-modeling security audit -- attack surfaces, secrets, SSRF, SQLi, open endpoints, auth flaws. Use ONLY when invoked via the security skill or when explicitly asked for threat modeling or a systematic audit.
+description: Threat-modeling security audit -- attack surfaces, secrets, SSRF, SQLi, open endpoints, auth flaws. Use ONLY when invoked via the `sax-security` skill or when explicitly asked for threat modeling or a systematic audit.
 
 ---
 

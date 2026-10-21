@@ -21,7 +21,7 @@ Follow these steps to stage, validate, commit, and push changes. **Stop immediat
    - If `tox` succeeds, proceed to Phase 3.
 
 ## Phase 3: Generate Commit Message & Commit
-1. **Generate Commit Message:** Invoke the `commit-message` skill to craft an appropriate commit message based on the staged changes.
+1. **Generate Commit Message:** Invoke the `sax-commit-message` skill to craft an appropriate commit message based on the staged changes.
 2. Commit the staged changes using the generated message:
    `git commit -m "<generated-message>"`
 

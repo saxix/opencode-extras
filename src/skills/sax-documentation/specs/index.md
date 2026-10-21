@@ -1,7 +1,7 @@
 # Documenter Profiles Index
 
 This directory owns the per-type documentation profiles for the `documenter` agent.
-The `documenter` agent and the `documentation` skill must reference these files instead of duplicating preset definitions.
+The `documenter` agent and the `sax-documentation` skill must reference these files instead of duplicating preset definitions.
 
 ## Preset -> Guides
 
@@ -28,7 +28,7 @@ All profiles inherit `common.md` (language, evidence, style, verification base).
 
 ## How to Add a New Profile
 
-1. Create `src/skills/documentation/specs/<type>.md` with sections: Purpose, Required Guides, Mandatory Sections, Evidence Sources, Verification Checklist, Example Structure.
+1. Create `src/skills/sax-documentation/specs/<type>.md` with sections: Purpose, Required Guides, Mandatory Sections, Evidence Sources, Verification Checklist, Example Structure.
 2. Add a row to the table above.
 3. Update `src/agents/documenter.md` scoping question checklist to include the new type.
-4. Update `src/skills/documentation/SKILL.md` scope tailoring if the taxonomy changes.
+4. Update `src/skills/sax-documentation/SKILL.md` scope tailoring if the taxonomy changes.

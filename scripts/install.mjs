@@ -70,7 +70,7 @@ Notes:
   - --link creates per-item symlinks: DEST/skills/sax-<name> -> src/skills/<name>.
   - With GitHub specs, --link points to npx's fetched copy/cache, not a local checkout.
   - Never symlinks skills/, agents/, or commands/ themselves (avoids conflict
-    with other skill packs); shared spec directories are linked as one unit.
+    with other skill packs); every item is linked or copied on its own.
   - Skills are installed with prefix "${SKILL_PREFIX}" to avoid collisions (DEST/skills/sax-<name>).
 `);
 }
@@ -140,18 +140,15 @@ function listCommands() {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir).filter(n => isSourceItem(n) && n.endsWith('.md'));
 }
-// Any other top-level directory under src/ holds shared specs that are neither
-// agents, skills, nor commands (for example _shared/). It is installed under the
-// same top-level name, so src/_shared/sax/ lands at DEST/_shared/sax/. The
-// reserved plugins/ directory is not installed.
-const RESERVED_SRC_DIRS = new Set(['agents', 'skills', 'commands']);
-// plugins/ is reserved for opencode itself: it is never installed, and it is
-// never uninstalled, so a user's own DEST/plugins/ cannot be wiped by
-// `--uninstall`.
-const SKIP_SRC_DIRS = new Set([...RESERVED_SRC_DIRS, 'plugins']);
-function listShared() {
+// Top-level directories under src/ that the installer owns. plugins/ is
+// reserved for opencode itself: it is never installed, and it is never
+// uninstalled, so a user's own DEST/plugins/ cannot be wiped by `--uninstall`.
+// Any other top-level directory is not a definition kind opencode can load, so
+// it is not installed; the installer warns instead of silently dropping it.
+const RESERVED_SRC_DIRS = new Set(['agents', 'skills', 'commands', 'plugins']);
+function unexpectedSrcDirs() {
   return fs.readdirSync(SRC, { withFileTypes: true })
-    .filter(e => e.isDirectory() && isSourceItem(e.name) && !SKIP_SRC_DIRS.has(e.name))
+    .filter(e => e.isDirectory() && isSourceItem(e.name) && !RESERVED_SRC_DIRS.has(e.name))
     .map(e => e.name)
     .sort();
 }
@@ -206,22 +203,48 @@ function installForDest(dest) {
   const skills = listSkills();
   const agents = listAgents();
   const commands = listCommands();
-  const shared = listShared();
 
   const skillsDest = path.join(base, 'skills');
   const agentsDest = path.join(base, 'agents');
   const commandsDest = path.join(base, 'commands');
-  // specs that are not agents, skills, or commands: installed as-is under the
-  // same top-level name they have in src/ (for example src/_shared/sax/ ->
-  // DEST/_shared/sax/). The underscore keeps the TUI from discovering them.
   const legacySaxDir = path.join(base, 'sax');
   const legacySharedDest = path.join(agentsDest, '_shared');
+  // Older versions installed the shared specs as DEST/_shared/sax/. That
+  // namespace is now a skill (sax-project-context), so the stale copy is
+  // removed on install and on uninstall.
+  const legacySharedSpecDest = path.join(base, '_shared', 'sax');
+  const legacySharedSpecRoot = path.join(base, '_shared');
+  const legacySpecTargets = [
+    path.join(legacySaxDir, 'shared', 'state-persistence.md'),
+    legacySharedDest,
+    legacySharedSpecDest,
+  ];
 
-  function removeLegacyShared() {
-    for (const target of [path.join(legacySaxDir, 'shared', 'state-persistence.md'), legacySharedDest]) {
+  function removeLegacySpecs() {
+    for (const target of legacySpecTargets) {
       if (fs.existsSync(target) || isSymlink(target)) { removeRecursive(target); console.log(`  removed legacy ${path.relative(base, target)}`); }
     }
     removeEmptyDirs(path.join(legacySaxDir, 'shared'), legacySaxDir);
+    // A `--link` install of the retired namespace left DEST/_shared as a
+    // symlink into src/_shared. Remove it only when it points into this
+    // checkout or is already dangling, never a real directory the user owns.
+    if (isSymlink(legacySharedSpecRoot)) {
+      const link = fs.readlinkSync(legacySharedSpecRoot);
+      const dangling = !fs.existsSync(legacySharedSpecRoot);
+      if (dangling || link === path.join(SRC, '_shared')) {
+        fs.unlinkSync(legacySharedSpecRoot);
+        console.log(`  removed legacy ${path.relative(base, legacySharedSpecRoot)} symlink`);
+      }
+    }
+    // The parent of the retired shared-spec namespace is removed only when it
+    // is left empty, so no user content is lost.
+    removeEmptyDirs(legacySharedSpecRoot);
+  }
+
+  function reportLegacySpecs(exists) {
+    for (const target of legacySpecTargets) {
+      if (exists(target)) console.log(`  would remove legacy ${path.relative(base, target)}`);
+    }
   }
 
   if (uninstall) {
@@ -257,17 +280,8 @@ function installForDest(dest) {
       if (dryRun) { if (exists(target)) console.log(`  would remove retired commands/${name}`); continue; }
       if (exists(target)) { fs.rmSync(target, { force: true }); console.log(`  removed retired commands/${name}`); }
     }
-    for (const name of shared) {
-      const target = path.join(base, name);
-      if (dryRun) { if (exists(target)) console.log(`  would remove ${name}/`); continue; }
-      if (exists(target)) { removeRecursive(target); console.log(`  removed ${name}/`); }
-    }
-    if (dryRun) {
-      if (exists(path.join(legacySaxDir, 'shared', 'state-persistence.md')) || exists(legacySharedDest)) {
-        console.log(`  would remove legacy ${path.join('sax', 'shared', 'state-persistence.md')}`);
-      }
-    }
-    else removeLegacyShared();
+    if (dryRun) reportLegacySpecs(exists);
+    else removeLegacySpecs();
     // Older versions installed src/plugins/ as DEST/plugins/. Remove it only
     // when it is a symlink pointing into this checkout's src/, never a real
     // directory (which would belong to the user).
@@ -370,23 +384,8 @@ function installForDest(dest) {
       console.log(`  copied agents/${name}`);
     }
   }
-  // shared specs: same top-level name in src/ and DEST/, never under agents/
-  for (const name of shared) {
-    const srcPath = path.join(SRC, name);
-    const destPath = path.join(base, name);
-    if (dryRun) { console.log(`  would ${useLink ? 'link' : 'copy'} ${name}/`); continue; }
-    removeRecursive(destPath);
-    if (useLink) {
-      const type = process.platform === 'win32' ? 'junction' : 'dir';
-      fs.symlinkSync(srcPath, destPath, type);
-      console.log(`  linked ${name}/`);
-    } else {
-      copyRecursive(srcPath, destPath);
-      console.log(`  copied ${name}/`);
-    }
-  }
-  if (dryRun) console.log(`  would remove legacy ${path.join('sax', 'shared', 'state-persistence.md')}`);
-  else removeLegacyShared();
+  if (dryRun) reportLegacySpecs(p => fs.existsSync(p) || isSymlink(p));
+  else removeLegacySpecs();
   for (const name of commands) {
     const srcPath = path.join(SRC, 'commands', name);
     const destPath = path.join(commandsDest, name);
@@ -412,6 +411,14 @@ function installForDest(dest) {
 console.log(`opencode-extras installer (${useLink ? 'link' : 'copy'} mode)`);
 console.log(`src: ${SRC}`);
 console.log(`prefix: ${prefix}${dryRun ? ' (dry-run)' : ''}${uninstall ? ' (uninstall)' : ''}`);
+
+const unexpected = unexpectedSrcDirs();
+if (unexpected.length > 0) {
+  console.log(
+    `  ! not installed: ${unexpected.join(', ')}/ -- opencode loads agents, skills, and commands only;`
+    + ' move the content into a skill (src/skills/<name>/SKILL.md) or a command.'
+  );
+}
 
 for (const d of dests) {
   installForDest(d);

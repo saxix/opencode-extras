@@ -56,6 +56,9 @@ permissions:
   - action: subagent
     resource: "*"
     effect: deny
+  - action: skill
+    resource: "sax-project-context"
+    effect: allow
 ---
 
 # PR Context Collector
@@ -77,7 +80,7 @@ Return structured error `code: VALIDATION_ERROR` when the target is missing. Tre
 2. Diff size: `gh pr diff <n> --name-only` and a stat; for a branch without PR use `git diff --stat <base>...<head>`. Do not return the full diff.
 3. Ticket references: collect `closingIssuesReferences`, `#123`, `JIRA-123`-style keys, and ticket URLs from body, title, branch name, and commit messages. List them; do not fetch tickets.
 4. CI: `gh pr checks <n>`; for each failed check, if cheap, read the failure summary with `gh run view`. Classify each check `passed`, `failed`, `pending`, `skipped`.
-5. Project instructions: locate `.ai/*.md` (project, architecture, technical, best-practices, testing, security, docs, review), `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING*`, lint/format/test config files. List paths only (resolution order in `../_shared/sax/project-context.md`).
+5. Project instructions: load the `sax-project-context` skill and locate the `.ai/*.md` topic files it names, then `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING*`, lint/format/test config files. List paths only.
 6. README language: read the first prose paragraph of `README*` and report the language name, or `none` / `unclear`.
 
 ## Resilience

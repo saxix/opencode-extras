@@ -22,6 +22,7 @@ Source of truth: each skill's `SKILL.md` frontmatter.
 | [`sax-find-bugs`](#sax-find-bugs) | `sax-find-bugs/` |
 | [`sax-issue-bookmarks`](#sax-issue-bookmarks) | `sax-issue-bookmarks/` |
 | [`sax-pr-review`](#sax-pr-review) | `sax-pr-review/` |
+| [`sax-project-context`](#sax-project-context) | `sax-project-context/` |
 | [`sax-pull-request`](#sax-pull-request) | `sax-pull-request/` |
 | [`sax-push`](#sax-push) | `sax-push/` |
 | [`sax-release`](#sax-release) | `sax-release/` |
@@ -58,7 +59,7 @@ Framework, checklist, and idiomatic conventions for reviewing Python code (PEP 8
 
 - **Source:** `src/skills/sax-commit/SKILL.md`
 
-Safely stage and commit changes. Handles branch safety checks on protected branches, invokes 'commit-message' to draft the message, presents a preview, and commits upon confirmation. Trigger on "commit", "make commit", "git commit".
+Safely stage and commit changes. Handles branch safety checks on protected branches, invokes 'sax-commit-message' to draft the message, presents a preview, and commits upon confirmation. Trigger on "commit", "make commit", "git commit".
 
 ## sax-commit-message
 
@@ -114,6 +115,12 @@ Canonical rules and procedures for explicit analyst ticket bookmarks used by the
 
 Canonical rubric for reviewing a pull request, a local diff, or the current state of the code -- review dimensions, evidence rules, decision criteria (APPROVE, REQUEST_CHANGES, COMMENT), comment language rule, and the final comment template. Shared by the Reviewer agent; trigger on "review pr", "review pull request", "review branch", "review diff", "review my changes", "review current branch", "review code", "review these files", "pr verdict", "approve pr".
 
+## sax-project-context
+
+- **Source:** `src/skills/sax-project-context/SKILL.md`
+
+Canonical contract for the `.ai/` project rule files: the topic list, the resolution order between project rules and skill defaults, the `## Project context` reference block in `AGENTS.md`, and the stable headings. Loaded by the reviewer agents, the review rubric skill, and the init-project and config-check commands; not intended for direct use.
+
 ## sax-pull-request
 
 - **Source:** `src/skills/sax-pull-request/SKILL.md`
@@ -136,19 +143,19 @@ Generate release notes and create a GitHub release by comparing current HEAD wit
 
 - **Source:** `src/skills/sax-security/SKILL.md`
 
-Orchestrated security audit using security-audit (threat modeling) and security-owasp (OWASP confidence). Use for "audit the code", "find vulnerabilities", "security review".
+Orchestrated security audit using `sax-security-audit` (threat modeling) and `sax-security-owasp` (OWASP confidence). Use for "audit the code", "find vulnerabilities", "security review".
 
 ## sax-security-audit
 
 - **Source:** `src/skills/sax-security-audit/SKILL.md`
 
-Threat-modeling security audit -- attack surfaces, secrets, SSRF, SQLi, open endpoints, auth flaws. Use ONLY when invoked via the security skill or when explicitly asked for threat modeling or a systematic audit.
+Threat-modeling security audit -- attack surfaces, secrets, SSRF, SQLi, open endpoints, auth flaws. Use ONLY when invoked via the `sax-security` skill or when explicitly asked for threat modeling or a systematic audit.
 
 ## sax-security-owasp
 
 - **Source:** `src/skills/sax-security-owasp/SKILL.md`
 
-OWASP-based security review -- trace data flow, verify exploitability, report only high-confidence findings. Use ONLY when invoked via the security skill or when explicitly asked for an OWASP review.
+OWASP-based security review -- trace data flow, verify exploitability, report only high-confidence findings. Use ONLY when invoked via the `sax-security` skill or when explicitly asked for an OWASP review.
 
 ## sax-spec-inspect
 

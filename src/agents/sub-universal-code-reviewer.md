@@ -61,7 +61,7 @@ Use chain-of-thought: evaluate each dimension step by step and note which one fa
 
 ## Skills management
 
-- If a language or stack is specified or clearly detected, load and apply the corresponding skill (`code-review-python`, `code-review-django`, `security-owasp`, `find-bugs`, `architecture-review`) to enforce idiomatic rules. Do not duplicate skill content; reference the skill.
+- If a language or stack is specified or clearly detected, load and apply the corresponding skill (`sax-code-review-python`, `sax-code-review-django`, `sax-security-owasp`, `sax-find-bugs`, `sax-architecture-review`) to enforce idiomatic rules. Do not duplicate skill content; reference the skill.
 - If no skill matches the detected stack, apply language-agnostic checks only and note `No specific skill applied` in the report.
 
 ## Output contract
@@ -107,8 +107,8 @@ Medium risk: unhandled empty list in query and N+1 in loop.
 | Medium | `src/orders/service.py -- OrderService.list` | Performance | N+1 queries in loop | `src/orders/service.py -- OrderService.list` | Prefetch related orders |
 
 ### Skills applied
-- code-review-python -- Python idioms
-- find-bugs -- edge cases
+- sax-code-review-python -- Python idioms
+- sax-find-bugs -- edge cases
 ```
 
 Severity: `Critical` (exploitable / data loss), `High` (bug / security), `Medium` (maintainability / perf), `Low` (style / nit).

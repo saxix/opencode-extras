@@ -1,6 +1,6 @@
 ---
 name: sax-commit
-description: Safely stage and commit changes. Handles branch safety checks on protected branches, invokes 'commit-message' to draft the message, presents a preview, and commits upon confirmation. Trigger on "commit", "make commit", "git commit".
+description: Safely stage and commit changes. Handles branch safety checks on protected branches, invokes 'sax-commit-message' to draft the message, presents a preview, and commits upon confirmation. Trigger on "commit", "make commit", "git commit".
 ---
 
 ## Methodology
@@ -19,7 +19,7 @@ description: Safely stage and commit changes. Handles branch safety checks on pr
    - If no changes are staged, inspect `git diff` and offer to stage relevant files (`git add`).
 
 3. **Generate Commit Message:**
-   - Invoke the `commit-message` skill rules to draft the commit message header, body, and footer based on `git diff --cached`.
+   - Invoke the `sax-commit-message` skill rules to draft the commit message header, body, and footer based on `git diff --cached`.
 
 4. **Display Preview & Request Confirmation:**
    - Present the staged summary and draft commit message:

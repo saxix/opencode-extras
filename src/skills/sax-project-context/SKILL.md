@@ -1,6 +1,11 @@
+---
+name: sax-project-context
+description: 'Canonical contract for the `.ai/` project rule files: the topic list, the resolution order between project rules and skill defaults, the `## Project context` reference block in `AGENTS.md`, and the stable headings. Loaded by the reviewer agents, the review rubric skill, and the init-project and config-check commands; not intended for direct use.'
+---
+
 # Shared Project Context Contract
 
-This file owns where project-specific rules live and how agents and skills resolve them. It is shared by `reviewer`, `coder`, `documenter`, the analysts, and the review subagents, which must reference it instead of restating the lookup. It is installed at `DEST/_shared/sax/project-context.md` and is neither an agent, a skill, nor a command, so the TUI does not discover it.
+This skill owns where project-specific rules live and how agents and skills resolve them. It is loaded by the `reviewer` agent, its review subagents, the `sax-pr-review` skill, and the `init-project` and `config-check` commands, which must load it instead of restating the lookup. It is installed as a skill, so opencode discovers it by the name `sax-project-context` in both global and project installs. Reference it by that name, never by path: a relative path resolves against the working directory of the session, not against the installed definition, and reading outside that directory triggers an `external_directory` permission prompt.
 
 Agents and skills ship generic method and sensible defaults. The project owns the concrete rules. The `init-project` command creates and updates the files described here.
 
@@ -11,7 +16,7 @@ For every topic, read sources in this order and stop at the first that answers t
 1. `.ai/<topic>.md` in the project root (authoritative).
 2. Instruction files: `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING*`, `.github/copilot-instructions.md`, `.cursor/rules/`.
 3. Executable config: linter, formatter, type checker, test runner, CI workflows, pre-commit.
-4. Defaults owned by the skill or agent (for example `pr-review`, `code-review-python`).
+4. Defaults owned by the skill or agent (for example `sax-pr-review`, `sax-code-review-python`).
 
 Rules:
 
@@ -29,8 +34,8 @@ Rules:
 | `.ai/architecture.md` | Boundaries, entrypoints, data flow | `system-analyst`, `coder`, `reviewer` |
 | `.ai/technical.md` | Language, versions, commands, toolchain | all |
 | `.ai/best-practices.md` | Code conventions and workflow rules | `coder`, `reviewer` |
-| `.ai/testing.md` | How to test, coverage expectations | `coder`, `reviewer`, `debug` |
-| `.ai/security.md` | Sensitive areas, required controls (optional) | `reviewer`, security skills |
+| `.ai/testing.md` | How to test, coverage expectations | `coder`, `reviewer`, `sax-debug` |
+| `.ai/security.md` | Sensitive areas, required controls (optional) | `reviewer`, `sax-security-owasp` |
 | `.ai/docs.md` | Documentation expectations and language (optional) | `documenter`, `reviewer` |
 | `.ai/review.md` | Review policy: blockers, thresholds, language (optional) | `reviewer` |
 
@@ -98,6 +103,6 @@ Example for `.ai/review.md`:
 |---|---|---|
 | Project standards | `.ai/best-practices.md` | instruction files, lint config |
 | Tests | `.ai/testing.md` | CI config, test runner config |
-| Security | `.ai/security.md` | `security-owasp` skill |
+| Security | `.ai/security.md` | `sax-security-owasp` skill |
 | Documentation | `.ai/docs.md` | README, `docs/` structure |
-| Decision thresholds, language | `.ai/review.md` | `pr-review` skill |
+| Decision thresholds, language | `.ai/review.md` | `sax-pr-review` skill |

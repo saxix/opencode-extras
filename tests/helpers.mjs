@@ -9,7 +9,6 @@ export const SRC = path.join(REPO_ROOT, 'src');
 export const SRC_SKILLS = path.join(REPO_ROOT, 'src', 'skills');
 export const SRC_AGENTS = path.join(REPO_ROOT, 'src', 'agents');
 export const SRC_COMMANDS = path.join(REPO_ROOT, 'src', 'commands');
-export const SRC_SHARED = path.join(REPO_ROOT, 'src', '_shared');
 export const INSTALL_MJS = path.join(REPO_ROOT, 'scripts', 'install.mjs');
 export const PKG_NAME = 'saxix-utils';
 export const SKILL_PREFIX = 'sax-';
@@ -53,16 +52,6 @@ export function listSkills() {
 
 export function listAgents() {
   return fs.readdirSync(SRC_AGENTS).filter(n => isSourceItem(n) && n.endsWith('.md'));
-}
-
-// Mirrors the installer: top-level src/ directories other than agents, skills,
-// commands (and the reserved plugins/) are installed under the same name.
-const RESERVED_SRC_DIRS = new Set(['agents', 'skills', 'commands', 'plugins']);
-export function listShared() {
-  return fs.readdirSync(SRC, { withFileTypes: true })
-    .filter(e => e.isDirectory() && isSourceItem(e.name) && !RESERVED_SRC_DIRS.has(e.name))
-    .map(e => e.name)
-    .sort();
 }
 
 export function listCommands() {

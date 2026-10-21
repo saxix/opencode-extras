@@ -2,7 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { SRC_AGENTS, SRC_SHARED, parseFrontmatter, listAgents, listSkills } from './helpers.mjs';
+import { SRC_AGENTS, parseFrontmatter, listAgents, listSkills } from './helpers.mjs';
 
 const RETIRED_COMMAND_PATTERN = /issue-save|issue-load|issue-list/;
 const VALID_MODES = new Set(['primary', 'subagent']);
@@ -121,9 +121,11 @@ describe('agent permissions', () => {
       const entries = parsePermissions(frontmatterText(readAgent(f)));
       for (const e of entries) {
         if (e.action !== 'skill' || e.resource === '*') continue;
+        // the resource is the installed skill id (the directory basename), so it
+        // must match src/skills/<id> exactly
         assert.ok(
-          SKILL_NAMES.has(`sax-${e.resource}`),
-          `${f} references unknown skill "${e.resource}" (expected src/skills/sax-${e.resource})`
+          SKILL_NAMES.has(e.resource),
+          `${f} references unknown skill "${e.resource}" (expected src/skills/${e.resource})`
         );
       }
     }
@@ -131,12 +133,20 @@ describe('agent permissions', () => {
 });
 
 describe('agent content integrity', () => {
-  it('shared spec references resolve to real files', () => {
+  it('no agent references the retired shared-spec namespace', () => {
+    for (const f of listAgents()) {
+      assert.doesNotMatch(readAgent(f), /\.\.\/_shared\//, `${f} references the retired ../_shared/ namespace`);
+    }
+  });
+
+  it('skill references in agent prose resolve to installed skill ids', () => {
     for (const f of listAgents()) {
       const content = readAgent(f);
-      for (const m of content.matchAll(/\.\.\/_shared\/([A-Za-z0-9_./-]+)/g)) {
-        const p = path.join(SRC_SHARED, m[1]);
-        assert.ok(fs.existsSync(p), `${f} references missing shared file: ../_shared/${m[1]}`);
+      for (const m of content.matchAll(/`(sax-[a-z0-9-]+)`/g)) {
+        assert.ok(SKILL_NAMES.has(m[1]), `${f} references unknown skill id "${m[1]}"`);
+      }
+      for (const m of content.matchAll(/`([a-z][a-z0-9-]*)` skill/g)) {
+        assert.ok(SKILL_NAMES.has(m[1]), `${f} references unknown skill "${m[1]}"`);
       }
     }
   });
