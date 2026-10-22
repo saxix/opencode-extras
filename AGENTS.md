@@ -53,6 +53,7 @@ Default is `--copy` per-item (safe with other skill packs). Use `--link` for liv
 | `sax-commit/` | Safely stage and commit changes |
 | `sax-commit-message/` | Draft a structured commit message |
 | `sax-create_github_issue/` | Open a GitHub issue via `gh` |
+| `sax-create-redmine-issue/` | Create a Redmine issue via MCP server |
 | `sax-debug/` | Investigate failures, implement minimal fixes |
 | `sax-django-migration/` | Django migration generation |
 | `sax-django-models/` | Django ORM model design |

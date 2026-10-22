@@ -10,7 +10,7 @@ they stay readable in any terminal.
 | Artifact | Count | Reference |
 |---|---|---|
 | Agents | 13 | [Agent reference](reference/agents.md) |
-| Skills | 27 | [Skill reference](reference/skills.md) |
+| Skills | 28 | [Skill reference](reference/skills.md) |
 | Commands | 9 | [Command reference](reference/commands.md) |
 | Plugins | 1 | [Plugin reference](reference/plugins.md) |
 
