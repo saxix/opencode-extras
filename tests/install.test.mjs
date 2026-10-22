@@ -26,7 +26,7 @@ const readSkill = name => normalize(fs.readFileSync(path.join(SRC_SKILLS, name, 
 describe('skill frontmatter', () => {
   it('every skill has SKILL.md with valid name and description', () => {
     const skills = listSkills();
-    assert.equal(skills.length, 27, `expected 27 skills, got ${skills.length}`);
+    assert.equal(skills.length, 28, `expected 28 skills, got ${skills.length}`);
     for (const name of skills) {
       const fm = parseFrontmatter(path.join(SRC_SKILLS, name, 'SKILL.md'));
       assert.ok(fm, `${name}/SKILL.md missing frontmatter`);

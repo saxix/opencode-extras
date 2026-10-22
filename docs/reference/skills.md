@@ -14,6 +14,7 @@ Source of truth: each skill's `SKILL.md` frontmatter.
 | [`sax-code-review-python`](#sax-code-review-python) | `sax-code-review-python/` |
 | [`sax-commit`](#sax-commit) | `sax-commit/` |
 | [`sax-commit-message`](#sax-commit-message) | `sax-commit-message/` |
+| [`sax-create-redmine-issue`](#sax-create-redmine-issue) | `sax-create-redmine-issue/` |
 | [`sax-create_github_issue`](#sax-create_github_issue) | `sax-create_github_issue/` |
 | [`sax-debug`](#sax-debug) | `sax-debug/` |
 | [`sax-django-migration`](#sax-django-migration) | `sax-django-migration/` |
@@ -66,6 +67,12 @@ Safely stage and commit changes. Handles branch safety checks on protected branc
 - **Source:** `src/skills/sax-commit-message/SKILL.md`
 
 Generates a clear, structured commit message based on uncommitted changes in the repository. Trigger on "commit changes", "propose commit message", "create commit message", "show commit"
+
+## sax-create-redmine-issue
+
+- **Source:** `src/skills/sax-create-redmine-issue/SKILL.md`
+
+Creates a new Redmine issue or ticket for bugs, enhancements, or tasks using the Redmine MCP server (mcp-ticketing). Use this when asked to "open a Redmine ticket", "file a Redmine issue", "create a Redmine task", or report bugs/features to Redmine.
 
 ## sax-create_github_issue
 
